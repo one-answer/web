@@ -12,12 +12,16 @@ export default await (async () => {
     new Counter('T').set((await DB.select({ count: count() }).from(Thread))[0].count);
 
     const app = new Hono();
+
     app.get('/', tList);
     app.get('/c/:page{[0-9]+}?', tList);
     app.get('/t/:tid{[0-9]+}', pList);
     app.get('/t/:tid{[0-9]+}/c/:page{[0-9]+}?', pList);
+
     app.use('/favicon.ico', serveStatic({ path: './static/favicon.ico' }));
     app.use('/style.css', serveStatic({ path: './static/style.css' }));
+    app.use('/avatar/*', serveStatic({ root: './' }));
+    app.use('/upload/*', serveStatic({ root: './' }));
 
     return app;
 
