@@ -17,7 +17,7 @@ export default async function (a: Context) {
         })
         .from(Thread)
         .leftJoin(User, eq(Thread.uid, User.uid))
-        .orderBy(desc(Thread.last_date))
+        .orderBy(desc(Thread.create_date))
         .offset((page - 1) * 20)
         .limit(20);
 
@@ -45,18 +45,18 @@ export default async function (a: Context) {
         </div>
     </header>
     <main class="container">
-        <ul class="post-list">
+        <div class="post-list">
             ${data.map(item => html`
-            <li class="post-item">
+            <a href="/t/${item.tid}" class="post-item">
                 <div class="post-title">${raw(item.subject)}</div>
                 <div class="post-meta">
-                    <span class="author">作者：${item.username}</span>
-                    <span class="date">时间：${item.create_date}</span>
-                    <span class="replies">回复：${item.posts}</span>
+                    <span class="author">${item.username}</span>
+                    <span class="replies">&#x276F;&nbsp;${item.posts}</span>
+                    <span class="date" time_stamp="${item.create_date}"></span>
                 </div>
-            </li>
+            </a>
             `)}
-        </ul>
+        </div>
         <div class="pagination">
             ${pagination.map(item => html`
             <a ${item ? html`href="/c/${item}"` : ''} class="page-btn ${item == page ? 'active' : ''}">${item ? item : '...'}</a>
@@ -75,6 +75,13 @@ export default async function (a: Context) {
             </div>
         </div>
     </footer>
+    <script>
+        window.addEventListener('load', function() {
+            document.querySelectorAll('.date').forEach(element => {
+                element.innerHTML = new Date(parseInt(element.getAttribute('time_stamp'))*1000).toLocaleString();
+            });
+        });
+    </script>
 </body>
 </html>
                 `);
