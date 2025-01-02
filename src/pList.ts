@@ -1,26 +1,33 @@
 import { Context } from "hono";
-import { DB, Thread, User } from "./base";
-import { Config, Counter, Pagination } from "./core";
-import { desc, eq, getTableColumns } from 'drizzle-orm';
+import { DB, Post, Thread, User } from "./base";
+import { Config, Pagination } from "./core";
+import { asc, eq, getTableColumns } from 'drizzle-orm';
 import { html, raw } from "hono/html";
 
 export default async function (a: Context) {
 
+    const tid = parseInt(a.req.param('tid'))
+    const topic = (await DB
+        .select()
+        .from(Thread)
+        .where(eq(Thread.tid, tid))
+    )[0]
     const page = parseInt(a.req.param('page') ?? '0') || 1
-    const pagination = Pagination(20, new Counter('T').get(), page, 2)
+    const pagination = Pagination(20, topic?.posts ?? 0, page, 2)
     const data = await DB
         .select({
-            ...getTableColumns(Thread),
+            ...getTableColumns(Post),
             username: User.username,
             credits: User.credits,
             gid: User.gid,
         })
-        .from(Thread)
-        .leftJoin(User, eq(Thread.uid, User.uid))
-        .orderBy(desc(Thread.create_date))
+        .from(Post)
+        .where(eq(Post.tid, tid))
+        .leftJoin(User, eq(Post.uid, User.uid))
+        .orderBy(asc(Post.pid))
         .offset((page - 1) * 20)
         .limit(20);
-    const title = Config.get('site_name')
+    const title = raw(topic.subject)
 
     return a.html(html`
 <!DOCTYPE HTML>
@@ -48,19 +55,18 @@ export default async function (a: Context) {
     <main class="container">
         <div class="post-list">
             ${data.map(item => html`
-            <a href="/t/${item.tid}" class="post-item">
-                <div class="post-info">${raw(item.subject)}</div>
+            <div class="post-item">
+                <div class="post-info">${raw(item.message_fmt)}</div>
                 <div class="post-meta">
                     <span class="author">${item.username}</span>
-                    <span class="replies">&#x276F;&nbsp;${item.posts}</span>
                     <span class="date" time_stamp="${item.create_date}"></span>
                 </div>
-            </a>
+            </div>
             `)}
         </div>
         <div class="pagination">
             ${pagination.map(item => html`
-            <a ${item ? html`href="/c/${item}"` : ''} class="page-btn ${item == page ? 'active' : ''}">${item ? item : '...'}</a>
+            <a ${item ? html`href="/t/${tid}/c/${item}"` : ''} class="page-btn ${item == page ? 'active' : ''}">${item ? item : '...'}</a>
             `)}
         </div>
     </main>

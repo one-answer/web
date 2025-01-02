@@ -9,6 +9,15 @@ export const Conf = sqliteTable("conf", {
     value: text("value"),
 });
 
+export const Post = sqliteTable("post", {
+    pid: integer("pid").primaryKey(),
+    tid: integer("tid"),
+    uid: integer("uid"),
+    create_date: integer("create_date"),
+    quotepid: integer("quotepid"),
+    message_fmt: text("message_fmt"),
+});
+
 export const Thread = sqliteTable("thread", {
     tid: integer("tid").primaryKey(),
     uid: integer("uid"),
