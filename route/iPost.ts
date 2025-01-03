@@ -2,7 +2,7 @@ import { Context } from "hono";
 import { sign } from "hono/jwt";
 import { DB, User } from "./base";
 import { or, eq } from "drizzle-orm";
-import { setCookie } from "hono/cookie";
+import { deleteCookie, setCookie } from "hono/cookie";
 import { JWTSecretKey } from "../config";
 
 function md5(r: string): string {
@@ -87,7 +87,7 @@ function md5(r: string): string {
     return j;
 }
 
-export default async function (a: Context) {
+export async function iLoginPost(a: Context) {
     const body = await a.req.formData()
     const text = body.get('text')?.toString() || ''
     const pass = body.get('pass')?.toString() || ''
@@ -99,5 +99,10 @@ export default async function (a: Context) {
     if (!data || md5(pass + data.salt) != data.password) { return a.notFound() }
     const { password, salt, ...payload } = data
     setCookie(a, 'JWT', await sign(payload, JWTSecretKey))
+    return a.text('ok')
+}
+
+export async function iLogoutPost(a: Context) {
+    deleteCookie(a, 'JWT')
     return a.text('ok')
 }

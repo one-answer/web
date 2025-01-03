@@ -23,7 +23,7 @@ export default function (props: any) {
                         <a class="login-btn" href="javascript:;" onclick="logout();">退出</a>
                     `: html`
                         <a class="login-btn" href="/register" >注册</a>
-                        <a class="login-btn" href="/login">登录</a>
+                        <a class="login-btn" href="/auth">登录</a>
                     `}
                 </div>
             </div>

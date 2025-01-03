@@ -5,9 +5,8 @@ import { Config, Counter } from './core';
 import { DB, Thread } from './base';
 import { tList } from './tList';
 import pList from './pList';
-import iLogin from './iLogin';
-import iLoginPost from './iLoginPost';
-import iLogoutPost from './iLogoutPost';
+import iAuth from './iAuth';
+import { iLoginPost, iLogoutPost } from './iPost';
 
 export default await (async () => {
 
@@ -20,7 +19,7 @@ export default await (async () => {
     app.get('/c/:page{[0-9]+}?', tList);
     app.get('/t/:tid{[0-9]+}', pList);
     app.get('/t/:tid{[0-9]+}/c/:page{[0-9]+}?', pList);
-    app.get('/login', iLogin);
+    app.get('/auth', iAuth);
     app.post('/login', iLoginPost);
     app.post('/logout', iLogoutPost);
 
