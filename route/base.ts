@@ -1,6 +1,7 @@
 import { Database } from "bun:sqlite";
 import { drizzle } from "drizzle-orm/bun-sqlite";
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
+import { JWTPayload } from "hono/utils/jwt/types";
 
 export const DB = drizzle(new Database("my.db"));
 

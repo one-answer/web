@@ -5,7 +5,7 @@ import { verify } from "hono/jwt";
 import { JWTSecretKey } from "../config";
 
 export class Config {
-    private static conf: { [key: string]: JSON } = {};
+    private static conf: { [key: string]: string } = {};
     private constructor() { }
     public static init() {
         DB.select().from(Conf).all().forEach(item => {

@@ -3,7 +3,7 @@ import { serveStatic } from 'hono/bun'
 import { count } from 'drizzle-orm';
 import { Config, Counter } from './core';
 import { DB, Thread } from './base';
-import tList from './tList';
+import { tList } from './tList';
 import pList from './pList';
 import iLogin from './iLogin';
 import iLoginPost from './iLoginPost';
@@ -24,8 +24,8 @@ export default await (async () => {
     app.post('/login', iLoginPost);
     app.post('/logout', iLogoutPost);
 
-    app.use('/favicon.ico', serveStatic({ path: './static/favicon.ico' }));
-    app.use('/style.css', serveStatic({ path: './static/style.css' }));
+    app.use('/favicon.ico', serveStatic({ path: './style/app.ico' }));
+    app.use('/app.css', serveStatic({ path: './style/app.css' }));
     app.use('/avatar/*', serveStatic({ root: './' }));
     app.use('/upload/*', serveStatic({ root: './' }));
 
