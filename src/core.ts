@@ -1,4 +1,8 @@
+import { getCookie } from "hono/cookie";
 import { DB, Conf } from "./base";
+import { Context } from "hono";
+import { verify } from "hono/jwt";
+import { JWTSecretKey } from "../config";
 
 export class Config {
     private static conf: { [key: string]: JSON } = {};
@@ -89,4 +93,14 @@ export function Pagination(perPage: number, sum: number, page: number, near: num
         navigation.push(maxPage)
     }
     return navigation
+}
+
+export async function Auth(a: Context) {
+    const jwt = getCookie(a, 'JWT');
+    if (!jwt) { return false }
+    try {
+        return await verify(jwt, JWTSecretKey)
+    } catch (error) {
+        return false
+    }
 }

@@ -1,11 +1,12 @@
 import { Context } from "hono";
 import { DB, Thread, User } from "./base";
-import { Config, Counter, Pagination } from "./core";
+import { Auth, Config, Counter, Pagination } from "./core";
 import { desc, eq, getTableColumns } from 'drizzle-orm';
 import { html, raw } from "hono/html";
 
 export default async function (a: Context) {
 
+    const i = await Auth(a)
     const page = parseInt(a.req.param('page') ?? '0') || 1
     const pagination = Pagination(20, new Counter('T').get(), page, 2)
     const data = await DB
@@ -19,7 +20,7 @@ export default async function (a: Context) {
         .leftJoin(User, eq(Thread.uid, User.uid))
         .orderBy(desc(Thread.create_date))
         .offset((page - 1) * 20)
-        .limit(20);
+        .limit(20)
     const title = Config.get('site_name')
 
     return a.html(html`
@@ -38,10 +39,13 @@ export default async function (a: Context) {
             <input type="checkbox" id="menu-toggle" class="menu-toggle">
             <label for="menu-toggle" class="menu-toggle-label">菜单 ☰</label>
             <div class="header-buttons">
-                <a href="#" class="login-btn">首页</a>
-                <a href="#" class="login-btn">发帖</a>
-                <a href="#" class="login-btn">搜索</a>
-                <a href="#" class="login-btn">登录</a>
+                ${i ? html`
+                    <a class="login-btn" href="/p">发帖</a>
+                    <a class="login-btn" href="/i">设置</a>
+                    <a class="login-btn" href="javascript:;" onclick="logout();">退出</a>
+                `: html`
+                    <a href="/login" class="login-btn">登录</a>
+                `}
             </div>
         </div>
     </header>
@@ -77,6 +81,11 @@ export default async function (a: Context) {
         </div>
     </footer>
     <script>
+        async function logout() {
+            if ((await fetch(new Request("/logout", {method: "POST"}))).ok) {
+                location.reload();
+            }
+        }
         window.addEventListener('load', function() {
             document.querySelectorAll('.date').forEach(element => {
                 element.innerHTML = new Date(parseInt(element.getAttribute('time_stamp'))*1000).toLocaleString();
