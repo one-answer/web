@@ -20,7 +20,7 @@ export default function (props: pListProps) {
             </div>
             <div class="pagination">
                 ${props.pagination.map(item => html`
-                <a ${item ? html`href="/t/${props.tid}/c/${item}"` : ''} class="page-btn ${item == props.page ? 'active' : ''}">${item ? item : '...'}</a>
+                <a ${item ? html`href="/t/${props.tid}/${item}"` : ''} class="page-btn ${item == props.page ? 'active' : ''}">${item ? item : '...'}</a>
                 `)}
             </div>
         </main>

@@ -21,7 +21,7 @@ export default function (props: tListProps) {
             </div>
             <div class="pagination">
                 ${props.pagination.map(item => html`
-                <a ${item ? html`href="/c/${item}"` : ''} class="page-btn ${item == props.page ? 'active' : ''}">${item ? item : '...'}</a>
+                <a ${item ? html`href="/${item}"` : ''} class="page-btn ${item == props.page ? 'active' : ''}">${item ? item : '...'}</a>
                 `)}
             </div>
         </main>

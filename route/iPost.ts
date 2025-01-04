@@ -1,7 +1,7 @@
 import { Context } from "hono";
 import { sign } from "hono/jwt";
 import { DB, User } from "./base";
-import { or, eq } from "drizzle-orm";
+import { or, sql } from "drizzle-orm";
 import { deleteCookie, setCookie } from "hono/cookie";
 import { JWTSecretKey } from "../config";
 
@@ -89,12 +89,12 @@ function md5(r: string): string {
 
 export async function iLoginPost(a: Context) {
     const body = await a.req.formData()
-    const text = body.get('text')?.toString() || ''
+    const text = body.get('text')?.toString().toLowerCase() || ''
     const pass = body.get('pass')?.toString() || ''
     const data = (await DB
         .select()
         .from(User)
-        .where(or(eq(User.username, text), eq(User.email, text)))
+        .where(or(sql`lower(${User.username}) = ${text}`, sql`lower(${User.email}) = ${text}`))
     )[0] || null
     if (!data || md5(pass + data.salt) != data.password) { return a.notFound() }
     const { password, salt, ...payload } = data

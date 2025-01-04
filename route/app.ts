@@ -15,10 +15,8 @@ export default await (async () => {
 
     const app = new Hono();
 
-    app.get('/', tList);
-    app.get('/c/:page{[0-9]+}?', tList);
-    app.get('/t/:tid{[0-9]+}', pList);
-    app.get('/t/:tid{[0-9]+}/c/:page{[0-9]+}?', pList);
+    app.get('/:page{[0-9]+}?', tList);
+    app.get('/t/:tid{[0-9]+}/:page{[0-9]+}?', pList);
     app.get('/auth', iAuth);
     app.post('/login', iLoginPost);
     app.post('/logout', iLogoutPost);
