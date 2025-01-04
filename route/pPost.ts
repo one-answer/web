@@ -2,7 +2,7 @@ import { Context } from "hono";
 import { DB, Post, Thread } from "./base";
 import { eq, sql } from "drizzle-orm";
 import { deleteCookie } from "hono/cookie";
-import { Auth } from "./core";
+import { Auth, Counter } from "./core";
 
 export async function pEditPost(a: Context) {
     const i = await Auth(a)
@@ -84,6 +84,7 @@ export async function pEditPost(a: Context) {
                 posts: 0,
                 lastuid: i.uid as number,
             })
+        new Counter('T').add()
         return a.text(String(post.pid))
     }
 }
