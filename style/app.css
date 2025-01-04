@@ -322,6 +322,15 @@ body {
     max-height: 2.6em;
 }
 
+input[name="subject"] {
+    width: 100%;
+    padding: 6px;
+}
+
+.ql-editor {
+    min-height: 400px;
+}
+
 @media screen and (max-width: 768px) {
     .header a {
         font-size: 0.85rem;

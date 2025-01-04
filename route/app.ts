@@ -6,6 +6,7 @@ import { DB, Thread } from './base';
 import { tList } from './tList';
 import pList from './pList';
 import iAuth from './iAuth';
+import pEdit from './pEdit';
 import { iLoginPost, iLogoutPost } from './iPost';
 
 export default await (async () => {
@@ -17,12 +18,14 @@ export default await (async () => {
 
     app.get('/:page{[0-9]+}?', tList);
     app.get('/t/:tid{[0-9]+}/:page{[0-9]+}?', pList);
+    app.get('/edit/:id{-[0-9]+}?', pEdit);
     app.get('/auth', iAuth);
     app.post('/login', iLoginPost);
     app.post('/logout', iLogoutPost);
 
     app.use('/favicon.ico', serveStatic({ path: './style/app.ico' }));
     app.use('/app.css', serveStatic({ path: './style/app.css' }));
+    app.use('/quill/*', serveStatic({ root: './' }));
     app.use('/avatar/*', serveStatic({ root: './' }));
     app.use('/upload/*', serveStatic({ root: './' }));
 

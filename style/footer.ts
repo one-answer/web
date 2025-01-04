@@ -18,7 +18,7 @@ export default function (props: BaseProps) {
         <footer class="footer">
             <div class="footer-content">
                 <ul class="footer-links">
-                    ${Object.values(props.friend_link).map(item => html`
+                    ${Object.values(props.friend_link ?? {}).map(item => html`
                     <li><a href="${item.url}" target="_blank">${item.name}</a></li>
                     `)}
                 </ul>

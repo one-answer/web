@@ -13,13 +13,13 @@ export interface PListProps extends BaseProps {
 }
 
 export default async function (a: Context) {
-    const tid = parseInt(a.req.param('tid'))
     const i = await Auth(a)
+    const tid = parseInt(a.req.param('tid'))
     const topic = (await DB
         .select()
         .from(Thread)
         .where(eq(Thread.tid, tid))
-    )[0] || null
+    )?.[0]
     if (!topic) { return a.notFound() }
     const page = parseInt(a.req.param('page') ?? '0') || 1
     const pagination = Pagination(20, topic?.posts ?? 0, page, 2)

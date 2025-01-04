@@ -9,7 +9,7 @@ export class Config {
     private constructor() { }
     public static init() {
         DB.select().from(Conf).all().forEach(item => {
-            Config.conf[item.key] = JSON.parse(item.value || 'null');
+            Config.conf[item.key] = JSON.parse(item.value ?? 'null');
         });
     }
     public static get(key: string) {
@@ -29,7 +29,7 @@ export class Counter {
     }
     // 获取当前计数
     public get(): number {
-        return Counter.counters.get(this.name) || 0;
+        return Counter.counters.get(this.name) ?? 0;
     }
     // 设置计数器值
     public set(value: number): void {
@@ -37,7 +37,7 @@ export class Counter {
     }
     // 增加计数并返回新值
     public add(): number {
-        const newValue = (Counter.counters.get(this.name) || 0) + 1;
+        const newValue = (Counter.counters.get(this.name) ?? 0) + 1;
         Counter.counters.set(this.name, newValue);
         return newValue;
     }

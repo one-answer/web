@@ -6,7 +6,8 @@ import { JWTPayload } from "hono/utils/jwt/types";
 export interface BaseProps {
     i: false | JWTPayload
     title: string
-    friend_link: { [x: string]: any; }[]
+    friend_link?: { [x: string]: any; }[]
+    external_css?: string
 }
 
 export const DB = drizzle(new Database("forum.db"));

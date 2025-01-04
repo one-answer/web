@@ -89,13 +89,13 @@ function md5(r: string): string {
 
 export async function iLoginPost(a: Context) {
     const body = await a.req.formData()
-    const text = body.get('text')?.toString().toLowerCase() || ''
-    const pass = body.get('pass')?.toString() || ''
+    const text = body.get('text')?.toString().toLowerCase() ?? ''
+    const pass = body.get('pass')?.toString() ?? ''
     const data = (await DB
         .select()
         .from(User)
         .where(or(sql`lower(${User.username}) = ${text}`, sql`lower(${User.email}) = ${text}`))
-    )[0] || null
+    )?.[0]
     if (!data || md5(pass + data.salt) != data.password) { return a.notFound() }
     const { password, salt, ...payload } = data
     setCookie(a, 'JWT', await sign(payload, JWTSecretKey))

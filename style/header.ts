@@ -9,6 +9,7 @@ export default function (props: BaseProps) {
             <meta charset="UTF-8">
             <title>${props.title}</title>
             <link rel="stylesheet" type="text/css" href="/app.css" />
+            ${props.external_css ?? ''}
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
         </head>
         <body>
@@ -19,8 +20,8 @@ export default function (props: BaseProps) {
                 <label for="menu-toggle" class="menu-toggle-label">菜单 ☰</label>
                 <div class="header-buttons">
                     ${props.i ? html`
-                        <a class="login-btn" href="/p">发帖</a>
-                        <a class="login-btn" href="/i">设置</a>
+                        <a class="login-btn" href="/edit">发帖</a>
+                        <a class="login-btn" href="/conf">设置</a>
                         <a class="login-btn" href="javascript:;" onclick="logout();">退出</a>
                     `: html`
                         <a class="login-btn" href="/register" >注册</a>

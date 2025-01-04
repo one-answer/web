@@ -14,6 +14,7 @@ export default function (props: PListProps) {
                     <div class="post-meta">
                         <span class="author">${item.username}</span>
                         <span class="date" time_stamp="${item.create_date}"></span>
+                        <span class="pid">${item.pid}</span>
                     </div>
                 </div>
                 `)}
