@@ -12,12 +12,15 @@ export default function (props: PEditProps) {
             <button onclick="save()">提交</button>
             <script src="/quill/quill.js"></script>
             <script>
-                function save() {
-                    alert("save")
+                const quill = new Quill('[name="content"]', { theme: 'snow' });
+                async function save() {
+                    const data = new FormData();
+                    data.set('subject', document.querySelector('[name="subject"]').value);
+                    data.set('content', quill.getSemanticHTML());
+                    if ((await fetch(new Request("", {method: "POST", body: data}))).ok) {
+                        window.location=document.referrer
+                    } else { alert('提交失败'); }
                 };
-                window.addEventListener('load', function() {
-                    const quill = new Quill('div[name="content"]', { theme: 'snow' });
-                });
             </script>
         </main>
         ${Footer(props)}

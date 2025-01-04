@@ -13,42 +13,42 @@ export interface BaseProps {
 export const DB = drizzle(new Database("forum.db"));
 
 export const Conf = sqliteTable("conf", {
-    key: text("key").primaryKey(),
-    value: text("value"),
+    key: text().primaryKey(),
+    value: text(),
 });
 
 export const Post = sqliteTable("post", {
-    pid: integer("pid").primaryKey(),
-    tid: integer("tid"),
-    uid: integer("uid"),
-    create_date: integer("create_date"),
-    quotepid: integer("quotepid"),
-    message_fmt: text("message_fmt"),
+    pid: integer().primaryKey(),
+    tid: integer().notNull().default(0),
+    uid: integer().notNull().default(0),
+    create_date: integer().notNull().default(0),
+    quotepid: integer().notNull().default(0),
+    message_fmt: text().notNull().default(''),
 });
 
 export const Thread = sqliteTable("thread", {
-    tid: integer("tid").primaryKey(),
-    uid: integer("uid"),
-    subject: text("subject"),
-    create_date: integer("create_date"),
-    last_date: integer("last_date"),
-    posts: integer("posts"),
-    lastuid: integer("lastuid"),
+    tid: integer().primaryKey(),
+    uid: integer().notNull().default(0),
+    subject: text().notNull().default(''),
+    create_date: integer().notNull().default(0),
+    last_date: integer().notNull().default(0),
+    posts: integer().notNull().default(0),
+    lastuid: integer().notNull().default(0),
 });
 
 export const User = sqliteTable("user", {
-    uid: integer("uid").primaryKey(),
-    gid: integer("gid"),
-    email: text("email"),
-    username: text("username"),
-    password: text("password"),
-    salt: text("salt"),
-    threads: integer("threads"),
-    posts: integer("posts"),
-    credits: integer("credits"),
-    golds: integer("golds"),
-    create_date: integer("create_date"),
-    login_date: integer("login_date"),
-    notices: integer("notices"),
-    signature: text("signature"),
+    uid: integer().primaryKey(),
+    gid: integer().notNull().default(0),
+    email: text().notNull().default(''),
+    username: text().notNull().default(''),
+    password: text().notNull().default(''),
+    salt: text().notNull().default(''),
+    threads: integer().notNull().default(0),
+    posts: integer().notNull().default(0),
+    credits: integer().notNull().default(0),
+    golds: integer().notNull().default(0),
+    create_date: integer().notNull().default(0),
+    login_date: integer().notNull().default(0),
+    notices: integer().notNull().default(0),
+    signature: text().notNull().default(''),
 });

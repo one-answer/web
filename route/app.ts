@@ -7,6 +7,7 @@ import { tList } from './tList';
 import pList from './pList';
 import iAuth from './iAuth';
 import pEdit from './pEdit';
+import { pEditPost } from './pPost';
 import { iLoginPost, iLogoutPost } from './iPost';
 
 export default await (async () => {
@@ -19,6 +20,7 @@ export default await (async () => {
     app.get('/:page{[0-9]+}?', tList);
     app.get('/t/:tid{[0-9]+}/:page{[0-9]+}?', pList);
     app.get('/edit/:id{-[0-9]+}?', pEdit);
+    app.post('/edit/:id{-[0-9]+}?', pEditPost);
     app.get('/auth', iAuth);
     app.post('/login', iLoginPost);
     app.post('/logout', iLogoutPost);
