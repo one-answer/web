@@ -3,6 +3,12 @@ import { drizzle } from "drizzle-orm/bun-sqlite";
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 import { JWTPayload } from "hono/utils/jwt/types";
 
+export interface BaseProps {
+    i: false | JWTPayload
+    title: string
+    friend_link: { [x: string]: any; }[]
+}
+
 export const DB = drizzle(new Database("my.db"));
 
 export const Conf = sqliteTable("conf", {
@@ -45,9 +51,3 @@ export const User = sqliteTable("user", {
     notices: integer("notices"),
     signature: text("signature"),
 });
-
-export interface BaseProps {
-    i: false | JWTPayload
-    title: string
-    friend_link: { [x: string]: any; }[]
-}
