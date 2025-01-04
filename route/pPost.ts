@@ -1,12 +1,12 @@
 import { Context } from "hono";
 import { DB, Post, Thread } from "./base";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { deleteCookie } from "hono/cookie";
 import { Auth } from "./core";
 
 export async function pEditPost(a: Context) {
     const i = await Auth(a)
-    if (!i) { return a.text('Forbbiden', 401) }
+    if (!i) { return a.text('401', 401) }
     const time = Math.floor(Date.now() / 1000)
     const body = await a.req.formData()
     const id = parseInt(a.req.param('id') ?? '0')
@@ -17,47 +17,49 @@ export async function pEditPost(a: Context) {
             .where(eq(Post.pid, -id))
         )?.[0]
         //! 转换为 AllowEdit 函数
-        if (!post || post.uid != i.uid) { return a.text('Forbbiden', 401) }
+        if (!post || post.uid != i.uid) { return a.text('401', 401) }
         const content = body.get('content')?.toString()
-        if (!content) { return a.text('Forbbiden', 422) }
+        if (!content) { return a.text('422', 422) }
         await DB
             .update(Post)
             .set({ message_fmt: content })
             .where(eq(Post.pid, post.pid))
-        if (post.tid == post.pid) {
+        if (!post.tid) {
             const subject = body.get('subject')?.toString()
-            if (!subject) { return a.text('Forbbiden', 422) }
+            if (!subject) { return a.text('422', 422) }
             await DB.update(Thread)
                 .set({ subject: subject })
-                .where(eq(Thread.tid, post.tid))
+                .where(eq(Thread.tid, post.pid))
         }
         return a.text('ok')
-        //! Trigger 增加帖子数等
     } else if (id > 0) {
         const post = (await DB
             .select()
             .from(Post)
             .where(eq(Post.pid, id))
         )?.[0]
-        if (!post) { return a.text('Forbbiden', 401) }
+        if (!post) { return a.text('401', 401) }
         const content = body.get('content')?.toString()
-        if (!content) { return a.text('Forbbiden', 422) }
+        if (!content) { return a.text('422', 422) }
         await DB
             .insert(Post)
             .values({
-                tid: post.tid,
+                tid: post.tid ? post.tid : post.pid,
                 uid: i.uid as number,
                 create_date: time,
-                quotepid: (post.tid == post.pid) ? 0 : post.pid,
+                quotepid: post.tid ? post.pid : 0,
                 message_fmt: content,
             })
-        return a.text('ok') //! 返回posts数量
-        //! Trigger last_date
+        await DB
+            .update(Thread)
+            .set({ posts: sql`${Thread.posts}+1`, last_date: time }) //! 太老的帖子不更新时间
+            .where(eq(Thread.tid, post.tid ? post.tid : post.pid))
+        return a.text('ok') //! 返回tid/pid和posts数量
     } else {
         const subject = body.get('subject')?.toString()
-        if (!subject) { return a.text('Forbbiden', 422) }
+        if (!subject) { return a.text('422', 422) }
         const content = body.get('content')?.toString()
-        if (!content) { return a.text('Forbbiden', 422) }
+        if (!content) { return a.text('422', 422) }
         const post = (await DB
             .insert(Post)
             .values({
@@ -67,6 +69,10 @@ export async function pEditPost(a: Context) {
             })
             .returning({ pid: Post.pid })
         )?.[0]
+        await DB
+            .update(Post)
+            .set({ tid: post.pid })
+            .where(eq(Post.pid, post.pid))
         await DB
             .insert(Thread)
             .values({

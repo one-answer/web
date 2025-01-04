@@ -52,7 +52,7 @@ export class Counter {
 }
 
 export function Pagination(perPage: number, sum: number, page: number, near: number) {
-    if (page == 0) { page = 1 }
+    if (!page) { page = 1 }
     // 首页
     const navigation = [1]
     const maxPage = Math.floor((sum + perPage - 1) / perPage)

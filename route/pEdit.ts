@@ -12,7 +12,7 @@ export interface PEditProps extends BaseProps {
 
 export default async function (a: Context) {
     const i = await Auth(a)
-    if (!i) { return a.text('Forbbiden', 401) }
+    if (!i) { return a.text('401', 401) }
     const id = parseInt(a.req.param('id') ?? '0')
     const title = "编辑"
     const friend_link = Config.get('friend_link')
@@ -27,13 +27,13 @@ export default async function (a: Context) {
             .from(Post)
             .where(eq(Post.pid, -id))
         )?.[0]
-        if (!post || post.uid != i.uid) { return a.text('Forbbiden', 401) }
+        if (!post || post.uid != i.uid) { return a.text('401', 401) }
         content = raw(post.message_fmt) ?? ''
-        if (post.tid == post.pid) {
+        if (!post.tid) {
             const thread = (await DB
                 .select()
                 .from(Thread)
-                .where(eq(Thread.tid, post.tid))
+                .where(eq(Thread.tid, post.pid))
             )?.[0]
             if (thread) {
                 subject = raw(thread.subject) ?? ''

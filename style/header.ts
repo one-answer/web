@@ -20,7 +20,7 @@ export default function (props: BaseProps) {
                 <label for="menu-toggle" class="menu-toggle-label">菜单 ☰</label>
                 <div class="header-buttons">
                     ${props.i ? html`
-                        <a class="login-btn" href="/edit">发帖</a>
+                        <a class="login-btn" href="/edit${props.edit_target ? `/${props.edit_target}` : ''}">发帖</a>
                         <a class="login-btn" href="/conf">设置</a>
                         <a class="login-btn" href="javascript:;" onclick="logout();">退出</a>
                     `: html`

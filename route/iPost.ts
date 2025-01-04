@@ -94,7 +94,7 @@ export async function iLoginPost(a: Context) {
     const data = (await DB
         .select()
         .from(User)
-        .where(or(sql`lower(${User.username}) = ${text}`, sql`lower(${User.email}) = ${text}`))
+        .where(or(sql`lower(${User.username})=${text}`, sql`lower(${User.email})=${text}`))
     )?.[0]
     if (!data || md5(pass + data.salt) != data.password) { return a.notFound() }
     const { password, salt, ...payload } = data

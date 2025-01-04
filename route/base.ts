@@ -6,6 +6,7 @@ import { JWTPayload } from "hono/utils/jwt/types";
 export interface BaseProps {
     i: false | JWTPayload
     title: string
+    edit_target?: number
     friend_link?: { [x: string]: any; }[]
     external_css?: string
 }
