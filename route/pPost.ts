@@ -3,6 +3,7 @@ import { DB, Post, Thread } from "./base";
 import { eq, sql } from "drizzle-orm";
 import { deleteCookie } from "hono/cookie";
 import { Auth, Counter } from "./core";
+import * as DOMPurify from 'isomorphic-dompurify';
 
 export async function pEditPost(a: Context) {
     const i = await Auth(a)
@@ -18,7 +19,7 @@ export async function pEditPost(a: Context) {
         )?.[0]
         //! 转换为 AllowEdit 函数
         if (!post || post.uid != i.uid) { return a.text('401', 401) }
-        const content = body.get('content')?.toString()
+        const content = DOMPurify.sanitize(body.get('content')?.toString() ?? '')
         if (!content) { return a.text('422', 422) }
         await DB
             .update(Post)
@@ -39,7 +40,7 @@ export async function pEditPost(a: Context) {
             .where(eq(Post.pid, id))
         )?.[0]
         if (!post) { return a.text('401', 401) }
-        const content = body.get('content')?.toString()
+        const content = DOMPurify.sanitize(body.get('content')?.toString() ?? '')
         if (!content) { return a.text('422', 422) }
         await DB
             .insert(Post)
@@ -58,7 +59,7 @@ export async function pEditPost(a: Context) {
     } else {
         const subject = body.get('subject')?.toString()
         if (!subject) { return a.text('422', 422) }
-        const content = body.get('content')?.toString()
+        const content = DOMPurify.sanitize(body.get('content')?.toString() ?? '')
         if (!content) { return a.text('422', 422) }
         const post = (await DB
             .insert(Post)
