@@ -23,7 +23,7 @@ export default function (props: BaseProps) {
                     `)}
                 </ul>
                 <div class="developer-info">
-                    <p>© 2025 A.js </p>
+                    <p>© 2025 Forum</p>
                 </div>
             </div>
         </footer>

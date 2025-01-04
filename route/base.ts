@@ -9,7 +9,7 @@ export interface BaseProps {
     friend_link: { [x: string]: any; }[]
 }
 
-export const DB = drizzle(new Database("my.db"));
+export const DB = drizzle(new Database("forum.db"));
 
 export const Conf = sqliteTable("conf", {
     key: text("key").primaryKey(),
