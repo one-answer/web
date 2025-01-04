@@ -45,3 +45,9 @@ export const User = sqliteTable("user", {
     notices: integer("notices"),
     signature: text("signature"),
 });
+
+export interface BaseProps {
+    i: false | JWTPayload
+    title: string
+    friend_link: { [x: string]: any; }[]
+}

@@ -1,9 +1,9 @@
 import { html, raw } from "hono/html";
-import { pListProps } from "../route/pList";
+import { PListProps } from "../route/pList";
 import Header from "./header"
 import Footer from "./footer"
 
-export default function (props: pListProps) {
+export default function (props: PListProps) {
     return html`
         ${Header(props)}
         <main class="container">
@@ -20,10 +20,10 @@ export default function (props: pListProps) {
             </div>
             <div class="pagination">
                 ${props.pagination.map(item => html`
-                <a ${item ? html`href="/t/${props.tid}/${item}"` : ''} class="page-btn ${item == props.page ? 'active' : ''}">${item ? item : '...'}</a>
+                <a ${item ? html`href="/t/${props.topic.tid}/${item}"` : ''} class="page-btn ${item == props.page ? 'active' : ''}">${item ? item : '...'}</a>
                 `)}
             </div>
         </main>
-        ${Footer()}
+        ${Footer(props)}
     `;
 }

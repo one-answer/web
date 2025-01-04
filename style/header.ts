@@ -1,6 +1,7 @@
 import { html } from "hono/html";
+import { BaseProps } from "../route/base";
 
-export default function (props: any) {
+export default function (props: BaseProps) {
     return html`
         <!DOCTYPE HTML>
         <html>

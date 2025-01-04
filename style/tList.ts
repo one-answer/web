@@ -1,9 +1,9 @@
 import { html, raw } from "hono/html";
-import { tListProps } from "../route/tList";
+import { TListProps } from "../route/tList";
 import Header from "./header"
 import Footer from "./footer"
 
-export default function (props: tListProps) {
+export default function (props: TListProps) {
     return html`
         ${Header(props)}
         <main class="container">
@@ -25,6 +25,6 @@ export default function (props: tListProps) {
                 `)}
             </div>
         </main>
-        ${Footer()}
+        ${Footer(props)}
     `
 }

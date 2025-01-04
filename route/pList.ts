@@ -1,24 +1,20 @@
 import { Context } from "hono";
-import { DB, Post, Thread, User } from "./base";
-import { Auth, Pagination } from "./core";
+import { BaseProps, DB, Post, Thread, User } from "./base";
+import { Auth, Config, Pagination } from "./core";
 import { asc, eq, getTableColumns } from 'drizzle-orm';
 import { raw } from "hono/html";
-import { JWTPayload } from "hono/utils/jwt/types";
 import pListView from "../style/pList";
 
-export interface pListProps {
-    i: false | JWTPayload
-    tid: number
+export interface PListProps extends BaseProps {
     topic: { [x: string]: any; }
     page: number
     pagination: number[]
     data: { [x: string]: any; }[]
-    title: string
 }
 
 export default async function (a: Context) {
-    const i = await Auth(a)
     const tid = parseInt(a.req.param('tid'))
+    const i = await Auth(a)
     const topic = (await DB
         .select()
         .from(Thread)
@@ -41,5 +37,6 @@ export default async function (a: Context) {
         .offset((page - 1) * 20)
         .limit(20)
     const title = raw(topic.subject)
-    return a.html(pListView({ i, tid, topic, page, pagination, data, title }));
+    const friend_link = Config.get('friend_link')
+    return a.html(pListView({ i, topic, page, pagination, data, title, friend_link }));
 }

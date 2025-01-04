@@ -1,16 +1,13 @@
 import { Context } from "hono";
-import { DB, Thread, User } from "./base";
+import { BaseProps, DB, Thread, User } from "./base";
 import { Auth, Config, Counter, Pagination } from "./core";
 import { desc, eq, getTableColumns } from 'drizzle-orm';
-import { JWTPayload } from "hono/utils/jwt/types";
 import tListView from "../style/tList";
 
-export interface tListProps {
-    i: false | JWTPayload
+export interface TListProps extends BaseProps {
     page: number
     pagination: number[]
     data: { [x: string]: any; }[]
-    title: string
 }
 
 export async function tList(a: Context) {
@@ -30,5 +27,6 @@ export async function tList(a: Context) {
         .offset((page - 1) * 20)
         .limit(20)
     const title = Config.get('site_name')
-    return a.html(tListView({ i, page, pagination, data, title }));
+    const friend_link = Config.get('friend_link')
+    return a.html(tListView({ i, page, pagination, data, title, friend_link }));
 }
