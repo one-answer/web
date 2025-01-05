@@ -3,3 +3,5 @@ node_modules/
 avatar/
 upload/
 forum.db
+forum.db-shm
+forum.db-wal
