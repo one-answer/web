@@ -25,11 +25,9 @@ export default await (async () => {
     app.post('/login', iLoginPost);
     app.post('/logout', iLogoutPost);
 
-    app.use('/favicon.ico', serveStatic({ path: './style/app.ico' }));
-    app.use('/app.css', serveStatic({ path: './style/app.css' }));
-    app.use('/quill/*', serveStatic({ root: './' }));
     app.use('/avatar/*', serveStatic({ root: './' }));
     app.use('/upload/*', serveStatic({ root: './' }));
+    app.use('/*', serveStatic({ root: './static/' }));
 
     return app;
 

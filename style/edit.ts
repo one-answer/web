@@ -10,7 +10,7 @@ export default function (props: PEditProps) {
             <input name="subject" value="${props.subject}" placeholder="标题">
             <div name="content">${props.content}</div>
             <button onclick="save()">提交</button>
-            <script src="/quill/quill.js"></script>
+            <script src="/quill.js"></script>
             <script>
                 const quill = new Quill('[name="content"]', { theme: 'snow' });
                 async function save() {

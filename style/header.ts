@@ -8,7 +8,7 @@ export default function (props: BaseProps) {
         <head>
             <meta charset="UTF-8">
             <title>${props.title}</title>
-            <link rel="stylesheet" type="text/css" href="/app.css" />
+            <link rel="stylesheet" type="text/css" href="/forum.css" />
             ${props.external_css ?? ''}
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
         </head>

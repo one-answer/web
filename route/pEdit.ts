@@ -17,7 +17,7 @@ export default async function (a: Context) {
     const title = "编辑"
     const friend_link = Config.get('friend_link')
     const external_css = raw(`
-        <link href="/quill/quill.snow.css" rel="stylesheet" />
+        <link href="/quill.snow.css" rel="stylesheet" />
     `)
     let subject = ''
     let content = ''

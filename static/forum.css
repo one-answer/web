@@ -73,7 +73,12 @@ body {
     margin-top: .5rem;
     display: flex;
     flex-wrap: wrap;
-    gap: .8rem
+    gap: .8rem;
+}
+
+.post-meta a {
+    color: #7f8c8d;
+    text-decoration: none;
 }
 
 .pagination {
