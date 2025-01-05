@@ -11,7 +11,11 @@ export interface BaseProps {
     external_css?: string
 }
 
-export const DB = drizzle(new Database("forum.db"));
+export const DB = function () {
+    const db = new Database("forum.db");
+    db.exec("PRAGMA journal_mode = WAL;");
+    return drizzle(db);
+}()
 
 export const Conf = sqliteTable("conf", {
     key: text().primaryKey(),
