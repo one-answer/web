@@ -22,7 +22,7 @@ export default async function (a: Context) {
     )?.[0]
     if (!topic) { return a.notFound() }
     const page = parseInt(a.req.param('page') ?? '0') || 1
-    const pagination = Pagination(20, topic?.posts ?? 0, page, 2)
+    const pagination = Pagination(20, topic.posts - 1, page, 2)
     const data = await DB
         .select({
             ...getTableColumns(Post),
