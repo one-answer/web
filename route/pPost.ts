@@ -1,7 +1,8 @@
 import { Context } from "hono";
-import { DB, Post, Thread } from "./base";
-import { eq, sql } from "drizzle-orm";
+import { html } from "hono/html";
 import { deleteCookie } from "hono/cookie";
+import { eq, sql } from "drizzle-orm";
+import { DB, Post, Thread } from "./base";
 import { Auth, Counter } from "./core";
 import * as DOMPurify from 'isomorphic-dompurify';
 
@@ -26,7 +27,7 @@ export async function pEditPost(a: Context) {
             .set({ message_fmt: content })
             .where(eq(Post.pid, post.pid))
         if (!post.tid) {
-            const subject = body.get('subject')?.toString()
+            const subject = html`${body.get('subject')?.toString() ?? ''}`.toString()
             if (!subject) { return a.text('422', 422) }
             await DB.update(Thread)
                 .set({ subject: subject })
@@ -57,7 +58,7 @@ export async function pEditPost(a: Context) {
             .where(eq(Thread.tid, post.tid ? post.tid : post.pid))
         return a.text('ok') //! 返回tid/pid和posts数量
     } else {
-        const subject = body.get('subject')?.toString()
+        const subject = html`${body.get('subject')?.toString() ?? ''}`.toString()
         if (!subject) { return a.text('422', 422) }
         const content = DOMPurify.sanitize(body.get('content')?.toString() ?? '')
         if (!content) { return a.text('422', 422) }
@@ -70,10 +71,6 @@ export async function pEditPost(a: Context) {
             })
             .returning({ pid: Post.pid })
         )?.[0]
-        await DB
-            .update(Post)
-            .set({ tid: post.pid })
-            .where(eq(Post.pid, post.pid))
         await DB
             .insert(Thread)
             .values({
