@@ -54,7 +54,11 @@ export async function pEditPost(a: Context) {
             })
         await DB
             .update(Thread)
-            .set({ posts: sql`${Thread.posts}+1`, last_date: time, lastuid: i.uid as number }) //! 太老的帖子不更新时间
+            .set({
+                posts: sql`${Thread.posts}+1`,
+                lastuid: i.uid as number,
+                last_date: sql`CASE WHEN ${time} - ${Thread.create_date} < 604800 THEN ${time} ELSE ${Thread.last_date} END`,
+            }) //! 太老的帖子不更新最后回复时间
             .where(eq(Thread.tid, post.tid ? post.tid : post.pid))
         await DB
             .update(User)
