@@ -188,10 +188,6 @@ body {
     padding-bottom: .8rem
 }
 
-.footer-section h3 {
-    display: none
-}
-
 .footer-links a {
     color: #bdc3c7;
     text-decoration: none;
@@ -301,9 +297,6 @@ body {
         margin: .2rem
     }
 
-    .page-btn:not(:first-child):not(:last-child) {
-        display: none
-    }
 }
 
 .blockquote {
@@ -336,8 +329,17 @@ input[name="subject"] {
     min-height: 400px;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 600px) {
+
     .header a {
         font-size: 0.85rem;
     }
+
+    .page-btn {
+        min-width: 25px;
+        /* 在小屏幕上减小最小宽度 */
+        padding: 4px 8px;
+        /* 减小内边距 */
+    }
+
 }
