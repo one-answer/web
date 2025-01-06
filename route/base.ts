@@ -27,7 +27,7 @@ export const Post = sqliteTable("post", {
     tid: integer().notNull().default(0),
     uid: integer().notNull().default(0),
     create_date: integer().notNull().default(0),
-    quotepid: integer().notNull().default(0),
+    quote_pid: integer().notNull().default(0),
     message_fmt: text().notNull().default(''),
 });
 

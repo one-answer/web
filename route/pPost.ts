@@ -52,7 +52,7 @@ export async function pEditPost(a: Context) {
                 tid: post.tid ? post.tid : post.pid,
                 uid: i.uid as number,
                 create_date: time,
-                quotepid: post.tid ? post.pid : 0,
+                quote_pid: post.tid ? post.pid : 0,
                 message_fmt: content,
             })
         await DB

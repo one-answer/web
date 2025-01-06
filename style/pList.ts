@@ -12,7 +12,7 @@ export default function (z: PListProps) {
                 ${z.data.map(item => html`
                 <div class="post-item">
                     <div class="post-info">
-                        ${item.quotepid ? html`
+                        ${item.quote_pid ? html`
                         <blockquote class="blockquote">
                             ${raw(item.quote_username)}: ${HTMLFilter(item.quote_content, true)}
                         </blockquote>

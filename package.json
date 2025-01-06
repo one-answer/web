@@ -6,7 +6,7 @@
   "dependencies": {
     "dompurify": "^3.2.3",
     "drizzle-orm": "^0.38.3",
-    "hono": "^4.6.15",
+    "hono": "^4.6.16",
     "isomorphic-dompurify": "^2.19.0"
   },
   "devDependencies": {
