@@ -1,7 +1,7 @@
 import { Context } from "hono";
 import { BaseProps, DB, Post, Thread, User } from "./base";
 import { Auth, Pagination } from "./core";
-import { asc, eq, or, getTableColumns, aliasedTable } from 'drizzle-orm';
+import { asc, eq, or, getTableColumns, aliasedTable, and } from 'drizzle-orm';
 import { raw } from "hono/html";
 import pListView from "../style/pList";
 
@@ -36,11 +36,11 @@ export default async function (a: Context) {
             quote_username: QuoteUser.username,
         })
         .from(Post)
-        .where(or(eq(Post.pid, tid), eq(Post.tid, tid)))
+        .where(or(and(eq(Post.tid, 0), eq(Post.pid, tid)), eq(Post.tid, tid)))
         .leftJoin(User, eq(Post.uid, User.uid))
         .leftJoin(QuotePost, eq(Post.quote_pid, QuotePost.pid))
         .leftJoin(QuoteUser, eq(QuotePost.uid, QuoteUser.uid))
-        .orderBy(asc(Post.pid))
+        .orderBy(asc(Post.tid), asc(Post.pid))
         .offset((page - 1) * 20)
         .limit(20)
     const title = raw(topic.subject)
