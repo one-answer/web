@@ -28,7 +28,7 @@ export const Post = sqliteTable("post", {
     uid: integer().notNull().default(0),
     create_date: integer().notNull().default(0),
     quote_pid: integer().notNull().default(0),
-    message_fmt: text().notNull().default(''),
+    content: text().notNull().default(''),
 });
 
 export const Thread = sqliteTable("thread", {

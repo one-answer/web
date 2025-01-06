@@ -24,7 +24,7 @@ export async function pEditPost(a: Context) {
         await DB
             .update(Post)
             .set({
-                message_fmt: content,
+                content: content,
             })
             .where(eq(Post.pid, post.pid))
         if (!post.tid) {
@@ -53,7 +53,7 @@ export async function pEditPost(a: Context) {
                 uid: i.uid as number,
                 create_date: time,
                 quote_pid: post.tid ? post.pid : 0,
-                message_fmt: content,
+                content: content,
             })
         await DB
             .update(Thread)
@@ -82,7 +82,7 @@ export async function pEditPost(a: Context) {
             .values({
                 uid: i.uid as number,
                 create_date: time,
-                message_fmt: content,
+                content: content,
             })
             .returning({ pid: Post.pid })
         )?.[0]

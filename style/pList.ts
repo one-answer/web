@@ -17,7 +17,7 @@ export default function (z: PListProps) {
                             ${raw(item.quote_username)}: ${raw(HTMLText(item.quote_content, 140))}
                         </blockquote>
                         ` : ''}
-                        ${raw(item.message_fmt)}
+                        ${raw(item.content)}
                     </div>
                     <div class="post-meta">
                         <span class="author">${item.username}</span>

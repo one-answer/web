@@ -31,7 +31,7 @@ export default async function (a: Context) {
             username: User.username,
             credits: User.credits,
             gid: User.gid,
-            quote_content: QuotePost.message_fmt,
+            quote_content: QuotePost.content,
             quote_uid: QuoteUser.uid,
             quote_username: QuoteUser.username,
         })

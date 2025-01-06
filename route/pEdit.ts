@@ -29,7 +29,7 @@ export default async function (a: Context) {
             .where(eq(Post.pid, -eid))
         )?.[0]
         if (!post || post.uid != i.uid) { return a.text('401', 401) }
-        content = raw(post.message_fmt) ?? ''
+        content = raw(post.content) ?? ''
         if (!post.tid) {
             const thread = (await DB
                 .select()
