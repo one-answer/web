@@ -3,6 +3,7 @@ import { DB, Conf } from "./base";
 import { Context } from "hono";
 import { verify } from "hono/jwt";
 import { JWTSecretKey } from "../config";
+import * as DOMPurify from 'isomorphic-dompurify';
 
 export class Config {
     private static conf: { [key: string]: any } = {};
@@ -103,4 +104,13 @@ export async function Auth(a: Context) {
     } catch (error) {
         return false
     }
+}
+export function HTMLFilter(html: string) {
+    DOMPurify.addHook('afterSanitizeElements', function (node) {
+        if (!node.textContent?.trim() && !node.hasChildNodes() && node.parentNode) { node.parentNode.removeChild(node); }
+    });
+    return DOMPurify.sanitize(html, {
+        ALLOWED_TAGS: ['a', 'b', 'i', 'u', 'font', 'strong', 'em', 'strike', 'span', 'table', 'tr', 'td', 'th', 'thead', 'tbody', 'tfoot', 'caption', 'ol', 'ul', 'li', 'dl', 'dt', 'dd', 'menu', 'multicol', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'p', 'div', 'pre', 'br', 'img', 'video', 'audio', 'code', 'blockquote', 'iframe', 'section'],
+        ALLOWED_ATTR: ['target', 'href', 'src', 'alt', 'rel', 'width', 'height', 'size', 'border', 'align', 'colspan', 'rowspan', 'cite'],
+    })
 }
