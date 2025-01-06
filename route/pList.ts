@@ -1,6 +1,6 @@
 import { Context } from "hono";
 import { BaseProps, DB, Post, Thread, User } from "./base";
-import { Auth, Config, Pagination } from "./core";
+import { Auth, Pagination } from "./core";
 import { asc, eq, or, getTableColumns } from 'drizzle-orm';
 import { raw } from "hono/html";
 import pListView from "../style/pList";
@@ -37,7 +37,5 @@ export default async function (a: Context) {
         .offset((page - 1) * 20)
         .limit(20)
     const title = raw(topic.subject)
-    const edit_target = tid
-    const friend_link = Config.get('friend_link')
-    return a.html(pListView({ i, topic, page, pagination, data, title, edit_target, friend_link }));
+    return a.html(pListView({ a, i, topic, page, pagination, data, title }));
 }

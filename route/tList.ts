@@ -27,6 +27,5 @@ export async function tList(a: Context) {
         .offset((page - 1) * 20)
         .limit(20)
     const title = Config.get('site_name')
-    const friend_link = Config.get('friend_link')
-    return a.html(tListView({ i, page, pagination, data, title, friend_link }));
+    return a.html(tListView({ a, i, page, pagination, data, title }));
 }

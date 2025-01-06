@@ -10,12 +10,12 @@ export async function pEditPost(a: Context) {
     if (!i) { return a.text('401', 401) }
     const time = Math.floor(Date.now() / 1000)
     const body = await a.req.formData()
-    const id = parseInt(a.req.param('id') ?? '0')
-    if (id < 0) {
+    const eid = parseInt(a.req.param('eid') ?? '0')
+    if (eid < 0) {
         const post = (await DB
             .select()
             .from(Post)
-            .where(eq(Post.pid, -id))
+            .where(eq(Post.pid, -eid))
         )?.[0]
         //! 转换为 AllowEdit 函数
         if (!post || post.uid != i.uid) { return a.text('401', 401) }
@@ -37,11 +37,11 @@ export async function pEditPost(a: Context) {
                 .where(eq(Thread.tid, post.pid))
         }
         return a.text('ok')
-    } else if (id > 0) {
+    } else if (eid > 0) {
         const post = (await DB
             .select()
             .from(Post)
-            .where(eq(Post.pid, id))
+            .where(eq(Post.pid, eid))
         )?.[0]
         if (!post) { return a.text('401', 401) }
         const content = HTMLFilter(body.get('content')?.toString() ?? '')

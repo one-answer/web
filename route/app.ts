@@ -19,8 +19,8 @@ export default await (async () => {
 
     app.get('/:page{[0-9]+}?', tList);
     app.get('/t/:tid{[0-9]+}/:page{[0-9]+}?', pList);
-    app.get('/edit/:id{[-0-9]+}?', pEdit);
-    app.post('/edit/:id{[-0-9]+}?', pEditPost);
+    app.get('/e/:eid{[-0-9]+}?', pEdit);
+    app.post('/e/:eid{[-0-9]+}?', pEditPost);
     app.get('/auth', iAuth);
     app.post('/login', iLoginPost);
     app.post('/logout', iLogoutPost);

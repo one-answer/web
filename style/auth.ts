@@ -3,9 +3,9 @@ import { BaseProps } from "../route/base";
 import Header from "./header"
 import Footer from "./footer"
 
-export default function (props: BaseProps) {
+export default function (z: BaseProps) {
     return html`
-        ${Header(props)}
+        ${Header(z)}
         <main class="container">
             <form onsubmit="event.preventDefault(); login(this);">
                 <b>登录页面非AI生成，纯手工打造，请放心使用。</b><br />
@@ -26,6 +26,6 @@ export default function (props: BaseProps) {
                 }
             </script>
         </main>
-        ${Footer(props)}
+        ${Footer(z)}
     `;
 }

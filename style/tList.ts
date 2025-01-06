@@ -3,12 +3,12 @@ import { TListProps } from "../route/tList";
 import Header from "./header"
 import Footer from "./footer"
 
-export default function (props: TListProps) {
+export default function (z: TListProps) {
     return html`
-        ${Header(props)}
+        ${Header(z)}
         <main class="container">
             <div class="post-list">
-                ${props.data.map(item => html`
+                ${z.data.map(item => html`
                 <a href="/t/${item.tid}" class="post-item">
                     <div class="post-info">${raw(item.subject)}</div>
                     <div class="post-meta">
@@ -20,11 +20,11 @@ export default function (props: TListProps) {
                 `)}
             </div>
             <div class="pagination">
-                ${props.pagination.map(item => html`
-                <a ${item ? html`href="/${item}"` : ''} class="page-btn ${item == props.page ? 'active' : ''}">${item ? item : '...'}</a>
+                ${z.pagination.map(item => html`
+                <a ${item ? html`href="/${item}"` : ''} class="page-btn ${item == z.page ? 'active' : ''}">${item ? item : '...'}</a>
                 `)}
             </div>
         </main>
-        ${Footer(props)}
+        ${Footer(z)}
     `
 }

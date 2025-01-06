@@ -1,13 +1,13 @@
 import { Database } from "bun:sqlite";
+import { Context } from "hono";
+import { JWTPayload } from "hono/utils/jwt/types";
 import { drizzle } from "drizzle-orm/bun-sqlite";
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
-import { JWTPayload } from "hono/utils/jwt/types";
 
 export interface BaseProps {
+    a: Context
     i: false | JWTPayload
     title: string
-    edit_target?: number
-    friend_link?: { [x: string]: any; }[]
     external_css?: string
 }
 
