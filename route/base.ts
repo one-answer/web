@@ -37,8 +37,8 @@ export const Thread = sqliteTable("thread", {
     subject: text().notNull().default(''),
     create_date: integer().notNull().default(0),
     last_date: integer().notNull().default(0),
+    last_uid: integer().notNull().default(0),
     posts: integer().notNull().default(0),
-    lastuid: integer().notNull().default(0),
 });
 
 export const User = sqliteTable("user", {
