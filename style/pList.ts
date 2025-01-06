@@ -1,8 +1,8 @@
 import { html, raw } from "hono/html";
+import { HTMLText } from "../route/core";
 import { PListProps } from "../route/pList";
 import Header from "./header"
 import Footer from "./footer"
-import { HTMLFilter } from "../route/core";
 
 export default function (z: PListProps) {
     return html`
@@ -14,7 +14,7 @@ export default function (z: PListProps) {
                     <div class="post-info">
                         ${item.quote_pid ? html`
                         <blockquote class="blockquote">
-                            ${raw(item.quote_username)}: ${HTMLFilter(item.quote_content, true)}
+                            ${raw(item.quote_username)}: ${raw(HTMLText(item.quote_content, 140))}
                         </blockquote>
                         ` : ''}
                         ${raw(item.message_fmt)}

@@ -105,10 +105,8 @@ export async function Auth(a: Context) {
         return false
     }
 }
-export function HTMLFilter(html: string, text = false) {
-    if (text) {
-        return DOMPurify.sanitize(html, { ALLOWED_TAGS: ['#text'] })
-    }
+
+export function HTMLFilter(html: string) {
     DOMPurify.addHook('afterSanitizeElements', function (node) {
         if (!node.textContent?.trim() && !node.hasChildNodes() && node.parentNode) {
             node.parentNode.removeChild(node);
@@ -119,4 +117,15 @@ export function HTMLFilter(html: string, text = false) {
         ALLOWED_TAGS: ['a', 'b', 'i', 'u', 'font', 'strong', 'em', 'strike', 'span', 'table', 'tr', 'td', 'th', 'thead', 'tbody', 'tfoot', 'caption', 'ol', 'ul', 'li', 'dl', 'dt', 'dd', 'menu', 'multicol', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'p', 'div', 'pre', 'br', 'img', 'video', 'audio', 'code', 'blockquote', 'iframe', 'section'],
         ALLOWED_ATTR: ['target', 'href', 'src', 'alt', 'rel', 'width', 'height', 'size', 'border', 'align', 'colspan', 'rowspan', 'cite'],
     })
+}
+
+export function HTMLText(html: string, len = 0) {
+    let text = DOMPurify.sanitize(html, { ALLOWED_TAGS: ['#text'] })
+    if (len > 0) {
+        const lenOld = text.length
+        if (lenOld > len) {
+            text = text.slice(0, len - 3) + '...'
+        }
+    }
+    return text
 }
