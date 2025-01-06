@@ -24,13 +24,17 @@ export async function pEditPost(a: Context) {
         if (!content) { return a.text('422', 422) }
         await DB
             .update(Post)
-            .set({ message_fmt: content })
+            .set({
+                message_fmt: content,
+            })
             .where(eq(Post.pid, post.pid))
         if (!post.tid) {
             const subject = html`${body.get('subject')?.toString() ?? ''}`.toString()
             if (!subject) { return a.text('422', 422) }
             await DB.update(Thread)
-                .set({ subject: subject })
+                .set({
+                    subject: subject,
+                })
                 .where(eq(Thread.tid, post.pid))
         }
         return a.text('ok')
@@ -62,7 +66,11 @@ export async function pEditPost(a: Context) {
             .where(eq(Thread.tid, post.tid ? post.tid : post.pid))
         await DB
             .update(User)
-            .set({ posts: sql`${User.posts} + 1` })
+            .set({
+                posts: sql`${User.posts} + 1`,
+                credits: sql`${User.credits} + 1`,
+                golds: sql`${User.golds} + 1`,
+            })
             .where(eq(User.uid, i.uid as number))
         return a.text('ok') //! 返回tid/pid和posts数量
     } else {
@@ -92,7 +100,12 @@ export async function pEditPost(a: Context) {
             })
         await DB
             .update(User)
-            .set({ threads: sql`${User.threads} + 1`, posts: sql`${User.posts} + 1` })
+            .set({
+                threads: sql`${User.threads} + 1`,
+                posts: sql`${User.posts} + 1`,
+                credits: sql`${User.credits} + 2`,
+                golds: sql`${User.golds} + 2`,
+            })
             .where(eq(User.uid, i.uid as number))
         new Counter('T').add()
         return a.text(String(post.pid))
