@@ -4,11 +4,11 @@ import { count } from 'drizzle-orm';
 import { Config, Counter } from './core';
 import { DB, Thread } from './base';
 import { tList } from './tList';
+import { pEditPost } from './pPost';
+import { iLoginPost, iLogoutPost } from './iPost';
 import pList from './pList';
 import iAuth from './iAuth';
 import pEdit from './pEdit';
-import { pEditPost } from './pPost';
-import { iLoginPost, iLogoutPost } from './iPost';
 
 export default await (async () => {
 
