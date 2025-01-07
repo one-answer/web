@@ -4,10 +4,10 @@ import { count } from 'drizzle-orm';
 import { Config, Counter } from './core';
 import { DB, Thread } from './base';
 import { tList } from './tList';
-import { pEditPost } from './pPost';
-import { iLoginPost, iLogoutPost } from './iPost';
-import pList from './pList';
+import { pEditData } from './pData';
+import { iLoginData, iLogoutData } from './iData';
 import iAuth from './iAuth';
+import pList from './pList';
 import pEdit from './pEdit';
 
 export default await (async () => {
@@ -20,10 +20,10 @@ export default await (async () => {
     app.get('/:page{[0-9]+}?', tList);
     app.get('/t/:tid{[0-9]+}/:page{[0-9]+}?', pList);
     app.get('/e/:eid{[-0-9]+}?', pEdit);
-    app.post('/e/:eid{[-0-9]+}?', pEditPost);
+    app.post('/e/:eid{[-0-9]+}?', pEditData);
     app.get('/auth', iAuth);
-    app.post('/login', iLoginPost);
-    app.post('/logout', iLogoutPost);
+    app.post('/login', iLoginData);
+    app.post('/logout', iLogoutData);
 
     app.use('/avatar/*', serveStatic({ root: './' }));
     app.use('/upload/*', serveStatic({ root: './' }));

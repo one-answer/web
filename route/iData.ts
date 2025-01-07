@@ -87,7 +87,7 @@ function md5(r: string): string {
     return j;
 }
 
-export async function iLoginPost(a: Context) {
+export async function iLoginData(a: Context) {
     const body = await a.req.formData()
     const text = body.get('text')?.toString().toLowerCase() ?? ''
     const pass = body.get('pass')?.toString() ?? ''
@@ -102,7 +102,7 @@ export async function iLoginPost(a: Context) {
     return a.text('ok')
 }
 
-export async function iLogoutPost(a: Context) {
+export async function iLogoutData(a: Context) {
     deleteCookie(a, 'JWT')
     return a.text('ok')
 }

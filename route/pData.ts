@@ -1,11 +1,10 @@
 import { Context } from "hono";
 import { html } from "hono/html";
-import { deleteCookie } from "hono/cookie";
 import { and, eq, gt, sql } from "drizzle-orm";
 import { DB, Post, Thread, User } from "./base";
 import { Auth, Counter, HTMLFilter } from "./core";
 
-export async function pEditPost(a: Context) {
+export async function pEditData(a: Context) {
     const i = await Auth(a)
     if (!i) { return a.text('401', 401) }
     const time = Math.floor(Date.now() / 1000)
@@ -112,9 +111,4 @@ export async function pEditPost(a: Context) {
         new Counter('T').add()
         return a.text(String(post.pid))
     }
-}
-
-export async function iLogoutPost(a: Context) {
-    deleteCookie(a, 'JWT')
-    return a.text('ok')
 }
