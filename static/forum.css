@@ -35,7 +35,7 @@ body {
 
 .container {
     flex: 1;
-    max-width: 900px;
+    max-width: 60%;
     margin: 2rem auto;
     padding: 0 1rem;
     width: 100%
@@ -56,9 +56,10 @@ body {
 }
 
 .post-info {
-    font-size: 1rem;
+    font-size: 1.1vw;
     color: #2c3e50;
-    margin-bottom: .3rem
+    margin-bottom: .3rem;
+    word-wrap: break-word;
 }
 
 .post-info * {
@@ -287,18 +288,6 @@ body {
     }
 }
 
-@media screen and (max-width:480px) {
-    .pagination {
-        flex-wrap: wrap;
-        justify-content: center
-    }
-
-    .page-btn {
-        margin: .2rem
-    }
-
-}
-
 .blockquote {
     background-color: #f5f5f5;
     padding: 12px 16px;
@@ -329,6 +318,13 @@ input[name="subject"] {
     min-height: 400px;
 }
 
+@media screen and (max-width: 1000px) {
+    .container {
+        max-width: 100%;
+        margin: 1rem auto;
+    }
+}
+
 @media screen and (max-width: 600px) {
 
     .header a {
@@ -340,6 +336,18 @@ input[name="subject"] {
         /* 在小屏幕上减小最小宽度 */
         padding: 4px 8px;
         /* 减小内边距 */
+    }
+
+}
+
+@media screen and (max-width:480px) {
+    .pagination {
+        flex-wrap: wrap;
+        justify-content: center
+    }
+
+    .page-btn {
+        margin: .2rem
     }
 
 }
