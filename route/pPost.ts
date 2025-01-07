@@ -1,7 +1,7 @@
 import { Context } from "hono";
 import { html } from "hono/html";
 import { deleteCookie } from "hono/cookie";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, gt, sql } from "drizzle-orm";
 import { DB, Post, Thread, User } from "./base";
 import { Auth, Counter, HTMLFilter } from "./core";
 
@@ -12,24 +12,21 @@ export async function pEditPost(a: Context) {
     const body = await a.req.formData()
     const eid = parseInt(a.req.param('eid') ?? '0')
     if (eid < 0) {
-        const post = (await DB
-            .select()
-            .from(Post)
-            .where(eq(Post.pid, -eid))
-        )?.[0]
-        //! 转换为 AllowEdit 函数
-        if (!post || post.uid != i.uid) { return a.text('401', 401) }
         const content = HTMLFilter(body.get('content')?.toString() ?? '')
-        if (!content) { return a.text('422', 422) }
-        await DB
+        if (!content) { return a.text('406', 406) }
+        const post = (await DB
             .update(Post)
             .set({
                 content: content,
             })
-            .where(eq(Post.pid, post.pid))
+            .where(and(eq(Post.pid, -eid), eq(Post.uid, i.uid as number)))
+            .returning()
+        )?.[0]
+        // 如果帖子找不到 或不是作者 则禁止编辑
+        if (!post) { return a.text('403', 403) }
         if (!post.tid) {
             const subject = html`${body.get('subject')?.toString() ?? ''}`.toString()
-            if (!subject) { return a.text('422', 422) }
+            if (!subject) { return a.text('406', 406) }
             await DB.update(Thread)
                 .set({
                     subject: subject,
@@ -45,7 +42,21 @@ export async function pEditPost(a: Context) {
         )?.[0]
         if (!post) { return a.text('401', 401) }
         const content = HTMLFilter(body.get('content')?.toString() ?? '')
-        if (!content) { return a.text('422', 422) }
+        if (!content) { return a.text('406', 406) }
+        const thread = (await DB
+            .update(Thread)
+            .set({
+                posts: sql`${Thread.posts}+1`,
+                last_uid: i.uid as number,
+                last_date: sql`CASE WHEN ${time} - ${Thread.create_date} < 604800 THEN ${time} ELSE ${Thread.last_date} END`,
+            })
+            .where(and(
+                eq(Thread.tid, post.tid ? post.tid : post.pid),
+                gt(sql`${Thread.create_date} + 604800`, time),
+            ))
+            .returning({ tid: Thread.tid }))?.[0]
+        // 如果帖子找不到 也禁止回复 太旧的帖子也禁止回复
+        if (!thread) { return a.text('403', 403) }
         await DB
             .insert(Post)
             .values({
@@ -55,14 +66,6 @@ export async function pEditPost(a: Context) {
                 quote_pid: post.tid ? post.pid : 0,
                 content: content,
             })
-        await DB
-            .update(Thread)
-            .set({
-                posts: sql`${Thread.posts}+1`,
-                last_uid: i.uid as number,
-                last_date: sql`CASE WHEN ${time} - ${Thread.create_date} < 604800 THEN ${time} ELSE ${Thread.last_date} END`,
-            }) //! 太老的帖子不更新最后回复时间
-            .where(eq(Thread.tid, post.tid ? post.tid : post.pid))
         await DB
             .update(User)
             .set({
@@ -74,9 +77,9 @@ export async function pEditPost(a: Context) {
         return a.text('ok') //! 返回tid/pid和posts数量
     } else {
         const subject = html`${body.get('subject')?.toString() ?? ''}`.toString()
-        if (!subject) { return a.text('422', 422) }
+        if (!subject) { return a.text('406', 406) }
         const content = HTMLFilter(body.get('content')?.toString() ?? '')
-        if (!content) { return a.text('422', 422) }
+        if (!content) { return a.text('406', 406) }
         const post = (await DB
             .insert(Post)
             .values({
