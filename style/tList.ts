@@ -13,7 +13,7 @@ export default function (z: TListProps) {
                     <div class="post-info">${raw(item.subject)}</div>
                     <div class="post-meta">
                         <span class="author">${item.username}</span>
-                        <span class="replies">&#x276F;&nbsp;${item.posts}</span>
+                        <span class="replies">&#x276F;&nbsp;${item.posts - 1}</span>
                         <span class="date" time_stamp="${item.create_date}"></span>
                     </div>
                 </a>

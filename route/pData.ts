@@ -47,14 +47,14 @@ export async function pEditData(a: Context) {
             .set({
                 posts: sql`${Thread.posts}+1`,
                 last_uid: i.uid as number,
-                last_date: sql`CASE WHEN ${time} - ${Thread.create_date} < 604800 THEN ${time} ELSE ${Thread.last_date} END`,
+                last_date: time,
             })
             .where(and(
                 eq(Thread.tid, post.tid ? post.tid : post.pid),
-                gt(sql`${Thread.create_date} + 604800`, time),
+                gt(sql`${Thread.last_date} + 604800`, time),
             ))
             .returning({ tid: Thread.tid }))?.[0]
-        // 如果帖子找不到 也禁止回复 太旧的帖子也禁止回复
+        // 帖子找不到 一周没有热度 禁止回复
         if (!thread) { return a.text('403', 403) }
         await DB
             .insert(Post)
