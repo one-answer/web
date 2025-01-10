@@ -18,7 +18,11 @@ export async function pEditData(a: Context) {
             .set({
                 content: content,
             })
-            .where(and(eq(Post.pid, -eid), eq(Post.uid, i.uid as number)))
+            .where(and(
+                eq(Post.pid, -eid),
+                eq(Post.uid, i.uid as number),
+                gt(sql`${Post.create_date} + 604800`, time),
+            ))
             .returning()
         )?.[0]
         // 如果帖子找不到 或不是作者 则禁止编辑
@@ -29,6 +33,7 @@ export async function pEditData(a: Context) {
             await DB.update(Thread)
                 .set({
                     subject: subject,
+                    last_date: time,
                 })
                 .where(eq(Thread.tid, post.pid))
         }
