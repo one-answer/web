@@ -33,7 +33,6 @@ export async function pEditData(a: Context) {
             await DB.update(Thread)
                 .set({
                     subject: subject,
-                    last_date: time,
                 })
                 .where(eq(Thread.tid, post.pid))
         }
