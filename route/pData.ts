@@ -1,7 +1,7 @@
 import { Context } from "hono";
 import { html } from "hono/html";
 import { and, eq, gt, sql } from "drizzle-orm";
-import { DB, Post, Thread, User } from "./base";
+import { DB, Notice_Post, Notice_Thread, Post, Thread, User } from "./base";
 import { Auth, Counter, HTMLFilter } from "./core";
 
 export async function pEditData(a: Context) {
@@ -57,10 +57,11 @@ export async function pEditData(a: Context) {
                 eq(Thread.tid, post.tid ? post.tid : post.pid),
                 gt(sql`${Thread.last_date} + 604800`, time),
             ))
-            .returning({ tid: Thread.tid }))?.[0]
+            .returning()
+        )?.[0]
         // 帖子找不到 一周没有热度 禁止回复
         if (!thread) { return a.text('403', 403) }
-        await DB
+        const reply = (await DB
             .insert(Post)
             .values({
                 tid: post.tid ? post.tid : post.pid,
@@ -69,6 +70,8 @@ export async function pEditData(a: Context) {
                 quote_pid: post.tid ? post.pid : 0,
                 content: content,
             })
+            .returning()
+        )?.[0]
         await DB
             .update(User)
             .set({
@@ -77,6 +80,28 @@ export async function pEditData(a: Context) {
                 golds: sql`${User.golds} + 1`,
             })
             .where(eq(User.uid, i.uid as number))
+        // 回复通知 Notice
+        await DB
+            .insert(Notice_Post)
+            .values({
+                target_uid: post.uid,
+                tid: reply.tid,
+                pid: reply.pid,
+            })
+        await DB.insert(Notice_Thread)
+            .values({
+                target_uid: post.uid,
+                last_time: reply.create_date,
+                last_pid: reply.pid,
+                tid: reply.tid,
+            })
+            .onConflictDoUpdate({
+                target: [Notice_Thread.target_uid, Notice_Thread.tid],
+                set: {
+                    last_time: reply.create_date,
+                    last_pid: reply.pid,
+                },
+            });
         return a.text('ok') //! 返回tid/pid和posts数量
     } else {
         const subject = html`${body.get('subject')?.toString() ?? ''}`.toString()
@@ -90,7 +115,7 @@ export async function pEditData(a: Context) {
                 create_date: time,
                 content: content,
             })
-            .returning({ pid: Post.pid })
+            .returning()
         )?.[0]
         await DB
             .insert(Thread)
