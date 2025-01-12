@@ -1,6 +1,6 @@
 import { Context } from "hono";
 import { html } from "hono/html";
-import { DB, Notice_Post, Notice_Thread, Post, Thread, User } from "./base";
+import { DB, Post, Thread, User } from "./base";
 import { Auth, Counter, HTMLFilter } from "./core";
 import { and, eq, gt, sql } from "drizzle-orm";
 
@@ -68,6 +68,7 @@ export async function pEditData(a: Context) {
                 uid: i.uid as number,
                 create_date: time,
                 quote_pid: post.tid ? post.pid : 0,
+                quote_uid: post.uid,
                 content: content,
             })
             .returning()
@@ -86,19 +87,19 @@ export async function pEditData(a: Context) {
             await DB
                 .insert(Notice_Post)
                 .values({
-                    target_uid: post.uid,
+                    quote_uid: post.uid,
                     tid: reply.tid,
                     pid: reply.pid,
                 })
             await DB.insert(Notice_Thread)
                 .values({
-                    target_uid: post.uid,
+                    quote_uid: post.uid,
                     last_time: reply.create_date,
                     last_pid: reply.pid,
                     tid: reply.tid,
                 })
                 .onConflictDoUpdate({
-                    target: [Notice_Thread.target_uid, Notice_Thread.tid],
+                    target: [Notice_Thread.quote_uid, Notice_Thread.tid],
                     set: {
                         last_time: reply.create_date,
                         last_pid: reply.pid,

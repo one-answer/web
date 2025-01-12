@@ -22,18 +22,11 @@ export const Conf = sqliteTable("conf", {
     value: text(),
 });
 
-export const Notice_Post = sqliteTable("notice_post", {
-    target_uid: integer().notNull().default(0).primaryKey(),
+export const Notice = sqliteTable("notice", {
+    quote_uid: integer().notNull().default(0).primaryKey(),
     tid: integer().notNull().default(0).primaryKey(),
-    pid: integer().notNull().default(0).primaryKey(),
-});
-
-export const Notice_Thread = sqliteTable("notice_thread", {
-    target_uid: integer().notNull().default(0).primaryKey(),
-    last_time: integer().notNull().default(0),
     last_pid: integer().notNull().default(0),
     read_pid: integer().notNull().default(0),
-    tid: integer().notNull().default(0).primaryKey(),
 });
 
 export const Post = sqliteTable("post", {
@@ -42,6 +35,7 @@ export const Post = sqliteTable("post", {
     uid: integer().notNull().default(0),
     create_date: integer().notNull().default(0),
     quote_pid: integer().notNull().default(0),
+    quote_uid: integer().notNull().default(0),
     content: text().notNull().default(''),
 });
 
