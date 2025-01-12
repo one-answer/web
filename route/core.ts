@@ -32,6 +32,7 @@ export class Counter {
     }
 }
 
+/*
 export async function User_Notices(uid: number, set: number | null = null) {
     const key = 'User_Notices_' + uid
     if (set !== null) {
@@ -51,6 +52,7 @@ export async function User_Notices(uid: number, set: number | null = null) {
     }
     return Counter.get(key) ?? 0
 }
+*/
 
 export function Pagination(perPage: number, sum: number, page: number, near: number) {
     if (!page) { page = 1 }

@@ -23,17 +23,17 @@ export const Conf = sqliteTable("conf", {
 });
 
 export const Notice_Post = sqliteTable("notice_post", {
-    target_uid: integer().notNull().primaryKey(),
-    tid: integer().notNull().primaryKey(),
-    pid: integer().notNull().primaryKey(),
+    target_uid: integer().notNull().default(0).primaryKey(),
+    tid: integer().notNull().default(0).primaryKey(),
+    pid: integer().notNull().default(0).primaryKey(),
 });
 
 export const Notice_Thread = sqliteTable("notice_thread", {
-    target_uid: integer().notNull().primaryKey(),
-    last_time: integer().notNull().primaryKey(),
-    last_pid: integer().notNull(),
-    read_pid: integer().notNull(),
-    tid: integer().notNull(),
+    target_uid: integer().notNull().default(0).primaryKey(),
+    last_time: integer().notNull().default(0),
+    last_pid: integer().notNull().default(0),
+    read_pid: integer().notNull().default(0),
+    tid: integer().notNull().default(0).primaryKey(),
 });
 
 export const Post = sqliteTable("post", {
@@ -68,6 +68,5 @@ export const User = sqliteTable("user", {
     golds: integer().notNull().default(0),
     create_date: integer().notNull().default(0),
     login_date: integer().notNull().default(0),
-    notices: integer().notNull().default(0),
     signature: text().notNull().default(''),
 });
