@@ -13,7 +13,7 @@ import pEdit from './pEdit';
 export default await (async () => {
 
     Config.init()
-    new Counter('T').set((await DB.select({ count: count() }).from(Thread))[0].count);
+    Counter.set('T', (await DB.select({ count: count() }).from(Thread))[0].count);
 
     const app = new Hono();
 

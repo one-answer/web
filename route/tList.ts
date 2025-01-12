@@ -13,7 +13,7 @@ export interface TListProps extends BaseProps {
 export async function tList(a: Context) {
     const i = await Auth(a)
     const page = parseInt(a.req.param('page') ?? '0') || 1
-    const pagination = Pagination(20, new Counter('T').get(), page, 2)
+    const pagination = Pagination(20, Counter.get('T') ?? 0, page, 2)
     const data = await DB
         .select({
             ...getTableColumns(Thread),

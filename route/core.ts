@@ -1,8 +1,9 @@
 import { getCookie } from "hono/cookie";
-import { DB, Conf } from "./base";
+import { DB, Conf, User } from "./base";
+import { JWTSecretKey } from "../config";
 import { Context } from "hono";
 import { verify } from "hono/jwt";
-import { JWTSecretKey } from "../config";
+import { eq } from 'drizzle-orm';
 import * as DOMPurify from 'isomorphic-dompurify';
 
 export class Config {
@@ -20,36 +21,35 @@ export class Config {
 
 export class Counter {
     private static counters: Map<string, number> = new Map();
-    private name: string;
-    // 如果这个名称的计数器不存在，则初始化为0
-    constructor(name: string = 'default') {
-        this.name = name;
-        if (!Counter.counters.has(name)) {
-            Counter.counters.set(name, 0);
-        }
-    }
-    // 获取当前计数
-    public get(): number {
-        return Counter.counters.get(this.name) ?? 0;
+    private constructor() { }
+    public static get(name: string): number | null {
+        return Counter.counters.get(name) ?? null;
     }
     // 设置计数器值
-    public set(value: number): void {
-        Counter.counters.set(this.name, value);
+    public static set(name: string, value: number): number {
+        Counter.counters.set(name, value);
+        return value
     }
-    // 增加计数并返回新值
-    public add(): number {
-        const newValue = (Counter.counters.get(this.name) ?? 0) + 1;
-        Counter.counters.set(this.name, newValue);
-        return newValue;
+}
+
+export async function User_Notices(uid: number, set: number | null = null) {
+    const key = 'User_Notices_' + uid
+    if (set !== null) {
+        return Counter.set(key, (await DB
+            .update(User)
+            .set({ notices: set })
+            .where(eq(User.uid, uid))
+            .returning({ notices: User.notices })
+        )?.[0].notices)
     }
-    // 获取计数器名称
-    public getName(): string {
-        return this.name;
+    if (Counter.get(key) === null) {
+        return Counter.set(key, (await DB
+            .select({ notices: User.notices })
+            .from(User)
+            .where(eq(User.uid, uid))
+        )?.[0].notices)
     }
-    // 获取所有计数器的状态
-    public static getAllCounters(): Map<string, number> {
-        return new Map(Counter.counters);
-    }
+    return Counter.get(key) ?? 0
 }
 
 export function Pagination(perPage: number, sum: number, page: number, near: number) {

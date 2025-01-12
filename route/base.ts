@@ -32,6 +32,7 @@ export const Notice_Thread = sqliteTable("notice_thread", {
     target_uid: integer().notNull().primaryKey(),
     last_time: integer().notNull().primaryKey(),
     last_pid: integer().notNull(),
+    read_pid: integer().notNull(),
     tid: integer().notNull(),
 });
 

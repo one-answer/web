@@ -2,7 +2,7 @@ import { Context } from "hono";
 import { html } from "hono/html";
 import { and, eq, gt, sql } from "drizzle-orm";
 import { DB, Notice_Post, Notice_Thread, Post, Thread, User } from "./base";
-import { Auth, Counter, HTMLFilter } from "./core";
+import { Auth, Counter, HTMLFilter, User_Notices } from "./core";
 
 export async function pEditData(a: Context) {
     const i = await Auth(a)
@@ -79,29 +79,34 @@ export async function pEditData(a: Context) {
                 credits: sql`${User.credits} + 1`,
                 golds: sql`${User.golds} + 1`,
             })
-            .where(eq(User.uid, i.uid as number))
+            .where(eq(User.uid, reply.uid))
         // 回复通知 Notice
-        await DB
-            .insert(Notice_Post)
-            .values({
-                target_uid: post.uid,
-                tid: reply.tid,
-                pid: reply.pid,
-            })
-        await DB.insert(Notice_Thread)
-            .values({
-                target_uid: post.uid,
-                last_time: reply.create_date,
-                last_pid: reply.pid,
-                tid: reply.tid,
-            })
-            .onConflictDoUpdate({
-                target: [Notice_Thread.target_uid, Notice_Thread.tid],
-                set: {
+        /*
+        if (post.uid != reply.uid) {
+            await DB
+                .insert(Notice_Post)
+                .values({
+                    target_uid: post.uid,
+                    tid: reply.tid,
+                    pid: reply.pid,
+                })
+            await DB.insert(Notice_Thread)
+                .values({
+                    target_uid: post.uid,
                     last_time: reply.create_date,
                     last_pid: reply.pid,
-                },
-            });
+                    tid: reply.tid,
+                })
+                .onConflictDoUpdate({
+                    target: [Notice_Thread.target_uid, Notice_Thread.tid],
+                    set: {
+                        last_time: reply.create_date,
+                        last_pid: reply.pid,
+                    },
+                })
+            await User_Notices(post.uid, await User_Notices(post.uid) + 1)
+        }
+        */
         return a.text('ok') //! 返回tid/pid和posts数量
     } else {
         const subject = html`${body.get('subject')?.toString() ?? ''}`.toString()
@@ -137,7 +142,7 @@ export async function pEditData(a: Context) {
                 golds: sql`${User.golds} + 2`,
             })
             .where(eq(User.uid, i.uid as number))
-        new Counter('T').add()
+        Counter.set('T', (Counter.get('T') ?? 0) + 1)
         return a.text(String(post.pid))
     }
 }
