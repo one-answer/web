@@ -23,6 +23,7 @@ export default async function (a: Context) {
     if (!topic) { return a.notFound() }
     const page = parseInt(a.req.param('page') ?? '0') || 1
     const pagination = Pagination(20, topic.posts, page, 2)
+    const uid = parseInt(a.req.query('uid') ?? '0')
     const QuotePost = aliasedTable(Post, 'QuotePost')
     const QuoteUser = aliasedTable(User, 'QuoteUser')
     const data = await DB
@@ -32,11 +33,13 @@ export default async function (a: Context) {
             credits: User.credits,
             gid: User.gid,
             quote_content: QuotePost.content,
-            quote_uid: QuoteUser.uid,
             quote_username: QuoteUser.username,
         })
         .from(Post)
-        .where(or(and(eq(Post.tid, 0), eq(Post.pid, tid)), eq(Post.tid, tid)))
+        .where(and(
+            or(and(eq(Post.tid, 0), eq(Post.pid, tid)), eq(Post.tid, tid)),
+            (uid ? ((uid > 0) ? eq(Post.uid, uid) : or(eq(Post.uid, -uid), eq(Post.quote_uid, -uid))) : undefined),
+        ))
         .leftJoin(User, eq(Post.uid, User.uid))
         .leftJoin(QuotePost, eq(Post.quote_pid, QuotePost.pid))
         .leftJoin(QuoteUser, eq(QuotePost.uid, QuoteUser.uid))

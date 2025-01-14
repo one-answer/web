@@ -67,7 +67,7 @@ export async function pEditData(a: Context) {
                 tid: post.tid ? post.tid : post.pid,
                 uid: i.uid as number,
                 create_date: time,
-                quote_pid: post.tid ? post.pid : 0,
+                quote_pid: post.tid ? post.pid : 0, // 如果回复的是首层 则不引用
                 quote_uid: post.uid,
                 content: content,
             })

@@ -10,7 +10,7 @@ export interface TListProps extends BaseProps {
     data: { [x: string]: any; }[]
 }
 
-export async function tList(a: Context) {
+export default async function (a: Context) {
     const i = await Auth(a)
     const page = parseInt(a.req.param('page') ?? '0') || 1
     const pagination = Pagination(20, Counter.get('T') ?? 0, page, 2)

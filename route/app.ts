@@ -3,12 +3,13 @@ import { serveStatic } from 'hono/bun'
 import { count } from 'drizzle-orm';
 import { Config, Counter } from './core';
 import { DB, Thread } from './base';
-import { tList } from './tList';
 import { pEditData } from './pData';
 import { iLoginData, iLogoutData } from './iData';
 import iAuth from './iAuth';
+import nList from './nList';
 import pList from './pList';
 import pEdit from './pEdit';
+import tList from './tList';
 
 export default await (async () => {
 
@@ -21,6 +22,7 @@ export default await (async () => {
     app.get('/t/:tid{[0-9]+}/:page{[0-9]+}?', pList);
     app.get('/e/:eid{[-0-9]+}?', pEdit);
     app.post('/e/:eid{[-0-9]+}?', pEditData);
+    app.get('/n/:page{[0-9]+}?', nList);
     app.get('/auth', iAuth);
     app.post('/login', iLoginData);
     app.post('/logout', iLogoutData);
