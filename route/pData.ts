@@ -1,7 +1,7 @@
 import { Context } from "hono";
 import { html } from "hono/html";
-import { DB, Post, Thread, User } from "./base";
-import { Auth, Counter, HTMLFilter } from "./core";
+import { DB, Notice, Post, Thread, User } from "./base";
+import { Auth, Counter, HTMLFilter, User_Notice } from "./core";
 import { and, eq, gt, sql } from "drizzle-orm";
 
 export async function pEditData(a: Context) {
@@ -81,33 +81,37 @@ export async function pEditData(a: Context) {
                 golds: sql`${User.golds} + 1`,
             })
             .where(eq(User.uid, reply.uid))
-        // 回复通知 Notice
-        /*
+        // 回复通知 Notice 开始
+        // [通知]有回复所在的Thread 则更新自己的回帖
+        await DB
+            .update(Notice)
+            .set({
+                last_pid: reply.pid,
+            })
+            .where(and(
+                eq(Notice.uid, reply.uid), // 查找回帖人自己的uid
+                eq(Notice.tid, reply.tid),
+            ))
+        // 给回复目标的[通知]增加提醒
         if (post.uid != reply.uid) {
-            await DB
-                .insert(Notice_Post)
+            await DB.insert(Notice)
                 .values({
-                    quote_uid: post.uid,
+                    uid: reply.quote_uid,
                     tid: reply.tid,
-                    pid: reply.pid,
-                })
-            await DB.insert(Notice_Thread)
-                .values({
-                    quote_uid: post.uid,
-                    last_time: reply.create_date,
                     last_pid: reply.pid,
-                    tid: reply.tid,
+                    read_pid: reply.pid,
+                    unread: 1,
                 })
                 .onConflictDoUpdate({
-                    target: [Notice_Thread.quote_uid, Notice_Thread.tid],
+                    target: [Notice.uid, Notice.tid],
                     set: {
-                        last_time: reply.create_date,
                         last_pid: reply.pid,
+                        unread: 1,
                     },
                 })
-            await User_Notices(post.uid, await User_Notices(post.uid) + 1)
+            await User_Notice(post.uid, 1)
         }
-        */
+        // 回复通知 Notice 结束
         return a.text('ok') //! 返回tid/pid和posts数量
     } else {
         const subject = html`${body.get('subject')?.toString() ?? ''}`.toString()

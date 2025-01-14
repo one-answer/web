@@ -1,9 +1,9 @@
 import { getCookie } from "hono/cookie";
-import { DB, Conf, User } from "./base";
+import { DB, Conf, Notice } from "./base";
 import { JWTSecretKey } from "../config";
 import { Context } from "hono";
 import { verify } from "hono/jwt";
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import * as DOMPurify from 'isomorphic-dompurify';
 
 export class Config {
@@ -32,27 +32,21 @@ export class Counter {
     }
 }
 
-/*
-export async function User_Notices(uid: number, set: number | null = null) {
-    const key = 'User_Notices_' + uid
-    if (set !== null) {
-        return Counter.set(key, (await DB
-            .update(User)
-            .set({ notices: set })
-            .where(eq(User.uid, uid))
-            .returning({ notices: User.notices })
-        )?.[0].notices)
+export async function User_Notice(uid: number, unread: number = -1) {
+    const key = 'User_Notice_' + uid
+    if (unread >= 0) {
+        return Counter.set(key, unread)
     }
-    if (Counter.get(key) === null) {
-        return Counter.set(key, (await DB
-            .select({ notices: User.notices })
-            .from(User)
-            .where(eq(User.uid, uid))
-        )?.[0].notices)
-    }
-    return Counter.get(key) ?? 0
+    return Counter.get(key) ?? Counter.set(key, (await DB
+        .select({ unread: Notice.unread })
+        .from(Notice)
+        .where(and(
+            eq(Notice.uid, uid),
+            eq(Notice.unread, 1),
+        ))
+        .limit(1)
+    )?.[0]?.unread ?? 0)
 }
-*/
 
 export function Pagination(perPage: number, sum: number, page: number, near: number) {
     if (!page) { page = 1 }

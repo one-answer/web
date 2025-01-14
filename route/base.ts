@@ -23,10 +23,11 @@ export const Conf = sqliteTable("conf", {
 });
 
 export const Notice = sqliteTable("notice", {
-    quote_uid: integer().notNull().default(0).primaryKey(),
+    uid: integer().notNull().default(0).primaryKey(),
     tid: integer().notNull().default(0).primaryKey(),
     last_pid: integer().notNull().default(0),
     read_pid: integer().notNull().default(0),
+    unread: integer().notNull().default(0),
 });
 
 export const Post = sqliteTable("post", {
