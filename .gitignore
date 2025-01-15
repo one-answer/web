@@ -5,4 +5,3 @@ upload/
 forum.db
 forum.db-shm
 forum.db-wal
-config.ts

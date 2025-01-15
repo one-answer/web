@@ -1,9 +1,9 @@
 import { Context } from "hono";
 import { sign } from "hono/jwt";
 import { DB, User } from "./base";
+import { Config } from "./core";
 import { or, sql } from "drizzle-orm";
 import { deleteCookie, setCookie } from "hono/cookie";
-import { JWTSecretKey } from "../config";
 
 function md5(r: string): string {
     function n(r: number, n: number): number {
@@ -98,7 +98,7 @@ export async function iLoginData(a: Context) {
     )?.[0]
     if (!data || md5(pass + data.salt) != data.password) { return a.notFound() }
     const { password, salt, ...payload } = data
-    setCookie(a, 'JWT', await sign(payload, JWTSecretKey))
+    setCookie(a, 'JWT', await sign(payload, Config.get('secret_key')))
     return a.text('ok')
 }
 

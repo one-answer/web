@@ -1,8 +1,7 @@
-import { getCookie } from "hono/cookie";
-import { DB, Conf, Notice } from "./base";
-import { JWTSecretKey } from "../config";
 import { Context } from "hono";
 import { verify } from "hono/jwt";
+import { getCookie } from "hono/cookie";
+import { DB, Conf, Notice } from "./base";
 import { and, eq } from 'drizzle-orm';
 import * as DOMPurify from 'isomorphic-dompurify';
 
@@ -25,10 +24,19 @@ export class Counter {
     public static get(name: string): number | null {
         return Counter.counters.get(name) ?? null;
     }
-    // 设置计数器值
     public static set(name: string, value: number): number {
         Counter.counters.set(name, value);
         return value
+    }
+}
+
+export async function Auth(a: Context) {
+    const jwt = getCookie(a, 'JWT');
+    if (!jwt) { return false }
+    try {
+        return await verify(jwt, Config.get('secret_key'))
+    } catch (error) {
+        return false
     }
 }
 
@@ -90,16 +98,6 @@ export function Pagination(perPage: number, sum: number, page: number, near: num
         navigation.push(maxPage)
     }
     return navigation
-}
-
-export async function Auth(a: Context) {
-    const jwt = getCookie(a, 'JWT');
-    if (!jwt) { return false }
-    try {
-        return await verify(jwt, JWTSecretKey)
-    } catch (error) {
-        return false
-    }
 }
 
 export function HTMLFilter(html: string) {

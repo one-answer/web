@@ -1,1 +1,0 @@
-export const JWTSecretKey = 'TWF8&^$SF2d@es35TYG*STR43wt$^&sdD%a586$#Efs7rf64%97';
