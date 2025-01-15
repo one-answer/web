@@ -123,3 +123,14 @@ export function HTMLText(html: string, len = 0) {
     }
     return text
 }
+
+export function URLQuery(a: Context) {
+    const allow = ['uid'];
+    const query = new URLSearchParams();
+    Object.entries(a.req.query()).forEach(([key, val]) => {
+        if (allow.includes(key)) {
+            query.append(key, val);
+        }
+    });
+    return query.size ? '?' + query.toString() : '';
+}

@@ -1,5 +1,5 @@
 import { html, raw } from "hono/html";
-import { HTMLText } from "../route/core";
+import { HTMLText, URLQuery } from "../route/core";
 import { PListProps } from "../route/pList";
 import Header from "./header"
 import Footer from "./footer"
@@ -34,7 +34,7 @@ export default function (z: PListProps) {
             </div>
             <div class="pagination">
                 ${z.pagination.map(item => html`
-                <a ${item ? html`href="/t/${z.topic.tid}/${item}"` : ''} class="page-btn ${item == z.page ? 'active' : ''}">${item ? item : '...'}</a>
+                <a ${item ? html`href="/t/${z.topic.tid}/${item}${URLQuery(z.a)}"` : ''} class="page-btn ${item == z.page ? 'active' : ''}">${item ? item : '...'}</a>
                 `)}
             </div>
         </main>
