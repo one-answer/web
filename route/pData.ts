@@ -21,7 +21,7 @@ export async function pEditData(a: Context) {
             .where(and(
                 eq(Post.pid, -eid),
                 eq(Post.uid, i.uid as number),
-                gt(sql`${Post.create_date} + 604800`, time),
+                [1].includes(i.gid as number) ? undefined : gt(sql`${Post.create_date} + 604800`, time),
             ))
             .returning()
         )?.[0]
