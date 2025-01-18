@@ -87,6 +87,7 @@ export async function pEditData(a: Context) {
             .update(Notice)
             .set({
                 last_pid: reply.pid,
+                read_pid: sql`CASE WHEN ${Notice.last_pid} = ${Notice.read_pid} THEN ${reply.pid} ELSE ${Notice.read_pid} END`,
             })
             .where(and(
                 eq(Notice.uid, reply.uid), // 查找回帖人自己的uid
@@ -99,7 +100,7 @@ export async function pEditData(a: Context) {
                     uid: reply.quote_uid,
                     tid: reply.tid,
                     last_pid: reply.pid,
-                    read_pid: reply.pid,
+                    read_pid: reply.pid - 1,
                     unread: 1,
                 })
                 .onConflictDoUpdate({
