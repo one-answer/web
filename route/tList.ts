@@ -23,9 +23,9 @@ export default async function (a: Context) {
         .from(Thread)
         .leftJoin(User, eq(Thread.uid, User.uid))
         .orderBy(desc(Thread.last_date))
-        .offset((page - 1) * Config.get('t_per_page'))
-        .limit(Config.get('t_per_page'))
-    const pagination = Pagination(Config.get('t_per_page'), Counter.get('T') ?? 0, page, 2)
+        .offset((page - 1) * Config.get('page_size_t'))
+        .limit(Config.get('page_size_t'))
+    const pagination = Pagination(Config.get('page_size_t'), Counter.get('T') ?? 0, page, 2)
     const title = Config.get('site_name')
     return a.html(tListView({ a, i, page, pagination, data, title }));
 }

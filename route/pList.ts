@@ -1,7 +1,7 @@
 import { Context } from "hono";
 import { BaseProps, DB, Notice, Post, Thread, User } from "./base";
 import { Auth, Config, Pagination } from "./core";
-import { asc, eq, or, getTableColumns, and, sql, lt } from 'drizzle-orm';
+import { asc, eq, or, getTableColumns, and, sql, lte } from 'drizzle-orm';
 import { raw } from "hono/html";
 import pListView from "../style/pList";
 import { alias } from "drizzle-orm/sqlite-core";
@@ -56,8 +56,8 @@ export default async function (a: Context) {
         .leftJoin(QuotePost, eq(Post.quote_pid, QuotePost.pid))
         .leftJoin(QuoteUser, eq(QuotePost.uid, QuoteUser.uid))
         .orderBy(asc(Post.tid), asc(Post.pid))
-        .offset((page - 1) * Config.get('p_per_page'))
-        .limit(Config.get('p_per_page'))
+        .offset((page - 1) * Config.get('page_size_p'))
+        .limit(Config.get('page_size_p'))
     if (i && a.req.query('n')) {
         const read_pid = data.at(-1)?.pid ?? 0
         await DB.update(Notice)
@@ -69,11 +69,11 @@ export default async function (a: Context) {
                 and(
                     eq(Notice.uid, i.uid as number),
                     eq(Notice.tid, topic.tid),
-                    lt(Notice.read_pid, read_pid)
+                    lte(Notice.read_pid, read_pid)
                 )
             )
     }
-    const pagination = Pagination(Config.get('p_per_page'), data ? (data?.[0]?.count as number ?? 0) : 0, page, 2)
+    const pagination = Pagination(Config.get('page_size_p'), data ? (data?.[0]?.count as number ?? 0) : 0, page, 2)
     const title = raw(topic.subject)
     return a.html(pListView({ a, i, topic, page, pagination, data, title }));
 }

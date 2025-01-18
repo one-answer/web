@@ -30,8 +30,8 @@ export default async function (a: Context) {
         .leftJoin(Thread, eq(Notice.tid, Thread.tid))
         .leftJoin(Post, eq(Notice.last_pid, Post.pid))
         .orderBy(desc(Notice.uid), desc(Notice.unread), desc(Notice.last_pid))
-        .offset((page - 1) * Config.get('n_per_page'))
-        .limit(Config.get('n_per_page'))
+        .offset((page - 1) * Config.get('page_size_n'))
+        .limit(Config.get('page_size_n'))
     if (!data) { return a.notFound() }
     const title = '通知'
     return a.html(nListView({ a, i, page, data, title }));

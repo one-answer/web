@@ -30,6 +30,6 @@ export default async function (a: Context) {
         )
         .orderBy(asc(Post.tid), asc(Post.pid))
     )?.[0]?.count ?? 0
-    const page = Math.ceil(data / Config.get('p_per_page')) || 1
+    const page = Math.ceil(data / Config.get('page_size_p')) || 1
     return a.redirect('/t/' + tid + '/' + page + '?uid=' + uid + '#p' + pid)
 }
