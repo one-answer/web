@@ -39,7 +39,7 @@ export default function (z: NListProps) {
             <h3><a href="javascript:location.href=document.referrer">返回</a></h3>
             ${z.data.map(item => html`
             <li style="${item.unread ? 'background:yellow' : ''}">
-                <a href="/p?tid=${item.tid}?uid=-${item.uid}&pid=${item.last_pid}" target="contentFrame">
+                <a href="/p?tid=${item.tid}?uid=-${item.uid}&pid=${item.read_pid}" target="contentFrame">
                     ${raw(item.subject)}<br />
                     <small>${raw(HTMLText(item.content, 20))}</small>
                 </a>

@@ -13,7 +13,7 @@ export interface BaseProps {
 
 export const DB = function () {
     const db = new Database("forum.db");
-    //db.exec("PRAGMA journal_mode = WAL;");
+    db.exec("PRAGMA journal_mode = WAL;");
     return drizzle(db);
 }()
 

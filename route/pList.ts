@@ -1,6 +1,6 @@
 import { Context } from "hono";
 import { BaseProps, DB, Notice, Post, Thread, User } from "./base";
-import { Auth, Config, Pagination } from "./core";
+import { Auth, Config, Pagination, User_Notice } from "./core";
 import { asc, eq, or, getTableColumns, and, sql, lte } from 'drizzle-orm';
 import { raw } from "hono/html";
 import pListView from "../style/pList";
@@ -8,6 +8,7 @@ import { alias } from "drizzle-orm/sqlite-core";
 
 export interface PListProps extends BaseProps {
     topic: { [x: string]: any; }
+    pid: number
     page: number
     pagination: number[]
     data: { [x: string]: any; }[]
@@ -58,22 +59,28 @@ export default async function (a: Context) {
         .orderBy(asc(Post.tid), asc(Post.pid))
         .offset((page - 1) * Config.get('page_size_p'))
         .limit(Config.get('page_size_p'))
-    if (i && a.req.query('n')) {
-        const read_pid = data.at(-1)?.pid ?? 0
-        await DB.update(Notice)
+    if (i && a.req.query('pid')) {
+        const page_pid = data.at(-1)?.pid ?? 0
+        const notice = (await DB.update(Notice)
             .set({
-                read_pid: read_pid,
-                unread: sql`CASE WHEN ${read_pid} >= ${Notice.read_pid} THEN 0 ELSE 1 END`,
+                read_pid: page_pid,
+                unread: sql`CASE WHEN ${Notice.last_pid} <= ${page_pid} THEN 0 ELSE 1 END`,
             })
             .where(
                 and(
                     eq(Notice.uid, i.uid as number),
                     eq(Notice.tid, topic.tid),
-                    lte(Notice.read_pid, read_pid)
+                    lte(Notice.read_pid, page_pid)
                 )
             )
+            .returning()
+        )?.[0]
+        if (notice && !notice.unread) {
+            User_Notice(i.uid as number, 0)
+        }
     }
     const pagination = Pagination(Config.get('page_size_p'), data ? (data?.[0]?.count as number ?? 0) : 0, page, 2)
     const title = raw(topic.subject)
-    return a.html(pListView({ a, i, topic, page, pagination, data, title }));
+    const pid = parseInt(a.req.query('pid') ?? '0')
+    return a.html(pListView({ a, i, topic, page, pagination, data, title, pid }));
 }

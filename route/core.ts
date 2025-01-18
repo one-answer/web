@@ -125,7 +125,7 @@ export function HTMLText(html: string, len = 0) {
 }
 
 export function URLQuery(a: Context) {
-    const allow = ['uid'];
+    const allow = ['uid', 'pid'];
     const query = new URLSearchParams();
     Object.entries(a.req.query()).forEach(([key, val]) => {
         if (allow.includes(key)) {
