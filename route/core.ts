@@ -8,8 +8,8 @@ import * as DOMPurify from 'isomorphic-dompurify';
 export class Config {
     private static conf: { [key: string]: any } = {};
     private constructor() { }
-    public static init() {
-        DB.select().from(Conf).all().forEach(item => {
+    public static async init() {
+        (await DB.select().from(Conf).all()).forEach(item => {
             Config.conf[item.key] = JSON.parse(item.value ?? 'null');
         });
     }

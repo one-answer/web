@@ -1,8 +1,8 @@
-import { Database } from "bun:sqlite";
 import { Context } from "hono";
 import { JWTPayload } from "hono/utils/jwt/types";
-import { drizzle } from "drizzle-orm/bun-sqlite";
+import { drizzle } from "drizzle-orm/libsql";
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
+import { createClient } from '@libsql/client';
 
 export interface BaseProps {
     a: Context
@@ -12,8 +12,12 @@ export interface BaseProps {
 }
 
 export const DB = function () {
-    const db = new Database("forum.db");
-    db.exec("PRAGMA journal_mode = WAL;");
+    const db = createClient({
+        url: "file:forum.db",
+        //syncUrl: process.env.TURSO_DATABASE_URL,
+        //authToken: process.env.TURSO_AUTH_TOKEN,
+        //syncInterval: 60000,
+    });
     return drizzle(db);
 }()
 

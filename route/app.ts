@@ -14,7 +14,7 @@ import tList from './tList';
 
 export default await (async () => {
 
-    Config.init()
+    await Config.init()
     Counter.set('T', (await DB.select({ count: count() }).from(Thread))[0].count);
 
     const app = new Hono();
