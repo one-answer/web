@@ -13,7 +13,6 @@ export interface TListProps extends BaseProps {
 export default async function (a: Context) {
     const i = await Auth(a)
     const page = parseInt(a.req.param('page') ?? '0') || 1
-    const pagination = Pagination(20, Counter.get('T') ?? 0, page, 2)
     const data = await DB
         .select({
             ...getTableColumns(Thread),
@@ -24,8 +23,9 @@ export default async function (a: Context) {
         .from(Thread)
         .leftJoin(User, eq(Thread.uid, User.uid))
         .orderBy(desc(Thread.last_date))
-        .offset((page - 1) * 20)
-        .limit(20)
+        .offset((page - 1) * Config.get('t_per_page'))
+        .limit(Config.get('t_per_page'))
+    const pagination = Pagination(Config.get('t_per_page'), Counter.get('T') ?? 0, page, 2)
     const title = Config.get('site_name')
     return a.html(tListView({ a, i, page, pagination, data, title }));
 }

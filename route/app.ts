@@ -9,6 +9,7 @@ import iAuth from './iAuth';
 import nList from './nList';
 import pList from './pList';
 import pEdit from './pEdit';
+import pJump from './pJump';
 import tList from './tList';
 
 export default await (async () => {
@@ -23,6 +24,7 @@ export default await (async () => {
     app.get('/e/:eid{[-0-9]+}?', pEdit);
     app.post('/e/:eid{[-0-9]+}?', pEditData);
     app.get('/n/:page{[0-9]+}?', nList);
+    app.get('/p', pJump);
     app.get('/auth', iAuth);
     app.post('/login', iLoginData);
     app.post('/logout', iLogoutData);

@@ -10,7 +10,7 @@ export default function (z: PListProps) {
         <main class="container">
             <div class="post-list">
                 ${z.data.map(item => html`
-                <div class="post-item">
+                <div class="post-item" id="p${item.pid}">
                     <div class="post-info">
                         ${item.quote_pid ? html`
                         <blockquote class="blockquote">
@@ -38,6 +38,9 @@ export default function (z: PListProps) {
                 `)}
             </div>
         </main>
+        <script>
+        document.querySelector(window.location.hash).style.backgroundColor = '#FFF0F5'
+        </script>
         ${Footer(z)}
     `;
 }

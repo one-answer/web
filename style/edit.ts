@@ -12,21 +12,21 @@ export default function (z: PEditProps) {
             `: ''}
             <div name="content">${z.content}</div>
             <button onclick="save()">提交</button>
-            <script src="/quill.js"></script>
-            <script>
-                const quill = new Quill('[name="content"]', { theme: 'snow' });
-                async function save() {
-                    const data = new FormData();
-                    if(document.querySelector('[name="subject"]')){
-                        data.set('subject', document.querySelector('[name="subject"]').value);
-                    }
-                    data.set('content', quill.getSemanticHTML());
-                    if ((await fetch(new Request("", {method: "POST", body: data}))).ok) {
-                        window.location=document.referrer
-                    } else { alert('提交失败'); }
-                };
-            </script>
         </main>
+        <script src="/quill.js"></script>
+        <script>
+            const quill = new Quill('[name="content"]', { theme: 'snow' });
+            async function save() {
+                const data = new FormData();
+                if(document.querySelector('[name="subject"]')){
+                    data.set('subject', document.querySelector('[name="subject"]').value);
+                }
+                data.set('content', quill.getSemanticHTML());
+                if ((await fetch(new Request("", {method: "POST", body: data}))).ok) {
+                    window.location=document.referrer
+                } else { alert('提交失败'); }
+            };
+        </script>
         ${Footer(z)}
     `;
 }

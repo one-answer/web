@@ -1,6 +1,6 @@
 import { Context } from "hono";
 import { BaseProps, DB, Notice, Post, Thread } from "./base";
-import { Auth } from "./core";
+import { Auth, Config } from "./core";
 import { eq, or, getTableColumns, and, desc } from 'drizzle-orm';
 import nListView from "../style/nList";
 
@@ -30,8 +30,8 @@ export default async function (a: Context) {
         .leftJoin(Thread, eq(Notice.tid, Thread.tid))
         .leftJoin(Post, eq(Notice.last_pid, Post.pid))
         .orderBy(desc(Notice.uid), desc(Notice.unread), desc(Notice.last_pid))
-        .offset((page - 1) * 20)
-        .limit(20)
+        .offset((page - 1) * Config.get('n_per_page'))
+        .limit(Config.get('n_per_page'))
     if (!data) { return a.notFound() }
     const title = '通知'
     return a.html(nListView({ a, i, page, data, title }));
