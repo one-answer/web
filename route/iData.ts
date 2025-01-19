@@ -97,8 +97,8 @@ export async function iLoginData(a: Context) {
         .where(or(sql`lower(${User.username})=${text}`, sql`lower(${User.email})=${text}`))
     )?.[0]
     if (!data || md5(pass + data.salt) != data.password) { return a.notFound() }
-    const { password, salt, ...payload } = data
-    setCookie(a, 'JWT', await sign(payload, Config.get('secret_key')))
+    const { password, salt, ...i } = data
+    setCookie(a, 'JWT', await sign(i, Config.get('secret_key')))
     return a.text('ok')
 }
 

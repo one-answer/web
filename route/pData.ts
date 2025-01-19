@@ -1,8 +1,10 @@
 import { Context } from "hono";
 import { html } from "hono/html";
 import { DB, Notice, Post, Thread, User } from "./base";
-import { Auth, Counter, HTMLFilter, User_Notice } from "./core";
+import { Auth, Config, Counter, HTMLFilter, User_Notice } from "./core";
 import { and, eq, gt, sql } from "drizzle-orm";
+import { sign } from "hono/jwt";
+import { setCookie } from "hono/cookie";
 
 export async function pEditData(a: Context) {
     const i = await Auth(a)
@@ -81,6 +83,10 @@ export async function pEditData(a: Context) {
                 golds: sql`${User.golds} + 1`,
             })
             .where(eq(User.uid, reply.uid))
+        i.posts += 1;
+        i.credits += 1;
+        i.golds += 1;
+        setCookie(a, 'JWT', await sign(i, Config.get('secret_key')))
         // 回复通知 Notice 开始
         // [通知]有回复所在的Thread 则更新自己的回帖
         await DB
@@ -148,6 +154,11 @@ export async function pEditData(a: Context) {
                 golds: sql`${User.golds} + 2`,
             })
             .where(eq(User.uid, i.uid))
+        i.threads += 1;
+        i.posts += 1;
+        i.credits += 2;
+        i.golds += 2;
+        setCookie(a, 'JWT', await sign(i, Config.get('secret_key')))
         Counter.set('T', (Counter.get('T') ?? 0) + 1)
         return a.text(String(post.pid))
     }
