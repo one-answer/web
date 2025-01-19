@@ -20,8 +20,8 @@ export async function pEditData(a: Context) {
             })
             .where(and(
                 eq(Post.pid, -eid),
-                eq(Post.uid, i.uid as number),
-                [1].includes(i.gid as number) ? undefined : gt(sql`${Post.create_date} + 604800`, time),
+                eq(Post.uid, i.uid),
+                [1].includes(i.gid) ? undefined : gt(sql`${Post.create_date} + 604800`, time),
             ))
             .returning()
         )?.[0]
@@ -50,7 +50,7 @@ export async function pEditData(a: Context) {
             .update(Thread)
             .set({
                 posts: sql`${Thread.posts}+1`,
-                last_uid: i.uid as number,
+                last_uid: i.uid,
                 last_date: time,
             })
             .where(and(
@@ -65,7 +65,7 @@ export async function pEditData(a: Context) {
             .insert(Post)
             .values({
                 tid: post.tid ? post.tid : post.pid,
-                uid: i.uid as number,
+                uid: i.uid,
                 create_date: time,
                 quote_pid: post.tid ? post.pid : 0, // 如果回复的是首层 则不引用
                 quote_uid: post.uid,
@@ -122,7 +122,7 @@ export async function pEditData(a: Context) {
         const post = (await DB
             .insert(Post)
             .values({
-                uid: i.uid as number,
+                uid: i.uid,
                 create_date: time,
                 content: content,
             })
@@ -132,11 +132,11 @@ export async function pEditData(a: Context) {
             .insert(Thread)
             .values({
                 tid: post.pid,
-                uid: i.uid as number,
+                uid: i.uid,
                 subject: subject,
                 create_date: time,
                 last_date: time,
-                last_uid: i.uid as number,
+                last_uid: i.uid,
                 posts: 1,
             })
         await DB
@@ -147,7 +147,7 @@ export async function pEditData(a: Context) {
                 credits: sql`${User.credits} + 2`,
                 golds: sql`${User.golds} + 2`,
             })
-            .where(eq(User.uid, i.uid as number))
+            .where(eq(User.uid, i.uid))
         Counter.set('T', (Counter.get('T') ?? 0) + 1)
         return a.text(String(post.pid))
     }

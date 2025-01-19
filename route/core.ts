@@ -1,7 +1,7 @@
 import { Context } from "hono";
 import { verify } from "hono/jwt";
 import { getCookie } from "hono/cookie";
-import { DB, Conf, Notice } from "./base";
+import { DB, Conf, Notice, User } from "./base";
 import { and, eq } from 'drizzle-orm';
 import * as DOMPurify from 'isomorphic-dompurify';
 
@@ -32,11 +32,11 @@ export class Counter {
 
 export async function Auth(a: Context) {
     const jwt = getCookie(a, 'JWT');
-    if (!jwt) { return false }
+    if (!jwt) { return null }
     try {
-        return await verify(jwt, Config.get('secret_key'))
+        return await verify(jwt, Config.get('secret_key')) as typeof User.$inferSelect
     } catch (error) {
-        return false
+        return null
     }
 }
 

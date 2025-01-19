@@ -26,7 +26,7 @@ export default async function (z: BaseProps) {
                         ` : html`
                         <a class="login-btn" href="/e">发表</a>
                         `}
-                        <a class="login-btn" href="/n" style="${await User_Notice(z.i.uid as number) ? 'background:yellow' : ''}">通知</a>
+                        <a class="login-btn" href="/n" style="${await User_Notice(z.i.uid) ? 'background:yellow' : ''}">通知</a>
                         <a class="login-btn" href="/i">设置</a>
                         <a class="login-btn" href="javascript:;" onclick="logout();">退出</a>
                     `: html`

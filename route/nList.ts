@@ -21,7 +21,7 @@ export default async function (a: Context) {
         })
         .from(Notice)
         .where(and(
-            eq(Notice.uid, i.uid as number),
+            eq(Notice.uid, i.uid),
             or(
                 eq(Notice.unread, 1),
                 eq(Notice.unread, 0),

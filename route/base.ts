@@ -1,12 +1,11 @@
 import { Context } from "hono";
-import { JWTPayload } from "hono/utils/jwt/types";
 import { drizzle } from "drizzle-orm/libsql";
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 import { createClient } from '@libsql/client';
 
 export interface BaseProps {
     a: Context
-    i: false | JWTPayload
+    i: typeof User.$inferSelect | null
     title: string
     external_css?: string
 }

@@ -6,6 +6,7 @@ import { DB, Thread } from './base';
 import { pEditData } from './pData';
 import { iLoginData, iLogoutData } from './iData';
 import iAuth from './iAuth';
+import iConf from './iConf';
 import nList from './nList';
 import pList from './pList';
 import pEdit from './pEdit';
@@ -25,6 +26,7 @@ export default await (async () => {
     app.post('/e/:eid{[-0-9]+}?', pEditData);
     app.get('/n/:page{[0-9]+}?', nList);
     app.get('/p', pJump);
+    app.get('/i', iConf);
     app.get('/auth', iAuth);
     app.post('/login', iLoginData);
     app.post('/logout', iLogoutData);

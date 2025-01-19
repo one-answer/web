@@ -68,7 +68,7 @@ export default async function (a: Context) {
             })
             .where(
                 and(
-                    eq(Notice.uid, i.uid as number),
+                    eq(Notice.uid, i.uid),
                     eq(Notice.tid, topic.tid),
                     lte(Notice.read_pid, page_pid)
                 )
@@ -76,7 +76,7 @@ export default async function (a: Context) {
             .returning()
         )?.[0]
         if (notice && !notice.unread) {
-            User_Notice(i.uid as number, 0)
+            User_Notice(i.uid, 0)
         }
     }
     const pagination = Pagination(Config.get('page_size_p'), data ? (data?.[0]?.count as number ?? 0) : 0, page, 2)
