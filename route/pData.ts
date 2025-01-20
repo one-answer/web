@@ -142,7 +142,6 @@ export async function pEditData(a: Context) {
                 subject: subject,
                 create_date: time,
                 last_date: time,
-                last_uid: i.uid,
                 posts: 1,
             })
         await DB
