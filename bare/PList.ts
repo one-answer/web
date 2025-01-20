@@ -9,7 +9,7 @@ export function PList(z: PListProps) {
         <main class="container">
             <div class="post-list">
                 ${z.data.map(item => html`
-                <div class="post-item" style="${(z.pid && item.pid > z.pid) ? 'background:#FFF0F5' : ''}">
+                <div class="post-item" id="p${item.pid}" style="${(z.pid && item.pid > z.pid) ? 'background:#FFF0F5' : ''}">
                     <div class="post-info">
                         ${item.quote_pid ? html`
                         <blockquote class="blockquote">

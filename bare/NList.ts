@@ -34,18 +34,17 @@ export function NList(z: NListProps) {
     </style>
 </head>
 <body>
-    <div id="left">
-        <ul>
-            <h3><a href="javascript:location.href=document.referrer">返回</a></h3>
-            ${z.data.map(item => html`
-            <li style="${item.unread ? 'background:yellow' : ''}">
-                <a href="/p?tid=${item.tid}?uid=-${item.uid}&pid=${item.read_pid}" target="contentFrame">
-                    ${raw(item.subject)}<br />
-                    <small>${raw(HTMLText(item.content, 20))}</small>
-                </a>
-            </li>
-            `)}
-        </ul>
+    <div id="left" style="padding:0 10px">
+        <h3><a href="javascript:location.href=document.referrer">返回</a></h3>
+        ${z.data.map(item => html`
+        <hr />
+        <div style="${item.unread ? 'background:yellow' : ''}">
+            <a href="/p?tid=${item.tid}?uid=-${item.uid}&pid=${item.read_pid}" target="contentFrame">
+                ${raw(item.subject)}<br />
+                <small>${raw(HTMLText(item.content, 20))}</small>
+            </a>
+        </div>
+        `)}
     </div>
     <div id="right">
         <iframe id="contentFrame" name="contentFrame" src=""></iframe>
