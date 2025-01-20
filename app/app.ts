@@ -31,7 +31,6 @@ export default await (async () => {
     app.post('/login', iLogin);
     app.post('/logout', iLogout);
 
-    app.use('/avatar/*', serveStatic({ root: './' }));
     app.use('/upload/*', serveStatic({ root: './' }));
     app.use('/*', serveStatic({ root: './const/' }));
 
