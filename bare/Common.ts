@@ -68,7 +68,14 @@ export function Footer(z: BaseProps) {
                     `)}
                 </ul>
                 <div class="developer-info">
-                    <p>© 2025 Forum</p>
+                    <a href="https://github.com/OrganizationNameIsNotAvailable/Forum" target="_blank">Git</a>
+                    <a href="https://bun.sh/" target="_blank">Bun</a>
+                    <a href="https://hono.dev/" target="_blank">Hono</a>
+                    <a href="https://orm.drizzle.team/" target="_blank">Drizzle</a>
+                    <a href="https://www.sqlite.org/" target="_blank">SQLite</a>
+                    <a href="https://turso.tech/libsql" target="_blank">LibSQL</a>
+                    <a href="https://github.com/cure53/DOMPurify" target="_blank">DOMPurify</a>
+                    <a href="https://github.com/kkomelin/isomorphic-dompurify" target="_blank">Isomorphic</a>
                 </div>
             </div>
         </footer>

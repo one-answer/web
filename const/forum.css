@@ -189,6 +189,11 @@ body {
     padding-bottom: .8rem
 }
 
+.developer-info a {
+    color: #bdc3c7;
+    text-decoration: none;
+}
+
 .footer-links a {
     color: #bdc3c7;
     text-decoration: none;
