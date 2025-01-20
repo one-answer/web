@@ -49,7 +49,14 @@ export function Footer(z: BaseProps) {
             }
             window.addEventListener('load', function() {
                 document.querySelectorAll('.date').forEach(element => {
-                    element.innerHTML = new Date(parseInt(element.getAttribute('time_stamp'))*1000).toLocaleString();
+                    element.innerHTML = new Date(parseInt(element.getAttribute('time_stamp'))*1000)
+                                            .toLocaleString(undefined,{
+                                                year: 'numeric',
+                                                month: 'numeric',
+                                                day: 'numeric',
+                                                hour: '2-digit',
+                                                minute: '2-digit',
+                                            });
                 });
             });
         </script>

@@ -16,6 +16,7 @@ export function TList(z: TListProps) {
                         ${item.last_username ? html`
                         <span class="replies">&#x276E;&nbsp;${item.posts - 1}</span>
                         <span class="author">${item.last_username}</span>
+                        <span class="date" time_stamp="${item.last_date}"></span>
                         ` : ''}
                     </div>
                 </a>
