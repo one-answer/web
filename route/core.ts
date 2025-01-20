@@ -113,7 +113,10 @@ export function HTMLFilter(html: string) {
     })
 }
 
-export function HTMLText(html: string, len = 0) {
+export function HTMLText(html: string | null, len = 0) {
+    if (!html) {
+        return '...'
+    }
     let text = DOMPurify.sanitize(html, { ALLOWED_TAGS: ['#text'] })
     if (len > 0) {
         const lenOld = text.length

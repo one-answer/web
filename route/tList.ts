@@ -8,7 +8,12 @@ import tListView from "../style/tList";
 export interface TListProps extends BaseProps {
     page: number
     pagination: number[]
-    data: { [x: string]: any; }[]
+    data: (typeof Thread.$inferSelect & {
+        username: string | null;
+        credits: number | null;
+        gid: number | null;
+        last_username: string | null;
+    })[]
 }
 
 export default async function (a: Context) {

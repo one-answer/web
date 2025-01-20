@@ -19,7 +19,7 @@ export default function (z: BaseProps) {
         <footer class="footer">
             <div class="footer-content">
                 <ul class="footer-links">
-                    ${Object.values(Config.get('friend_link') as { [x: string]: any; }[]).map(item => html`
+                    ${Object.values(Config.get('friend_link') as { url: string, name: string; }[]).map(item => html`
                     <li><a href="${item.url}" target="_blank">${item.name}</a></li>
                     `)}
                 </ul>

@@ -6,7 +6,10 @@ import nListView from "../style/nList";
 
 export interface NListProps extends BaseProps {
     page: number
-    data: { [x: string]: any; }[]
+    data: (typeof Notice.$inferSelect & {
+        subject: string | null,
+        content: string | null,
+    })[]
 }
 
 export default async function (a: Context) {

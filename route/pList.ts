@@ -7,11 +7,18 @@ import pListView from "../style/pList";
 import { alias } from "drizzle-orm/sqlite-core";
 
 export interface PListProps extends BaseProps {
-    topic: { [x: string]: any; }
+    topic: typeof Thread.$inferSelect
     pid: number
     page: number
     pagination: number[]
-    data: { [x: string]: any; }[]
+    data: (typeof Post.$inferSelect & {
+        username: string | null;
+        credits: number | null;
+        gid: number | null;
+        quote_content: string | null;
+        quote_username: string | null;
+        count: number;
+    })[]
 }
 
 export default async function (a: Context) {
@@ -35,7 +42,7 @@ export default async function (a: Context) {
             gid: User.gid,
             quote_content: QuotePost.content,
             quote_username: QuoteUser.username,
-            count: sql`COUNT() OVER()`,
+            count: sql<number>`COUNT() OVER()`,
         })
         .from(Post)
         .where(
