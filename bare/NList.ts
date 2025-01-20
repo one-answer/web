@@ -41,7 +41,7 @@ export function NList(z: NListProps) {
             <li style="${item.unread ? 'background:yellow' : ''}">
                 <a href="/p?tid=${item.tid}?uid=-${item.uid}&pid=${item.read_pid}" target="contentFrame">
                     ${raw(item.subject)}<br />
-                    <small>${HTMLText(raw(item.content), 20)}</small>
+                    <small>${raw(HTMLText(item.content, 20))}</small>
                 </a>
             </li>
             `)}
