@@ -1,10 +1,9 @@
 import { html, raw } from "hono/html";
-import { HTMLText, URLQuery } from "../route/core";
-import { PListProps } from "../route/pList";
-import Header from "./header"
-import Footer from "./footer"
+import { HTMLText, URLQuery } from "../app/base";
+import { PListProps } from "../app/pList";
+import { Header, Footer } from "./Common"
 
-export default function (z: PListProps) {
+export function PList(z: PListProps) {
     return html`
         ${Header(z)}
         <main class="container">

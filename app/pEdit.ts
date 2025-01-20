@@ -1,9 +1,9 @@
 import { Context } from "hono";
 import { raw } from "hono/html";
-import { BaseProps, DB, Post, Thread } from "./base";
-import { Auth } from "./core";
+import { BaseProps, DB, Post, Thread } from "./data";
+import { Auth } from "./base";
 import { eq } from "drizzle-orm";
-import editView from "../style/edit";
+import { PEdit } from "../bare/PEdit";
 
 export interface PEditProps extends BaseProps {
     eid: number,
@@ -11,7 +11,7 @@ export interface PEditProps extends BaseProps {
     content: string
 }
 
-export default async function (a: Context) {
+export async function pEdit(a: Context) {
     const i = await Auth(a)
     if (!i) { return a.text('401', 401) }
     const eid = parseInt(a.req.param('eid') ?? '0')
@@ -45,5 +45,5 @@ export default async function (a: Context) {
     } else {
         title = "发表"
     }
-    return a.html(editView({ a, i, title, external_css, eid, subject, content }));
+    return a.html(PEdit({ a, i, title, external_css, eid, subject, content }));
 }

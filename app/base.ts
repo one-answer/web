@@ -1,7 +1,7 @@
 import { Context } from "hono";
 import { verify } from "hono/jwt";
 import { getCookie } from "hono/cookie";
-import { DB, Conf, Notice, User } from "./base";
+import { DB, Conf, Notice, User } from "./data";
 import { and, eq } from 'drizzle-orm';
 import * as DOMPurify from 'isomorphic-dompurify';
 

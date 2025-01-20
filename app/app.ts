@@ -1,17 +1,17 @@
 import { Hono } from 'hono'
 import { serveStatic } from 'hono/bun'
 import { count } from 'drizzle-orm';
-import { Config, Counter } from './core';
-import { DB, Thread } from './base';
+import { Config, Counter } from './base';
+import { DB, Thread } from './data';
 import { pEditData } from './pData';
-import { iLoginData, iLogoutData } from './iData';
-import iAuth from './iAuth';
-import iConf from './iConf';
-import nList from './nList';
-import pList from './pList';
-import pEdit from './pEdit';
-import pJump from './pJump';
-import tList from './tList';
+import { iLogin, iLogout } from './iData';
+import { iAuth } from './iAuth';
+import { iConf } from './iConf';
+import { nList } from './nList';
+import { pList } from './pList';
+import { pEdit } from './pEdit';
+import { pJump } from './pJump';
+import { tList } from './tList';
 
 export default await (async () => {
 
@@ -28,12 +28,12 @@ export default await (async () => {
     app.get('/p', pJump);
     app.get('/i', iConf);
     app.get('/auth', iAuth);
-    app.post('/login', iLoginData);
-    app.post('/logout', iLogoutData);
+    app.post('/login', iLogin);
+    app.post('/logout', iLogout);
 
     app.use('/avatar/*', serveStatic({ root: './' }));
     app.use('/upload/*', serveStatic({ root: './' }));
-    app.use('/*', serveStatic({ root: './static/' }));
+    app.use('/*', serveStatic({ root: './const/' }));
 
     return app;
 

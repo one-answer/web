@@ -1,8 +1,8 @@
 import { html, raw } from "hono/html";
-import { HTMLText } from "../route/core";
-import { NListProps } from "../route/nList";
+import { HTMLText } from "../app/base";
+import { NListProps } from "../app/nList";
 
-export default function (z: NListProps) {
+export function NList(z: NListProps) {
     return html`
 <!DOCTYPE html>
 <html lang="zh">

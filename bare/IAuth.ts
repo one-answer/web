@@ -1,28 +1,17 @@
 import { html } from "hono/html";
-import { BaseProps } from "../route/base";
-import Header from "./header"
-import Footer from "./footer"
+import { BaseProps } from "../app/data";
+import { Header, Footer } from "./Common"
 
-export default function (z: BaseProps) {
-    z.i = z.i! // 非空断言
+export function IAuth(z: BaseProps) {
     return html`
         ${Header(z)}
         <main class="container">
             <form onsubmit="event.preventDefault(); login(this);">
-                <input type="submit" value="保存" />
+                <b>登录页面非AI生成，纯手工打造，请放心使用。</b><br />
+                <input type="text" name="text" placeholder="用户名/E-mail" required /><br />
+                <input type="password" name="pass" placeholder="密码" required /><br />
+                <input type="submit" value="登录" />
                 <a href="javascript:history.back()">返回</a>
-                <br />
-                邮箱：<input type="text" name="mail" value="${z.i.email}" /><br />
-                昵称：<input type="text" name="name" value="${z.i.username}" /><br />
-                密码：<input type="password" name="pass" /><br />
-                重复：<input type="password" name="pass_confirm" /><br />
-                ID：${z.i.uid}<br />
-                经验：${z.i.credits}<br />
-                金币：${z.i.golds}<br />
-                主题：${z.i.threads}<br />
-                回复：${z.i.posts}<br />
-                职务：${z.i.gid}<br />
-                <b>注意：页面尚未完成，仅供查看，现在提交什么也修改不了！</b>
             </form>
             <script>
                 // 祖传大坨MD5
@@ -30,7 +19,7 @@ export default function (z: BaseProps) {
                 async function login(form){
                     const data = new FormData(form);
                     data.set('pass', md5(data.get('pass')));
-                    if ((await fetch(new Request("/iConf", {method: "POST", body: data}))).ok) {
+                    if ((await fetch(new Request("/login", {method: "POST", body: data}))).ok) {
                         window.location=document.referrer
                     } else { alert('登录失败'); }
                 }

@@ -1,10 +1,10 @@
 import { Context } from "hono";
-import { BaseProps, DB, Notice, Post, Thread, User } from "./base";
-import { Auth, Config, Pagination, User_Notice } from "./core";
+import { BaseProps, DB, Notice, Post, Thread, User } from "./data";
+import { Auth, Config, Pagination, User_Notice } from "./base";
 import { asc, eq, or, getTableColumns, and, sql, lte } from 'drizzle-orm';
-import { raw } from "hono/html";
-import pListView from "../style/pList";
 import { alias } from "drizzle-orm/sqlite-core";
+import { raw } from "hono/html";
+import { PList } from "../bare/PList";
 
 export interface PListProps extends BaseProps {
     topic: typeof Thread.$inferSelect
@@ -21,7 +21,7 @@ export interface PListProps extends BaseProps {
     })[]
 }
 
-export default async function (a: Context) {
+export async function pList(a: Context) {
     const i = await Auth(a)
     const tid = parseInt(a.req.param('tid'))
     const topic = (await DB
@@ -89,5 +89,5 @@ export default async function (a: Context) {
     const pagination = Pagination(Config.get('page_size_p'), data ? (data?.[0]?.count as number ?? 0) : 0, page, 2)
     const title = raw(topic.subject)
     const pid = parseInt(a.req.query('pid') ?? '0')
-    return a.html(pListView({ a, i, topic, page, pagination, data, title, pid }));
+    return a.html(PList({ a, i, topic, page, pagination, data, title, pid }));
 }

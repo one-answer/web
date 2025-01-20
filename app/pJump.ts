@@ -1,9 +1,9 @@
 import { Context } from "hono";
-import { DB, Post } from "./base";
+import { DB, Post } from "./data";
 import { asc, count, eq, or, and, lte } from 'drizzle-orm';
-import { Config } from "./core";
+import { Config } from "./base";
 
-export default async function (a: Context) {
+export async function pJump(a: Context) {
     const uid = parseInt(a.req.query('uid') ?? '0')
     const tid = parseInt(a.req.query('tid') ?? '0')
     const pid = parseInt(a.req.query('pid') ?? '0')

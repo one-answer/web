@@ -12,7 +12,7 @@ export interface BaseProps {
 
 export const DB = function () {
     const db = createClient({
-        url: "file:forum.db",
+        url: "file:app.db",
         //syncUrl: process.env.TURSO_DATABASE_URL,
         //authToken: process.env.TURSO_AUTH_TOKEN,
         //syncInterval: 60000,

@@ -1,7 +1,7 @@
 import { Context } from "hono";
 import { sign } from "hono/jwt";
-import { DB, User } from "./base";
-import { Config } from "./core";
+import { DB, User } from "./data";
+import { Config } from "./base";
 import { or, sql } from "drizzle-orm";
 import { deleteCookie, setCookie } from "hono/cookie";
 
@@ -87,7 +87,7 @@ function md5(r: string): string {
     return j;
 }
 
-export async function iLoginData(a: Context) {
+export async function iLogin(a: Context) {
     const body = await a.req.formData()
     const text = body.get('text')?.toString().toLowerCase() ?? ''
     const pass = body.get('pass')?.toString() ?? ''
@@ -102,7 +102,7 @@ export async function iLoginData(a: Context) {
     return a.text('ok')
 }
 
-export async function iLogoutData(a: Context) {
+export async function iLogout(a: Context) {
     deleteCookie(a, 'JWT')
     return a.text('ok')
 }

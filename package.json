@@ -1,7 +1,7 @@
 {
   "name": "forum",
   "scripts": {
-    "dev": "bun run --hot route/app.ts"
+    "dev": "bun run --hot app/app.ts"
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",

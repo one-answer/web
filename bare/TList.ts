@@ -1,9 +1,8 @@
 import { html, raw } from "hono/html";
-import { TListProps } from "../route/tList";
-import Header from "./header"
-import Footer from "./footer"
+import { TListProps } from "../app/tList";
+import { Header, Footer } from "./Common"
 
-export default function (z: TListProps) {
+export function TList(z: TListProps) {
     return html`
         ${Header(z)}
         <main class="container">

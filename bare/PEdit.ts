@@ -1,9 +1,8 @@
 import { html } from "hono/html";
-import { PEditProps } from "../route/pEdit";
-import Header from "./header"
-import Footer from "./footer"
+import { PEditProps } from "../app/pEdit";
+import { Header, Footer } from "./Common"
 
-export default function (z: PEditProps) {
+export function PEdit(z: PEditProps) {
     return html`
         ${Header(z)}
         <main class="container">
