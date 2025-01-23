@@ -99,7 +99,7 @@ export async function iLogin(a: Context) {
     )?.[0]
     if (!data || md5(pass + data.salt) != data.password) { return a.notFound() }
     const { password, salt, ...i } = data
-    setCookie(a, 'JWT', await sign(i, Config.get('secret_key')))
+    setCookie(a, 'JWT', await sign(i, Config.get('secret_key')), { maxAge: 2592000 })
     return a.text('ok')
 }
 
@@ -144,6 +144,6 @@ export async function iSave(a: Context) {
     }
     i.email = mail
     i.username = name
-    setCookie(a, 'JWT', await sign(i, Config.get('secret_key')))
+    setCookie(a, 'JWT', await sign(i, Config.get('secret_key')), { maxAge: 2592000 })
     return a.text('ok')
 }

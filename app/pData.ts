@@ -86,7 +86,7 @@ export async function pSave(a: Context) {
         i.posts += 1;
         i.credits += 1;
         i.golds += 1;
-        setCookie(a, 'JWT', await sign(i, Config.get('secret_key')))
+        setCookie(a, 'JWT', await sign(i, Config.get('secret_key')), { maxAge: 2592000 })
         // 回复通知 Notice 开始
         // [通知]有回复所在的Thread 则更新自己的回帖
         await DB
@@ -157,7 +157,7 @@ export async function pSave(a: Context) {
         i.posts += 1;
         i.credits += 2;
         i.golds += 2;
-        setCookie(a, 'JWT', await sign(i, Config.get('secret_key')))
+        setCookie(a, 'JWT', await sign(i, Config.get('secret_key')), { maxAge: 2592000 })
         Counter.set('T', (Counter.get('T') ?? 0) + 1)
         return a.text(String(post.pid))
     }
