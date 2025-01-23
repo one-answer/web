@@ -8,7 +8,7 @@ export function IAuth(z: BaseProps) {
         <main class="container">
             <form onsubmit="event.preventDefault(); login(this);">
                 <b>登录页面非AI生成，纯手工打造，请放心使用。</b><br />
-                <input type="text" name="text" placeholder="用户名/E-mail" required /><br />
+                <input type="text" name="user" placeholder="用户名/E-mail" required /><br />
                 <input type="password" name="pass" placeholder="密码" required /><br />
                 <input type="submit" value="登录" />
                 <a href="javascript:history.back()">返回</a>

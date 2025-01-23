@@ -1,9 +1,10 @@
 import { Context } from "hono";
 import { sign } from "hono/jwt";
 import { DB, User } from "./data";
-import { Config } from "./base";
-import { or, sql } from "drizzle-orm";
+import { Auth, Config } from "./base";
+import { eq, or, sql } from "drizzle-orm";
 import { deleteCookie, setCookie } from "hono/cookie";
+import XRegExp from "xregexp";
 
 function md5(r: string): string {
     function n(r: number, n: number): number {
@@ -89,12 +90,12 @@ function md5(r: string): string {
 
 export async function iLogin(a: Context) {
     const body = await a.req.formData()
-    const text = body.get('text')?.toString().toLowerCase() ?? ''
+    const user = body.get('user')?.toString().toLowerCase() ?? ''
     const pass = body.get('pass')?.toString() ?? ''
     const data = (await DB
         .select()
         .from(User)
-        .where(or(sql`lower(${User.username})=${text}`, sql`lower(${User.email})=${text}`))
+        .where(or(eq(User.username, user), eq(User.email, user)))
     )?.[0]
     if (!data || md5(pass + data.salt) != data.password) { return a.notFound() }
     const { password, salt, ...i } = data
@@ -104,5 +105,45 @@ export async function iLogin(a: Context) {
 
 export async function iLogout(a: Context) {
     deleteCookie(a, 'JWT')
+    return a.text('ok')
+}
+
+export async function iSave(a: Context) {
+    const i = await Auth(a)
+    if (!i) { return a.text('401', 401) }
+    const body = await a.req.formData()
+    const mail = body.get('mail')?.toString() ?? ''
+    if (!mail) { return a.text('mail_empty', 422) }
+    if (mail.length > 320) { return a.text('mail_too_long', 422) }
+    if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(mail)) { return a.text('mail_illegal', 422) }
+    const name = body.get('name')?.toString() ?? ''
+    if (!name) { return a.text('name_empty', 422) }
+    if (name.length > 20) { return a.text('name_too_long', 422) }
+    if (!XRegExp.tag()`^\p{L}[\p{L}\p{N}-_]*$`.test(name)) { return a.text('name_illegal', 422) }
+    const pass = body.get('pass')?.toString() ?? ''
+    if (pass && pass != (body.get('pass_repeat')?.toString() ?? '')) {
+        return a.text('pass_repeat', 400)
+    }
+    const pass_confirm = body.get('pass_confirm')?.toString() ?? ''
+    const data = (await DB
+        .select()
+        .from(User)
+        .where(eq(User.uid, i.uid))
+    )?.[0]
+    if (!data || md5(pass_confirm + data.salt) != data.password) { return a.text('pass_confirm', 401) }
+    try {
+        await DB.update(User)
+            .set({
+                email: mail,
+                username: name,
+                password: pass ? md5(pass + data.salt) : undefined,
+            })
+            .where(eq(User.uid, i.uid))
+    } catch (error) {
+        return a.text('data_conflict', 409)
+    }
+    i.email = mail
+    i.username = name
+    setCookie(a, 'JWT', await sign(i, Config.get('secret_key')))
     return a.text('ok')
 }

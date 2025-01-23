@@ -3,8 +3,8 @@ import { serveStatic } from 'hono/bun'
 import { count } from 'drizzle-orm';
 import { Config, Counter } from './base';
 import { DB, Thread } from './data';
-import { pEditData } from './pData';
-import { iLogin, iLogout } from './iData';
+import { pSave } from './pData';
+import { iLogin, iLogout, iSave } from './iData';
 import { iAuth } from './iAuth';
 import { iConf } from './iConf';
 import { nList } from './nList';
@@ -23,10 +23,11 @@ export default await (async () => {
     app.get('/:page{[0-9]+}?', tList);
     app.get('/t/:tid{[0-9]+}/:page{[0-9]+}?', pList);
     app.get('/e/:eid{[-0-9]+}?', pEdit);
-    app.post('/e/:eid{[-0-9]+}?', pEditData);
+    app.post('/e/:eid{[-0-9]+}?', pSave);
     app.get('/n/:page{[0-9]+}?', nList);
     app.get('/p', pJump);
     app.get('/i', iConf);
+    app.post('/i', iSave);
     app.get('/auth', iAuth);
     app.post('/login', iLogin);
     app.post('/logout', iLogout);

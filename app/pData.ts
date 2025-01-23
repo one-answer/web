@@ -6,7 +6,7 @@ import { and, eq, gt, sql } from "drizzle-orm";
 import { sign } from "hono/jwt";
 import { setCookie } from "hono/cookie";
 
-export async function pEditData(a: Context) {
+export async function pSave(a: Context) {
     const i = await Auth(a)
     if (!i) { return a.text('401', 401) }
     const time = Math.floor(Date.now() / 1000)
