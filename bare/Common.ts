@@ -66,16 +66,6 @@ export function Footer(z: BaseProps) {
                     <li><a href="${item.url}" target="_blank">${item.name}</a></li>
                     `)}
                 </ul>
-                <div class="developer-info">
-                    <a href="https://github.com/axww/A.js" target="_blank">Git</a>
-                    <a href="https://bun.sh/" target="_blank">Bun</a>
-                    <a href="https://hono.dev/" target="_blank">Hono</a>
-                    <a href="https://orm.drizzle.team/" target="_blank">Drizzle</a>
-                    <a href="https://www.sqlite.org/" target="_blank">SQLite</a>
-                    <a href="https://turso.tech/libsql" target="_blank">LibSQL</a>
-                    <a href="https://github.com/cure53/DOMPurify" target="_blank">DOMPurify</a>
-                    <a href="https://github.com/kkomelin/isomorphic-dompurify" target="_blank">Isomorphic</a>
-                </div>
             </div>
         </footer>
         </body>
