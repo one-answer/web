@@ -15,7 +15,7 @@ export async function Header(z: BaseProps) {
         </head>
         <body>
         <header class="header">
-            <h1><a href="/">${z.title}</a></h1>
+            <h1><a href="/">${Config.get('site_name')}</a></h1>
             <div>
                 <input type="checkbox" id="menu-toggle" class="menu-toggle">
                 <label for="menu-toggle" class="menu-toggle-label">菜单 ☰</label>

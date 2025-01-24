@@ -1,7 +1,6 @@
 import { Context } from "hono";
-import { html } from "hono/html";
 import { DB, Notice, Post, Thread, User } from "./data";
-import { Auth, Config, Counter, HTMLFilter, User_Notice } from "./base";
+import { Auth, Config, Counter, HTMLFilter, HTMLSubject, User_Notice } from "./base";
 import { and, eq, gt, sql } from "drizzle-orm";
 import { sign } from "hono/jwt";
 import { setCookie } from "hono/cookie";
@@ -30,12 +29,10 @@ export async function pSave(a: Context) {
         // 如果帖子找不到 或不是作者 则禁止编辑
         if (!post) { return a.text('403', 403) }
         if (!post.tid) {
-            const subject = html`${body.get('subject')?.toString() ?? ''}`.toString()
-            if (!subject) { return a.text('406', 406) }
             await DB
                 .update(Thread)
                 .set({
-                    subject: subject,
+                    subject: HTMLSubject(content, 200),
                 })
                 .where(eq(Thread.tid, post.pid))
         }
@@ -123,8 +120,6 @@ export async function pSave(a: Context) {
         // 回复通知 Notice 结束
         return a.text('ok') //! 返回tid/pid和posts数量
     } else {
-        const subject = html`${body.get('subject')?.toString() ?? ''}`.toString()
-        if (!subject) { return a.text('406', 406) }
         const content = HTMLFilter(body.get('content')?.toString() ?? '')
         if (!content) { return a.text('406', 406) }
         const post = (await DB
@@ -141,7 +136,7 @@ export async function pSave(a: Context) {
             .values({
                 tid: post.pid,
                 uid: i.uid,
-                subject: subject,
+                subject: HTMLSubject(content, 200),
                 create_date: time,
                 last_date: time,
                 posts: 1,

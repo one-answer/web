@@ -7,7 +7,6 @@ import { PEdit } from "../bare/PEdit";
 
 export interface PEditProps extends BaseProps {
     eid: number,
-    subject: string
     content: string
 }
 
@@ -19,7 +18,6 @@ export async function pEdit(a: Context) {
         <link href="/quill.snow.css" rel="stylesheet" />
     `)
     let title = ""
-    let subject = ''
     let content = ''
     if (eid < 0) {
         title = "编辑"
@@ -30,20 +28,10 @@ export async function pEdit(a: Context) {
         )?.[0]
         if (!post || post.uid != i.uid) { return a.text('401', 401) }
         content = raw(post.content) ?? ''
-        if (!post.tid) {
-            const thread = (await DB
-                .select()
-                .from(Thread)
-                .where(eq(Thread.tid, post.pid))
-            )?.[0]
-            if (thread) {
-                subject = raw(thread.subject) ?? ''
-            }
-        }
     } else if (eid > 0) {
         title = "回复"
     } else {
         title = "发表"
     }
-    return a.html(PEdit({ a, i, title, external_css, eid, subject, content }));
+    return a.html(PEdit({ a, i, title, external_css, eid, content }));
 }

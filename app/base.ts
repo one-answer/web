@@ -3,6 +3,7 @@ import { verify } from "hono/jwt";
 import { getCookie } from "hono/cookie";
 import { DB, Conf, Notice, User } from "./data";
 import { and, eq } from 'drizzle-orm';
+import { Window } from "happy-dom";
 import * as DOMPurify from 'isomorphic-dompurify';
 
 export class Config {
@@ -118,6 +119,22 @@ export function HTMLText(html: string | null, len = 0) {
         return '...'
     }
     let text = DOMPurify.sanitize(html, { ALLOWED_TAGS: ['#text'] })
+    if (len > 0) {
+        const lenOld = text.length
+        if (lenOld > len) {
+            text = text.slice(0, len - 3) + '...'
+        }
+    }
+    return text
+}
+
+export function HTMLSubject(html: string | null, len = 0) {
+    if (!html) {
+        return '...'
+    }
+    const document = new Window().document
+    document.body.innerHTML = html
+    let text = document.body.innerText.split('\n')[0]
     if (len > 0) {
         const lenOld = text.length
         if (lenOld > len) {
