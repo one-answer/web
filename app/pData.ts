@@ -32,7 +32,7 @@ export async function pSave(a: Context) {
             await DB
                 .update(Thread)
                 .set({
-                    subject: HTMLSubject(content, 200),
+                    subject: HTMLSubject(content, 140),
                 })
                 .where(eq(Thread.tid, post.pid))
         }
@@ -136,7 +136,7 @@ export async function pSave(a: Context) {
             .values({
                 tid: post.pid,
                 uid: i.uid,
-                subject: HTMLSubject(content, 200),
+                subject: HTMLSubject(content, 140),
                 create_date: time,
                 last_date: time,
                 posts: 1,
