@@ -21,7 +21,7 @@ export function IConf(z: BaseProps) {
                 经验：${z.i.credits}<br />
                 金币：${z.i.golds}<br />
                 主题：${z.i.threads}<br />
-                回复：${z.i.posts}<br />
+                帖子：${z.i.posts}<br />
                 职务：${z.i.gid}<br />
             </form>
             <script>
