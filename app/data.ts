@@ -65,6 +65,4 @@ export const User = sqliteTable("user", {
     credits: integer().notNull().default(0),
     golds: integer().notNull().default(0),
     create_date: integer().notNull().default(0),
-    login_date: integer().notNull().default(0),
-    signature: text().notNull().default(''),
 });

@@ -4,7 +4,7 @@ import { count } from 'drizzle-orm';
 import { Config, Counter } from './base';
 import { DB, Thread } from './data';
 import { pSave } from './pData';
-import { iLogin, iLogout, iSave } from './iData';
+import { iLogin, iLogout, iRegister, iSave } from './iData';
 import { iAuth } from './iAuth';
 import { iConf } from './iConf';
 import { nList } from './nList';
@@ -31,6 +31,7 @@ export default await (async () => {
     app.get('/auth', iAuth);
     app.post('/login', iLogin);
     app.post('/logout', iLogout);
+    app.post('/register', iRegister);
 
     app.use('/upload/*', serveStatic({ root: './' }));
     app.use('/*', serveStatic({ root: './const/' }));

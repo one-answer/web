@@ -30,7 +30,6 @@ export async function Header(z: BaseProps) {
                         <a class="login-btn" href="/i">设置</a>
                         <a class="login-btn" href="javascript:;" onclick="logout();">退出</a>
                     `: html`
-                        <a class="login-btn" href="/register" >注册</a>
                         <a class="login-btn" href="/auth">登录</a>
                     `}
                 </div>

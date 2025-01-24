@@ -68,7 +68,8 @@ export async function pList(a: Context) {
         .limit(Config.get('page_size_p'))
     if (i && a.req.query('pid')) {
         const page_pid = data.at(-1)?.pid ?? 0
-        const notice = (await DB.update(Notice)
+        const notice = (await DB
+            .update(Notice)
             .set({
                 read_pid: page_pid,
                 unread: sql`CASE WHEN ${Notice.last_pid} <= ${page_pid} THEN 0 ELSE 1 END`,

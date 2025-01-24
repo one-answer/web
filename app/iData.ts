@@ -1,8 +1,9 @@
+import { randomBytes } from "crypto";
 import { Context } from "hono";
 import { sign } from "hono/jwt";
 import { DB, User } from "./data";
 import { Auth, Config } from "./base";
-import { eq, or, sql } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 import { deleteCookie, setCookie } from "hono/cookie";
 import XRegExp from "xregexp";
 
@@ -108,6 +109,36 @@ export async function iLogout(a: Context) {
     return a.text('ok')
 }
 
+export async function iRegister(a: Context) {
+    const body = await a.req.formData()
+    const user = body.get('user')?.toString().toLowerCase() ?? ''
+    const pass = body.get('pass')?.toString() ?? ''
+    if (!user || !pass) { return a.notFound() }
+    const time = Math.floor(Date.now() / 1000)
+    let hash = randomBytes(Math.ceil(8))
+        .toString("hex")
+        .toUpperCase()
+        .replace(/[A-F]/g, char => (Math.random() > 0.5 ? char : String.fromCharCode(char.charCodeAt(0) + 17)))
+        .slice(0, 16);
+
+    const data = (await DB
+        .insert(User)
+        .values({
+            email: user,
+            username: '#' + time,
+            password: md5(pass + hash),
+            salt: hash,
+            create_date: time,
+        })
+        .onConflictDoNothing()
+        .returning()
+    )?.[0]
+    if (!data) { return a.text('data_conflict', 409) }
+    const { password, salt, ...i } = data
+    setCookie(a, 'JWT', await sign(i, Config.get('secret_key')), { maxAge: 2592000 })
+    return a.text('ok')
+}
+
 export async function iSave(a: Context) {
     const i = await Auth(a)
     if (!i) { return a.text('401', 401) }
@@ -121,9 +152,6 @@ export async function iSave(a: Context) {
     if (name.length > 20) { return a.text('name_too_long', 422) }
     if (!XRegExp.tag()`^\p{L}[\p{L}\p{N}-_]*$`.test(name)) { return a.text('name_illegal', 422) }
     const pass = body.get('pass')?.toString() ?? ''
-    if (pass && pass != (body.get('pass_repeat')?.toString() ?? '')) {
-        return a.text('pass_repeat', 400)
-    }
     const pass_confirm = body.get('pass_confirm')?.toString() ?? ''
     const data = (await DB
         .select()
@@ -132,7 +160,8 @@ export async function iSave(a: Context) {
     )?.[0]
     if (!data || md5(pass_confirm + data.salt) != data.password) { return a.text('pass_confirm', 401) }
     try {
-        await DB.update(User)
+        await DB
+            .update(User)
             .set({
                 email: mail,
                 username: name,

@@ -32,7 +32,8 @@ export async function pSave(a: Context) {
         if (!post.tid) {
             const subject = html`${body.get('subject')?.toString() ?? ''}`.toString()
             if (!subject) { return a.text('406', 406) }
-            await DB.update(Thread)
+            await DB
+                .update(Thread)
                 .set({
                     subject: subject,
                 })
@@ -101,7 +102,8 @@ export async function pSave(a: Context) {
             ))
         // 给回复目标的[通知]增加提醒
         if (post.uid != reply.uid) {
-            await DB.insert(Notice)
+            await DB
+                .insert(Notice)
                 .values({
                     uid: reply.quote_uid,
                     tid: reply.tid,

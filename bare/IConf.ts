@@ -30,8 +30,12 @@ export function IConf(z: BaseProps) {
                 async function save(form){
                     const data = new FormData(form);
                     if (data.get('pass')) {
+                        if(data.get('pass') != data.get('pass_repeat')) {
+                            alert('密码不一致');
+                            return;
+                        }
                         data.set('pass', md5(data.get('pass')));
-                        data.set('pass_repeat', md5(data.get('pass_repeat')));
+                        data.delete('pass_repeat');
                     }
                     data.set('pass_confirm', md5(data.get('pass_confirm')));
                     const result = await fetch(new Request("/i", {method: "POST", body: data}));
