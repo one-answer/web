@@ -38,6 +38,7 @@ export async function pSave(a: Context) {
         }
         return a.text('ok')
     } else if (eid > 0) {
+        if (time - (Counter.get('User_Submit_' + i.uid) ?? 0) < 60) { return a.text('too_fast', 403) }
         const post = (await DB
             .select()
             .from(Post)
@@ -121,8 +122,10 @@ export async function pSave(a: Context) {
             await User_Notice(post.uid, 1)
         }
         // 回复通知 Notice 结束
+        Counter.set('User_Submit_' + i.uid, time)
         return a.text('ok') //! 返回tid/pid和posts数量
     } else {
+        if (time - (Counter.get('User_Submit_' + i.uid) ?? 0) < 60) { return a.text('too_fast', 403) }
         const content = HTMLFilter(body.get('content')?.toString() ?? '')
         if (!content) { return a.text('406', 406) }
         const post = (await DB
@@ -159,6 +162,7 @@ export async function pSave(a: Context) {
         i.golds += 2;
         setCookie(a, 'JWT', await sign(i, Config.get('secret_key')), { maxAge: 2592000 })
         Counter.set('T', (Counter.get('T') ?? 0) + 1)
+        Counter.set('User_Submit_' + i.uid, time)
         return a.text(String(post.pid))
     }
 }

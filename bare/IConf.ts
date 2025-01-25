@@ -43,8 +43,7 @@ export function IConf(z: Props) {
                         alert('修改成功')
                         location.reload()
                     } else {
-                        const text = await result.text();
-                        alert(text)
+                        alert(await result.text())
                     }
                 }
             </script>

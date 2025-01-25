@@ -14,20 +14,20 @@ export const DB = function () {
 }()
 
 export const Conf = sqliteTable("conf", {
-    key: text().notNull().primaryKey(),
+    key: text().primaryKey(),
     value: text(),
 });
 
 export const Notice = sqliteTable("notice", {
-    uid: integer().notNull().default(0).primaryKey(),
-    tid: integer().notNull().default(0).primaryKey(),
+    uid: integer().primaryKey(),
+    tid: integer().primaryKey(),
     last_pid: integer().notNull().default(0),
     read_pid: integer().notNull().default(0),
     unread: integer().notNull().default(0),
 });
 
 export const Post = sqliteTable("post", {
-    pid: integer().notNull().default(0).primaryKey(),
+    pid: integer().primaryKey(),
     tid: integer().notNull().default(0),
     uid: integer().notNull().default(0),
     access: integer().notNull().default(0),
@@ -38,7 +38,7 @@ export const Post = sqliteTable("post", {
 });
 
 export const Thread = sqliteTable("thread", {
-    tid: integer().notNull().default(0).primaryKey(),
+    tid: integer().primaryKey(),
     uid: integer().notNull().default(0),
     access: integer().notNull().default(0),
     create_date: integer().notNull().default(0),
@@ -49,7 +49,7 @@ export const Thread = sqliteTable("thread", {
 });
 
 export const User = sqliteTable("user", {
-    uid: integer().notNull().default(0).primaryKey(),
+    uid: integer().primaryKey(),
     gid: integer().notNull().default(0),
     mail: text().notNull().default('').unique(),
     name: text().notNull().default('').unique(),

@@ -15,9 +15,10 @@ export function PEdit(z: PEditProps) {
             async function save() {
                 const data = new FormData();
                 data.set('content', quill.getSemanticHTML());
-                if ((await fetch(new Request("", {method: "POST", body: data}))).ok) {
+                const result = await fetch(new Request("", {method: "POST", body: data}))
+                if (result.ok) {
                     window.location=document.referrer
-                } else { alert('提交失败'); }
+                } else { alert('提交失败：'+ await result.text()); }
             };
         </script>
         ${Footer(z)}
