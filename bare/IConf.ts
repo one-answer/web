@@ -16,7 +16,7 @@ export function IConf(z: Props) {
                 格式：字符、数字、横线(-)、下划线(_)，需以字符开头。<br />
                 新密码：<input type="password" name="pass" placeholder="留空不更换" /><br />
                 新密码：<input type="password" name="pass_repeat" placeholder="再输入一遍" /><br />
-                原密码：<input type="password" name="pass_confirm" placeholder="保存前输入" /><br />
+                原密码：<input type="password" name="pass_confirm" required placeholder="保存前输入" /><br />
                 ID：${z.i.uid}<br />
                 经验：${z.i.credits}<br />
                 金币：${z.i.golds}<br />
