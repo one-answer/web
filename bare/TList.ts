@@ -11,11 +11,11 @@ export function TList(z: TListProps) {
                 <a href="/t/${item.tid}" class="post-item">
                     <div class="post-info">${raw(item.subject)}</div>
                     <div class="post-meta">
-                        <span class="author">${item.username}</span>
+                        <span class="author">${item.name}</span>
                         <span class="date" time_stamp="${item.create_date}"></span>
-                        ${item.last_username ? html`
+                        ${item.last_name ? html`
                         <span class="replies">&#x276E;&nbsp;${item.posts - 1}</span>
-                        <span class="author">${item.last_username}</span>
+                        <span class="author">${item.last_name}</span>
                         <span class="date" time_stamp="${item.last_date}"></span>
                         ` : ''}
                     </div>

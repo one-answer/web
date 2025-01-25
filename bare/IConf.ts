@@ -11,8 +11,8 @@ export function IConf(z: Props) {
                 <input type="submit" value="保存" />
                 <a href="javascript:history.back()">返回</a>
                 <br />
-                邮箱：<input type="text" name="mail" value="${z.i.email}" /><br />
-                昵称：<input type="text" name="name" value="${z.i.username}" /><br />
+                邮箱：<input type="text" name="mail" value="${z.i.mail}" /><br />
+                昵称：<input type="text" name="name" value="${z.i.name}" /><br />
                 格式：字符、数字、横线(-)、下划线(_)，需以字符开头。<br />
                 新密码：<input type="password" name="pass" placeholder="留空不更换" /><br />
                 新密码：<input type="password" name="pass_repeat" placeholder="再输入一遍" /><br />

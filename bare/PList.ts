@@ -13,13 +13,13 @@ export function PList(z: PListProps) {
                     <div class="post-info">
                         ${item.quote_pid ? html`
                         <blockquote class="blockquote">
-                            ${raw(item.quote_username)}: ${raw(HTMLText(item.quote_content, 140))}
+                            ${raw(item.quote_name)}: ${raw(HTMLText(item.quote_content, 140))}
                         </blockquote>
                         ` : ''}
                         ${raw(item.content)}
                     </div>
                     <div class="post-meta">
-                        <span class="author">${item.username}</span>
+                        <span class="author">${item.name}</span>
                         <span class="date" time_stamp="${item.create_date}"></span>
                             ${(z.i) ? html`
                             ${(z.i.uid == item.uid) ? html`

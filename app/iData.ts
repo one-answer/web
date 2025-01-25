@@ -96,10 +96,10 @@ export async function iLogin(a: Context) {
     const data = (await DB
         .select()
         .from(User)
-        .where(or(eq(User.username, user), eq(User.email, user)))
+        .where(or(eq(User.name, user), eq(User.mail, user)))
     )?.[0]
-    if (!data || md5(pass + data.salt) != data.password) { return a.notFound() }
-    const { password, salt, ...i } = data
+    if (!data || md5(pass + data.salt) != data.hash) { return a.notFound() }
+    const { hash, salt, ...i } = data
     setCookie(a, 'JWT', await sign(i, Config.get('secret_key')), { maxAge: 2592000 })
     return a.text('ok')
 }
@@ -115,25 +115,25 @@ export async function iRegister(a: Context) {
     const pass = body.get('pass')?.toString() ?? ''
     if (!user || !pass) { return a.notFound() }
     const time = Math.floor(Date.now() / 1000)
-    let hash = randomBytes(Math.ceil(8))
-        .toString("hex")
+    let rand = randomBytes(Math.ceil(8))
+        .toString("base64")
         .toUpperCase()
-        .replace(/[A-F]/g, char => (Math.random() > 0.5 ? char : String.fromCharCode(char.charCodeAt(0) + 17)))
+        .replace(/[^A-Z0-9]/g, () => String.fromCharCode(65 + Math.floor(Math.random() * 36)))
         .slice(0, 16);
     const data = (await DB
         .insert(User)
         .values({
-            email: user,
-            username: '#' + time,
-            password: md5(pass + hash),
-            salt: hash,
+            mail: user,
+            name: '#' + time,
+            hash: md5(pass + rand),
+            salt: rand,
             create_date: time,
         })
         .onConflictDoNothing()
         .returning()
     )?.[0]
     if (!data) { return a.text('data_conflict', 409) }
-    const { password, salt, ...i } = data
+    const { hash, salt, ...i } = data
     setCookie(a, 'JWT', await sign(i, Config.get('secret_key')), { maxAge: 2592000 })
     return a.text('ok')
 }
@@ -157,21 +157,21 @@ export async function iSave(a: Context) {
         .from(User)
         .where(eq(User.uid, i.uid))
     )?.[0]
-    if (!data || md5(pass_confirm + data.salt) != data.password) { return a.text('pass_confirm', 401) }
+    if (!data || md5(pass_confirm + data.salt) != data.hash) { return a.text('pass_confirm', 401) }
     try {
         await DB
             .update(User)
             .set({
-                email: mail,
-                username: name,
-                password: pass ? md5(pass + data.salt) : undefined,
+                mail: mail,
+                name: name,
+                hash: pass ? md5(pass + data.salt) : undefined,
             })
             .where(eq(User.uid, i.uid))
     } catch (error) {
         return a.text('data_conflict', 409)
     }
-    i.email = mail
-    i.username = name
+    i.mail = mail
+    i.name = name
     setCookie(a, 'JWT', await sign(i, Config.get('secret_key')), { maxAge: 2592000 })
     return a.text('ok')
 }

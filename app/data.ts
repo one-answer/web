@@ -51,9 +51,9 @@ export const Thread = sqliteTable("thread", {
 export const User = sqliteTable("user", {
     uid: integer().notNull().default(0).primaryKey(),
     gid: integer().notNull().default(0),
-    email: text().notNull().default('').unique(),
-    username: text().notNull().default('').unique(),
-    password: text().notNull().default(''),
+    mail: text().notNull().default('').unique(),
+    name: text().notNull().default('').unique(),
+    hash: text().notNull().default(''),
     salt: text().notNull().default(''),
     threads: integer().notNull().default(0),
     posts: integer().notNull().default(0),

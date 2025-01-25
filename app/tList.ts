@@ -9,10 +9,10 @@ export interface TListProps extends Props {
     page: number
     pagination: number[]
     data: (typeof Thread.$inferSelect & {
-        username: string | null;
+        name: string | null;
         credits: number | null;
         gid: number | null;
-        last_username: string | null;
+        last_name: string | null;
     })[]
 }
 
@@ -23,10 +23,10 @@ export async function tList(a: Context) {
     const data = await DB
         .select({
             ...getTableColumns(Thread),
-            username: User.username,
+            name: User.name,
             credits: User.credits,
             gid: User.gid,
-            last_username: LastUser.username,
+            last_name: LastUser.name,
         })
         .from(Thread)
         .leftJoin(User, eq(Thread.uid, User.uid))

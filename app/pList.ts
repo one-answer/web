@@ -12,11 +12,11 @@ export interface PListProps extends Props {
     page: number
     pagination: number[]
     data: (typeof Post.$inferSelect & {
-        username: string | null;
+        name: string | null;
         credits: number | null;
         gid: number | null;
         quote_content: string | null;
-        quote_username: string | null;
+        quote_name: string | null;
         count: number;
     })[]
 }
@@ -40,11 +40,11 @@ export async function pList(a: Context) {
     const data = await DB
         .select({
             ...getTableColumns(Post),
-            username: User.username,
+            name: User.name,
             credits: User.credits,
             gid: User.gid,
             quote_content: QuotePost.content,
-            quote_username: QuoteUser.username,
+            quote_name: QuoteUser.name,
             count: sql<number>`COUNT() OVER()`,
         })
         .from(Post)
