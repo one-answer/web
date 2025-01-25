@@ -19,7 +19,9 @@ export async function nList(a: Context) {
     const data = await DB
         .select({
             ...getTableColumns(Notice),
+            thread_access: Thread.access,
             subject: Thread.subject,
+            post_access: Post.access,
             content: Post.content,
         })
         .from(Notice)
@@ -35,6 +37,16 @@ export async function nList(a: Context) {
         .orderBy(desc(Notice.uid), desc(Notice.unread), desc(Notice.last_pid))
         .offset((page - 1) * Config.get('page_size_n'))
         .limit(Config.get('page_size_n'))
+    // 过滤掉已被删除的内容
+    data.forEach(function (item) {
+        if (item.thread_access) {
+            item.subject = '...'
+            item.content = '...'
+        } else if (item.post_access) {
+            item.content = '...'
+        }
+        return item
+    })
     if (!data) { return a.notFound() }
     const title = '通知'
     return a.html(NList({ a, i, page, data, title }));

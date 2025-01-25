@@ -29,9 +29,9 @@ export async function tList(a: Context) {
             last_name: LastUser.name,
         })
         .from(Thread)
+        .where(eq(Thread.access, 0))
         .leftJoin(User, eq(Thread.uid, User.uid))
         .leftJoin(LastUser, eq(Thread.last_uid, LastUser.uid))
-        .where(eq(Thread.access, 0))
         .orderBy(desc(Thread.last_date))
         .offset((page - 1) * Config.get('page_size_t'))
         .limit(Config.get('page_size_t'))

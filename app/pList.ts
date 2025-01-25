@@ -51,7 +51,7 @@ export async function pList(a: Context) {
         .where(and(
             // access
             eq(Post.access, 0),
-            // uid
+            // uid | quote_uid
             (uid ?
                 ((uid > 0) ? eq(Post.uid, uid) : or(eq(Post.uid, -uid), eq(Post.quote_uid, -uid)))
                 : undefined
