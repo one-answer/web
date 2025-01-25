@@ -1,12 +1,12 @@
 import { Context } from "hono";
-import { BaseProps, DB, Notice, Post, Thread, User } from "./data";
+import { Props, DB, Notice, Post, Thread, User } from "./data";
 import { Auth, Config, Pagination, User_Notice } from "./base";
 import { asc, eq, or, getTableColumns, and, sql, lte } from 'drizzle-orm';
 import { alias } from "drizzle-orm/sqlite-core";
 import { raw } from "hono/html";
 import { PList } from "../bare/PList";
 
-export interface PListProps extends BaseProps {
+export interface PListProps extends Props {
     topic: typeof Thread.$inferSelect
     pid: number
     page: number
@@ -27,7 +27,10 @@ export async function pList(a: Context) {
     const topic = (await DB
         .select()
         .from(Thread)
-        .where(eq(Thread.tid, tid))
+        .where(and(
+            eq(Thread.tid, tid),
+            eq(Thread.access, 0),
+        ))
     )?.[0]
     if (!topic) { return a.notFound() }
     const page = parseInt(a.req.param('page') ?? '0') || 1
@@ -45,21 +48,24 @@ export async function pList(a: Context) {
             count: sql<number>`COUNT() OVER()`,
         })
         .from(Post)
-        .where(
-            and(
-                or(
-                    and(
-                        eq(Post.tid, 0),
-                        eq(Post.pid, tid),
-                    ),
-                    eq(Post.tid, tid),
+        .where(and(
+            // access
+            eq(Post.access, 0),
+            // uid
+            (uid ?
+                ((uid > 0) ? eq(Post.uid, uid) : or(eq(Post.uid, -uid), eq(Post.quote_uid, -uid)))
+                : undefined
+            ),
+            // tid - pid
+            or(
+                and(
+                    eq(Post.tid, 0),
+                    eq(Post.pid, tid),
                 ),
-                (uid ?
-                    ((uid > 0) ? eq(Post.uid, uid) : or(eq(Post.uid, -uid), eq(Post.quote_uid, -uid)))
-                    : undefined
-                ),
-            )
-        )
+                eq(Post.tid, tid),
+            ),
+
+        ))
         .leftJoin(User, eq(Post.uid, User.uid))
         .leftJoin(QuotePost, eq(Post.quote_pid, QuotePost.pid))
         .leftJoin(QuoteUser, eq(QuotePost.uid, QuoteUser.uid))
@@ -78,7 +84,7 @@ export async function pList(a: Context) {
                 and(
                     eq(Notice.uid, i.uid),
                     eq(Notice.tid, topic.tid),
-                    lte(Notice.read_pid, page_pid)
+                    lte(Notice.read_pid, page_pid),
                 )
             )
             .returning()

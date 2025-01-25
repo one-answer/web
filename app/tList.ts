@@ -1,11 +1,11 @@
 import { Context } from "hono";
-import { BaseProps, DB, Thread, User } from "./data";
+import { Props, DB, Thread, User } from "./data";
 import { Auth, Config, Counter, Pagination } from "./base";
 import { desc, eq, getTableColumns } from 'drizzle-orm';
 import { alias } from "drizzle-orm/sqlite-core";
 import { TList } from "../bare/TList";
 
-export interface TListProps extends BaseProps {
+export interface TListProps extends Props {
     page: number
     pagination: number[]
     data: (typeof Thread.$inferSelect & {
@@ -31,6 +31,7 @@ export async function tList(a: Context) {
         .from(Thread)
         .leftJoin(User, eq(Thread.uid, User.uid))
         .leftJoin(LastUser, eq(Thread.last_uid, LastUser.uid))
+        .where(eq(Thread.access, 0))
         .orderBy(desc(Thread.last_date))
         .offset((page - 1) * Config.get('page_size_t'))
         .limit(Config.get('page_size_t'))

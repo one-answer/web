@@ -21,12 +21,12 @@ export async function pSave(a: Context) {
             })
             .where(and(
                 eq(Post.pid, -eid),
-                eq(Post.uid, i.uid),
-                [1].includes(i.gid) ? undefined : gt(sql`${Post.create_date} + 604800`, time),
+                eq(Post.access, 0),
+                [1].includes(i.gid) ? undefined : eq(Post.uid, i.uid), // 只有作者可以编辑
+                [1].includes(i.gid) ? undefined : gt(sql`${Post.create_date} + 604800`, time), // 7天后禁止编辑
             ))
             .returning()
         )?.[0]
-        // 如果帖子找不到 或不是作者 则禁止编辑
         if (!post) { return a.text('403', 403) }
         if (!post.tid) {
             await DB
@@ -41,9 +41,12 @@ export async function pSave(a: Context) {
         const post = (await DB
             .select()
             .from(Post)
-            .where(eq(Post.pid, eid))
+            .where(and(
+                eq(Post.pid, eid),
+                eq(Post.access, 0),
+            ))
         )?.[0]
-        if (!post) { return a.text('401', 401) }
+        if (!post) { return a.text('403', 403) }
         const content = HTMLFilter(body.get('content')?.toString() ?? '')
         if (!content) { return a.text('406', 406) }
         const thread = (await DB

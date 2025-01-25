@@ -3,7 +3,6 @@ import { drizzle } from "drizzle-orm/libsql";
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 import { createClient } from '@libsql/client';
 
-
 export const DB = function () {
     const db = createClient({
         url: "file:app.db",
@@ -15,16 +14,9 @@ export const DB = function () {
 }()
 
 export const Conf = sqliteTable("conf", {
-    key: text().primaryKey(),
+    key: text().notNull().primaryKey(),
     value: text(),
 });
-
-export interface BaseProps {
-    a: Context
-    i: typeof User.$inferSelect | null
-    title: string
-    external_css?: string
-}
 
 export const Notice = sqliteTable("notice", {
     uid: integer().notNull().default(0).primaryKey(),
@@ -35,9 +27,10 @@ export const Notice = sqliteTable("notice", {
 });
 
 export const Post = sqliteTable("post", {
-    pid: integer().primaryKey(),
+    pid: integer().notNull().default(0).primaryKey(),
     tid: integer().notNull().default(0),
     uid: integer().notNull().default(0),
+    access: integer().notNull().default(0),
     create_date: integer().notNull().default(0),
     quote_pid: integer().notNull().default(0),
     quote_uid: integer().notNull().default(0),
@@ -45,17 +38,18 @@ export const Post = sqliteTable("post", {
 });
 
 export const Thread = sqliteTable("thread", {
-    tid: integer().primaryKey(),
+    tid: integer().notNull().default(0).primaryKey(),
     uid: integer().notNull().default(0),
-    subject: text().notNull().default(''),
+    access: integer().notNull().default(0),
     create_date: integer().notNull().default(0),
     last_date: integer().notNull().default(0),
     last_uid: integer().notNull().default(0),
     posts: integer().notNull().default(0),
+    subject: text().notNull().default(''),
 });
 
 export const User = sqliteTable("user", {
-    uid: integer().primaryKey(),
+    uid: integer().notNull().default(0).primaryKey(),
     gid: integer().notNull().default(0),
     email: text().notNull().default('').unique(),
     username: text().notNull().default('').unique(),
@@ -67,3 +61,10 @@ export const User = sqliteTable("user", {
     golds: integer().notNull().default(0),
     create_date: integer().notNull().default(0),
 });
+
+export interface Props {
+    a: Context
+    i: typeof User.$inferSelect | null
+    title: string
+    external_css?: string
+}

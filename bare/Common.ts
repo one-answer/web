@@ -1,8 +1,8 @@
 import { html } from "hono/html";
-import { BaseProps } from "../app/data";
+import { Props } from "../app/data";
 import { Config, User_Notice } from "../app/base";
 
-export async function Header(z: BaseProps) {
+export async function Header(z: Props) {
     return html`
         <!DOCTYPE HTML>
         <html>
@@ -38,7 +38,7 @@ export async function Header(z: BaseProps) {
     `
 }
 
-export function Footer(z: BaseProps) {
+export function Footer(z: Props) {
     return html`
         <script>
             async function logout() {

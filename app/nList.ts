@@ -1,10 +1,10 @@
 import { Context } from "hono";
-import { BaseProps, DB, Notice, Post, Thread } from "./data";
+import { Props, DB, Notice, Post, Thread } from "./data";
 import { Auth, Config } from "./base";
 import { eq, or, getTableColumns, and, desc } from 'drizzle-orm';
 import { NList } from "../bare/NList";
 
-export interface NListProps extends BaseProps {
+export interface NListProps extends Props {
     page: number
     data: (typeof Notice.$inferSelect & {
         subject: string | null,

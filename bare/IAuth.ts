@@ -1,8 +1,8 @@
 import { html } from "hono/html";
-import { BaseProps } from "../app/data";
+import { Props } from "../app/data";
 import { Header, Footer } from "./Common"
 
-export function IAuth(z: BaseProps) {
+export function IAuth(z: Props) {
     return html`
         ${Header(z)}
         <main class="container">

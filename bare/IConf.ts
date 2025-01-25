@@ -1,8 +1,8 @@
 import { html } from "hono/html";
-import { BaseProps } from "../app/data";
+import { Props } from "../app/data";
 import { Header, Footer } from "./Common"
 
-export function IConf(z: BaseProps) {
+export function IConf(z: Props) {
     z.i = z.i! // 非空断言
     return html`
         ${Header(z)}

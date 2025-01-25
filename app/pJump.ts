@@ -12,22 +12,26 @@ export async function pJump(a: Context) {
             count: count(),
         })
         .from(Post)
-        .where(
-            and(
-                or(
-                    and(
-                        eq(Post.tid, 0),
-                        eq(Post.pid, tid),
-                    ),
+        .where(and(
+            // access
+            eq(Post.access, 0),
+            // uid | quote_uid
+            (uid ?
+                ((uid > 0) ? eq(Post.uid, uid) : or(eq(Post.uid, -uid), eq(Post.quote_uid, -uid)))
+                : undefined
+            ),
+            // tid - pid
+            or(
+                and(
+                    eq(Post.tid, 0),
+                    eq(Post.pid, tid),
+                ),
+                and(
                     eq(Post.tid, tid),
-                ),
-                (uid ?
-                    ((uid > 0) ? eq(Post.uid, uid) : or(eq(Post.uid, -uid), eq(Post.quote_uid, -uid)))
-                    : undefined
-                ),
-                lte(Post.pid, pid),
-            )
-        )
+                    lte(Post.pid, pid),
+                )
+            ),
+        ))
         .orderBy(asc(Post.tid), asc(Post.pid))
     )?.[0]?.count ?? 0
     const page = Math.ceil(data / Config.get('page_size_p')) || 1
