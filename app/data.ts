@@ -3,19 +3,13 @@ import { drizzle } from "drizzle-orm/libsql";
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 import { createClient } from '@libsql/client';
 
-export interface BaseProps {
-    a: Context
-    i: typeof User.$inferSelect | null
-    title: string
-    external_css?: string
-}
 
 export const DB = function () {
     const db = createClient({
         url: "file:app.db",
-        //syncUrl: process.env.TURSO_DATABASE_URL,
-        //authToken: process.env.TURSO_AUTH_TOKEN,
-        //syncInterval: 60000,
+        syncUrl: process.env.TURSO_DATABASE_URL,
+        authToken: process.env.TURSO_AUTH_TOKEN,
+        syncInterval: 60,
     });
     return drizzle(db);
 }()
@@ -24,6 +18,13 @@ export const Conf = sqliteTable("conf", {
     key: text().primaryKey(),
     value: text(),
 });
+
+export interface BaseProps {
+    a: Context
+    i: typeof User.$inferSelect | null
+    title: string
+    external_css?: string
+}
 
 export const Notice = sqliteTable("notice", {
     uid: integer().notNull().default(0).primaryKey(),

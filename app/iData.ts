@@ -120,7 +120,6 @@ export async function iRegister(a: Context) {
         .toUpperCase()
         .replace(/[A-F]/g, char => (Math.random() > 0.5 ? char : String.fromCharCode(char.charCodeAt(0) + 17)))
         .slice(0, 16);
-
     const data = (await DB
         .insert(User)
         .values({
