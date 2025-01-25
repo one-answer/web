@@ -95,6 +95,6 @@ export async function pList(a: Context) {
     }
     const pagination = Pagination(Config.get('page_size_p'), data ? (data?.[0]?.count as number ?? 0) : 0, page, 2)
     const title = raw(topic.subject)
-    const pid = parseInt(a.req.query('pid') ?? '0')
+    const pid = parseInt(a.req.query('pid') ?? 'Infinity')
     return a.html(PList({ a, i, topic, page, pagination, data, title, pid }));
 }
