@@ -7,7 +7,8 @@ export async function pJump(a: Context) {
     const uid = parseInt(a.req.query('uid') ?? '0')
     const tid = parseInt(a.req.query('tid') ?? '0')
     const pid = parseInt(a.req.query('pid') ?? '0')
-    const data = (await DB
+    const unread = parseInt(a.req.query('unread') ?? '0')
+    const skip = (await DB
         .select({
             count: count(),
         })
@@ -34,6 +35,6 @@ export async function pJump(a: Context) {
         ))
         .orderBy(asc(Post.tid), asc(Post.pid))
     )?.[0]?.count ?? 0
-    const page = Math.ceil(data / Config.get('page_size_p')) || 1
+    const page = Math.ceil((unread ? skip + 1 : skip) / Config.get('page_size_p')) || 1
     return a.redirect('/t/' + tid + '/' + page + '?uid=' + uid + '&pid=' + pid + '#p' + pid)
 }
