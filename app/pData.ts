@@ -98,8 +98,8 @@ export async function pSave(a: Context) {
                 read_pid: sql`CASE WHEN ${Notice.last_pid} = ${Notice.read_pid} THEN ${reply.pid} ELSE ${Notice.read_pid} END`,
             })
             .where(and(
-                eq(Notice.uid, reply.uid), // 查找回帖人自己的uid
                 eq(Notice.tid, reply.tid),
+                eq(Notice.uid, reply.uid), // 查找回帖人自己的uid
             ))
         // 给回复目标的[通知]增加提醒
         if (post.uid != reply.uid) {
@@ -113,7 +113,7 @@ export async function pSave(a: Context) {
                     unread: 1,
                 })
                 .onConflictDoUpdate({
-                    target: [Notice.uid, Notice.tid],
+                    target: [Notice.tid, Notice.uid],
                     set: {
                         last_pid: reply.pid,
                         unread: 1,
@@ -182,7 +182,9 @@ export async function pOmit(a: Context) {
         ))
         .returning()
     )?.[0]
+    // 如果无法删除则报错
     if (!post) { return a.text('410:gone', 410) }
+    // 如果是一个Thread则删除全部关联消息
     if (!post.tid) {
         await DB
             .update(Thread)
@@ -193,6 +195,12 @@ export async function pOmit(a: Context) {
                 eq(Thread.tid, post.pid),
                 [1].includes(i.gid) ? undefined : eq(Thread.uid, i.uid), // 管理和作者都能删除
             ))
+        await DB
+            .delete(Notice)
+            .where(and(
+                eq(Notice.tid, post.tid || post.pid),
+            ))
+        return a.text('ok')
     }
     // 历史提醒（用户自己）
     const post_u = (await DB
@@ -221,16 +229,16 @@ export async function pOmit(a: Context) {
                 unread: sql`CASE WHEN ${Notice.read_pid} < ${post_u.pid} THEN 1 ELSE 0 END`,
             })
             .where(and(
-                eq(Notice.uid, post.uid),
                 eq(Notice.tid, post.tid || post.pid),
+                eq(Notice.uid, post.uid),
                 eq(Notice.last_pid, post.pid),
             ))
     } else {
         await DB
             .delete(Notice)
             .where(and(
-                eq(Notice.uid, post.uid),
                 eq(Notice.tid, post.tid || post.pid),
+                eq(Notice.uid, post.uid),
             ))
     }
     // 历史提醒（被回复人）
@@ -260,16 +268,16 @@ export async function pOmit(a: Context) {
                 unread: sql`CASE WHEN ${Notice.read_pid} < ${post_q.pid} THEN 1 ELSE 0 END`,
             })
             .where(and(
-                eq(Notice.uid, post.quote_uid),
                 eq(Notice.tid, post.tid || post.pid),
+                eq(Notice.uid, post.quote_uid),
                 eq(Notice.last_pid, post.pid),
             ))
     } else {
         await DB
             .delete(Notice)
             .where(and(
-                eq(Notice.uid, post.quote_uid),
                 eq(Notice.tid, post.tid || post.pid),
+                eq(Notice.uid, post.quote_uid),
             ))
     }
     return a.text('ok')

@@ -22,6 +22,7 @@ export function PEdit(z: PEditProps) {
                 } else { alert('提交失败：'+ await result.text()); }
             };
             async function omit() {
+                if(!confirm('真的要删除吗?')){return;}
                 const data = new FormData();
                 const result = await fetch(new Request("", {method: "DELETE"}))
                 if (result.ok) {

@@ -79,8 +79,8 @@ export async function pList(a: Context) {
             })
             .where(
                 and(
-                    eq(Notice.uid, i.uid),
                     eq(Notice.tid, topic.tid),
+                    eq(Notice.uid, i.uid),
                     lte(Notice.read_pid, page_pid),
                 )
             )
