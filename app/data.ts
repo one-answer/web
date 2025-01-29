@@ -19,8 +19,8 @@ export const Conf = sqliteTable("conf", {
 });
 
 export const Notice = sqliteTable("notice", {
-    uid: integer().primaryKey(),
     tid: integer().primaryKey(),
+    uid: integer().primaryKey(),
     last_pid: integer().notNull().default(0),
     read_pid: integer().notNull().default(0),
     unread: integer().notNull().default(0),
