@@ -167,10 +167,10 @@ export async function pSave(a: Context) {
     }
 }
 
-export async function pRecycle(a: Context) {
+export async function pOmit(a: Context) {
     const i = await Auth(a)
     if (!i) { return a.text('401', 401) }
-    const pid = parseInt(a.req.param('pid') ?? '0')
+    const pid = -parseInt(a.req.param('eid') ?? '0')
     const post = (await DB
         .update(Post)
         .set({
@@ -182,6 +182,7 @@ export async function pRecycle(a: Context) {
         ))
         .returning()
     )?.[0]
+    if (!post) { return a.text('410:gone', 410) }
     if (!post.tid) {
         await DB
             .update(Thread)
@@ -271,4 +272,5 @@ export async function pRecycle(a: Context) {
                 eq(Notice.tid, post.tid || post.pid),
             ))
     }
+    return a.text('ok')
 }

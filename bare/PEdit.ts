@@ -8,6 +8,7 @@ export function PEdit(z: PEditProps) {
         <main class="container">
             <div name="content">${z.content}</div>
             <button onclick="save()">提交</button>
+            <button onclick="omit()">删除</button>
         </main>
         <script src="/quill.js"></script>
         <script>
@@ -19,6 +20,13 @@ export function PEdit(z: PEditProps) {
                 if (result.ok) {
                     window.location=document.referrer
                 } else { alert('提交失败：'+ await result.text()); }
+            };
+            async function omit() {
+                const data = new FormData();
+                const result = await fetch(new Request("", {method: "DELETE"}))
+                if (result.ok) {
+                    window.location=document.referrer
+                } else { alert('删除失败：'+ await result.text()); }
             };
         </script>
         ${Footer(z)}

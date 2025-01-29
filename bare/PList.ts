@@ -11,7 +11,7 @@ export function PList(z: PListProps) {
                 ${z.data.map(item => html`
                 <div class="post-item" id="p${item.pid}" style="${(item.pid > z.pid) ? 'background:#FFF0F5' : ''}">
                     <div class="post-info">
-                        ${item.quote_pid ? html`
+                        ${item.quote_name ? html`
                         <blockquote class="blockquote">
                             ${raw(item.quote_name)}: ${raw(HTMLText(item.quote_content, 140))}
                         </blockquote>
