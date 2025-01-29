@@ -22,8 +22,9 @@ export function PList(z: PListProps) {
                         <span class="author">${item.name}</span>
                         <span class="date" time_stamp="${item.create_date}"></span>
                             ${(z.i) ? html`
-                            ${(z.i.uid == item.uid) ? html`
+                            ${(z.i.uid == item.uid || z.i.gid == 1) ? html`
                             <a class="edit" href="/e/-${item.pid}">编辑</a>
+                            <a class="edit" href="javascript:omit(-${item.pid});">删除</a>
                             `: ''}
                             <a class="reply" href="/e/${item.pid}">回复</a>
                             `: ''}
@@ -37,6 +38,15 @@ export function PList(z: PListProps) {
                 `)}
             </div>
         </main>
+        <script>
+            async function omit(eid){
+                if(!confirm('真的要删除吗?')){return;}
+                const result = await fetch(new Request('/e/'+eid, {method: 'DELETE'}))
+                if (result.ok) {
+                    location.reload();
+                } else { alert('删除失败：'+ await result.text()); }
+            }
+        </script>
         ${Footer(z)}
     `;
 }

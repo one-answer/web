@@ -16,15 +16,14 @@ export function PEdit(z: PEditProps) {
             async function save() {
                 const data = new FormData();
                 data.set('content', quill.getSemanticHTML());
-                const result = await fetch(new Request("", {method: "POST", body: data}))
+                const result = await fetch(new Request('', {method: 'POST', body: data}))
                 if (result.ok) {
                     window.location=document.referrer
                 } else { alert('提交失败：'+ await result.text()); }
             };
             async function omit() {
                 if(!confirm('真的要删除吗?')){return;}
-                const data = new FormData();
-                const result = await fetch(new Request("", {method: "DELETE"}))
+                const result = await fetch(new Request('', {method: 'DELETE'}))
                 if (result.ok) {
                     window.location=document.referrer
                 } else { alert('删除失败：'+ await result.text()); }
