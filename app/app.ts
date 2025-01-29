@@ -1,4 +1,5 @@
 import { Hono } from 'hono'
+import { csrf } from 'hono/csrf'
 import { serveStatic } from 'hono/bun'
 import { count } from 'drizzle-orm';
 import { Config, Counter } from './base';
@@ -19,6 +20,7 @@ export default await (async () => {
     Counter.set('T', (await DB.select({ count: count() }).from(Thread))[0].count);
 
     const app = new Hono();
+    app.use(csrf())
 
     app.get('/:page{[0-9]+}?', tList);
     app.get('/t/:tid{[0-9]+}/:page{[0-9]+}?', pList);
