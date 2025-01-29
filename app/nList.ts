@@ -27,10 +27,7 @@ export async function nList(a: Context) {
         .from(Notice)
         .where(and(
             eq(Notice.uid, i.uid),
-            or(
-                eq(Notice.unread, 1),
-                eq(Notice.unread, 0),
-            ),
+            or(eq(Notice.unread, 1), eq(Notice.unread, 0)),
         ))
         .leftJoin(Thread, eq(Notice.tid, Thread.tid))
         .leftJoin(Post, eq(Notice.last_pid, Post.pid))

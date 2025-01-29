@@ -58,10 +58,7 @@ export async function pList(a: Context) {
             ),
             // tid - pid
             or(
-                and(
-                    eq(Post.tid, 0),
-                    eq(Post.pid, tid),
-                ),
+                and(eq(Post.tid, 0), eq(Post.pid, tid)),
                 eq(Post.tid, tid),
             ),
 

@@ -1,6 +1,6 @@
 import { Context } from "hono";
 import { DB, Post } from "./data";
-import { asc, count, eq, or, and, lte } from 'drizzle-orm';
+import { count, eq, or, and, lte, desc } from 'drizzle-orm';
 import { Config } from "./base";
 
 export async function pJump(a: Context) {
@@ -23,17 +23,11 @@ export async function pJump(a: Context) {
             ),
             // tid - pid
             or(
-                and(
-                    eq(Post.tid, 0),
-                    eq(Post.pid, tid),
-                ),
-                and(
-                    eq(Post.tid, tid),
-                    lte(Post.pid, pid),
-                )
+                and(eq(Post.tid, 0), eq(Post.pid, tid)),
+                and(eq(Post.tid, tid), lte(Post.pid, pid))
             ),
         ))
-        .orderBy(asc(Post.tid), asc(Post.pid))
+        .orderBy(desc(Post.tid), desc(Post.pid))
     )?.[0]?.count ?? 0
     const page = Math.ceil((unread ? skip + 1 : skip) / Config.get('page_size_p')) || 1
     return a.redirect('/t/' + tid + '/' + page + '?uid=' + uid + '&pid=' + pid + '#p' + pid)
