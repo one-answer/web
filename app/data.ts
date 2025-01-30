@@ -62,9 +62,13 @@ export const User = sqliteTable("user", {
     create_date: integer().notNull().default(0),
 });
 
+export type I = Omit<typeof User.$inferSelect, "hash" | "salt"> & {
+    notice: boolean;
+};
+
 export interface Props {
     a: Context
-    i: typeof User.$inferSelect | null
+    i: I | null
     title: string
     external_css?: string
 }
