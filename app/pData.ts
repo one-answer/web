@@ -184,8 +184,17 @@ export async function pOmit(a: Context) {
     )?.[0]
     // 如果无法删除则报错
     if (!post) { return a.text('410:gone', 410) }
-    // 如果是一个Thread则删除全部关联消息
     if (post.tid) {
+        // 如果删的是Post
+        await DB
+            .update(Thread)
+            .set({
+                posts: sql`${Thread.posts} - 1`,
+            })
+            .where(and(
+                eq(Thread.tid, post.tid),
+                [1].includes(i.gid) ? undefined : eq(Thread.uid, i.uid), // 管理和作者都能删除
+            ))
         await DB
             .update(User)
             .set({
@@ -194,7 +203,88 @@ export async function pOmit(a: Context) {
                 golds: sql`${User.golds} - 1`,
             })
             .where(eq(User.uid, post.uid))
+        // 历史提醒（用户自己）
+        const post_u = (await DB
+            .select()
+            .from(Post)
+            .where(and(
+                // access
+                eq(Post.access, 0),
+                // uid | quote_uid
+                or(eq(Post.uid, post.uid), eq(Post.quote_uid, post.uid)),
+                // tid - pid
+                or(
+                    and(eq(Post.tid, 0), eq(Post.pid, post.tid)),
+                    and(eq(Post.tid, post.tid), lt(Post.pid, pid)),
+                ),
+            ))
+            .orderBy(desc(Post.tid), desc(Post.pid))
+            .limit(1)
+        )?.[0]
+        if (post.tid && post_u) {
+            // 如果有则跳回上一条提醒
+            await DB
+                .update(Notice)
+                .set({
+                    last_pid: post_u.pid,
+                    unread: sql`CASE WHEN ${Notice.read_pid} < ${post_u.pid} THEN 1 ELSE 0 END`,
+                })
+                .where(and(
+                    eq(Notice.tid, post.tid || post.pid),
+                    eq(Notice.uid, post.uid),
+                    eq(Notice.last_pid, post.pid),
+                ))
+        } else {
+            await DB
+                .delete(Notice)
+                .where(and(
+                    eq(Notice.tid, post.tid || post.pid),
+                    eq(Notice.uid, post.uid),
+                ))
+        }
+        User_Notice(post.uid, -1)
+        // 历史提醒（被回复人）
+        const post_q = (await DB
+            .select()
+            .from(Post)
+            .where(and(
+                // access
+                eq(Post.access, 0),
+                // uid | quote_uid
+                or(eq(Post.uid, post.quote_uid), eq(Post.quote_uid, post.quote_uid)),
+                // tid - pid
+                or(
+                    and(eq(Post.tid, 0), eq(Post.pid, post.tid)),
+                    and(eq(Post.tid, post.tid), lt(Post.pid, pid))
+                ),
+            ))
+            .orderBy(desc(Post.tid), desc(Post.pid))
+            .limit(1)
+        )?.[0]
+        if (post.tid && post_q) {
+            // 如果有则跳回上一条提醒
+            await DB
+                .update(Notice)
+                .set({
+                    last_pid: post_q.pid,
+                    unread: sql`CASE WHEN ${Notice.read_pid} < ${post_q.pid} THEN 1 ELSE 0 END`,
+                })
+                .where(and(
+                    eq(Notice.tid, post.tid || post.pid),
+                    eq(Notice.uid, post.quote_uid),
+                    eq(Notice.last_pid, post.pid),
+                ))
+        } else {
+            await DB
+                .delete(Notice)
+                .where(and(
+                    eq(Notice.tid, post.tid || post.pid),
+                    eq(Notice.uid, post.quote_uid),
+                ))
+        }
+        User_Notice(post.quote_uid, -1)
     } else {
+        // 如果删的是Thread
         await DB
             .update(Thread)
             .set({
@@ -223,87 +313,6 @@ export async function pOmit(a: Context) {
         noticeUidArr.forEach(function (row) {
             User_Notice(row.uid, -1)
         })
-        return a.text('ok')
     }
-    // 历史提醒（用户自己）
-    const post_u = (await DB
-        .select()
-        .from(Post)
-        .where(and(
-            // access
-            eq(Post.access, 0),
-            // uid | quote_uid
-            or(eq(Post.uid, post.uid), eq(Post.quote_uid, post.uid)),
-            // tid - pid
-            or(
-                and(eq(Post.tid, 0), eq(Post.pid, post.tid)),
-                and(eq(Post.tid, post.tid), lt(Post.pid, pid)),
-            ),
-        ))
-        .orderBy(desc(Post.tid), desc(Post.pid))
-        .limit(1)
-    )?.[0]
-    if (post.tid && post_u) {
-        // 如果有则跳回上一条提醒
-        await DB
-            .update(Notice)
-            .set({
-                last_pid: post_u.pid,
-                unread: sql`CASE WHEN ${Notice.read_pid} < ${post_u.pid} THEN 1 ELSE 0 END`,
-            })
-            .where(and(
-                eq(Notice.tid, post.tid || post.pid),
-                eq(Notice.uid, post.uid),
-                eq(Notice.last_pid, post.pid),
-            ))
-    } else {
-        await DB
-            .delete(Notice)
-            .where(and(
-                eq(Notice.tid, post.tid || post.pid),
-                eq(Notice.uid, post.uid),
-            ))
-    }
-    User_Notice(post.uid, -1)
-    // 历史提醒（被回复人）
-    const post_q = (await DB
-        .select()
-        .from(Post)
-        .where(and(
-            // access
-            eq(Post.access, 0),
-            // uid | quote_uid
-            or(eq(Post.uid, post.quote_uid), eq(Post.quote_uid, post.quote_uid)),
-            // tid - pid
-            or(
-                and(eq(Post.tid, 0), eq(Post.pid, post.tid)),
-                and(eq(Post.tid, post.tid), lt(Post.pid, pid))
-            ),
-        ))
-        .orderBy(desc(Post.tid), desc(Post.pid))
-        .limit(1)
-    )?.[0]
-    if (post.tid && post_q) {
-        // 如果有则跳回上一条提醒
-        await DB
-            .update(Notice)
-            .set({
-                last_pid: post_q.pid,
-                unread: sql`CASE WHEN ${Notice.read_pid} < ${post_q.pid} THEN 1 ELSE 0 END`,
-            })
-            .where(and(
-                eq(Notice.tid, post.tid || post.pid),
-                eq(Notice.uid, post.quote_uid),
-                eq(Notice.last_pid, post.pid),
-            ))
-    } else {
-        await DB
-            .delete(Notice)
-            .where(and(
-                eq(Notice.tid, post.tid || post.pid),
-                eq(Notice.uid, post.quote_uid),
-            ))
-    }
-    User_Notice(post.quote_uid, -1)
     return a.text('ok')
 }
