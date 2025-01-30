@@ -313,6 +313,7 @@ export async function pOmit(a: Context) {
         noticeUidArr.forEach(function (row) {
             User_Notice(row.uid, -1)
         })
+        Counter.set('T', (Counter.get('T') ?? 0) - 1)
     }
     return a.text('ok')
 }
