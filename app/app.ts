@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { csrf } from 'hono/csrf'
 import { serveStatic } from 'hono/bun'
-import { count } from 'drizzle-orm';
+import { count, eq } from 'drizzle-orm';
 import { Config, Counter } from './base';
 import { DB, Thread } from './data';
 import { pOmit, pSave } from './pData';
@@ -17,7 +17,11 @@ import { tList } from './tList';
 export default await (async () => {
 
     await Config.init()
-    Counter.set('T', (await DB.select({ count: count() }).from(Thread))[0].count);
+    Counter.set('T', (
+        await DB.select({ count: count() })
+            .from(Thread)
+            .where(eq(Thread.access, 0))
+    )[0].count);
 
     const app = new Hono();
     app.use(csrf())

@@ -185,7 +185,16 @@ export async function pOmit(a: Context) {
     // 如果无法删除则报错
     if (!post) { return a.text('410:gone', 410) }
     // 如果是一个Thread则删除全部关联消息
-    if (!post.tid) {
+    if (post.tid) {
+        await DB
+            .update(User)
+            .set({
+                posts: sql`${User.posts} - 1`,
+                credits: sql`${User.credits} - 1`,
+                golds: sql`${User.golds} - 1`,
+            })
+            .where(eq(User.uid, post.uid))
+    } else {
         await DB
             .update(Thread)
             .set({
@@ -195,6 +204,15 @@ export async function pOmit(a: Context) {
                 eq(Thread.tid, post.pid),
                 [1].includes(i.gid) ? undefined : eq(Thread.uid, i.uid), // 管理和作者都能删除
             ))
+        await DB
+            .update(User)
+            .set({
+                threads: sql`${User.threads} - 1`,
+                posts: sql`${User.posts} - 1`,
+                credits: sql`${User.credits} - 2`,
+                golds: sql`${User.golds} - 2`,
+            })
+            .where(eq(User.uid, post.uid))
         const noticeUidArr = (await DB
             .delete(Notice)
             .where(and(
