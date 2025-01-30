@@ -29,6 +29,9 @@ export class Counter {
         Counter.counters.set(name, value);
         return value
     }
+    public static del(name: string) {
+        Counter.counters.delete(name);
+    }
 }
 
 export async function Auth(a: Context) {
@@ -41,8 +44,11 @@ export async function Auth(a: Context) {
     }
 }
 
-export async function User_Notice(uid: number, unread: number = -1) {
+export async function User_Notice(uid: number, unread: number = -2) {
     const key = 'User_Notice_' + uid
+    if (unread == -1) {
+        return Counter.del(key)
+    }
     if (unread >= 0) {
         return Counter.set(key, unread)
     }

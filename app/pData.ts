@@ -119,7 +119,7 @@ export async function pSave(a: Context) {
                         unread: 1,
                     },
                 })
-            await User_Notice(post.uid, 1)
+            User_Notice(post.uid, 1)
         }
         // 回复通知 Notice 结束
         Counter.set('User_Submit_' + i.uid, time)
@@ -195,11 +195,16 @@ export async function pOmit(a: Context) {
                 eq(Thread.tid, post.pid),
                 [1].includes(i.gid) ? undefined : eq(Thread.uid, i.uid), // 管理和作者都能删除
             ))
-        await DB
+        const noticeUidArr = (await DB
             .delete(Notice)
             .where(and(
                 eq(Notice.tid, post.tid || post.pid),
             ))
+            .returning({ uid: Notice.uid })
+        )
+        noticeUidArr.forEach(function (row) {
+            User_Notice(row.uid, -1)
+        })
         return a.text('ok')
     }
     // 历史提醒（用户自己）
@@ -241,6 +246,7 @@ export async function pOmit(a: Context) {
                 eq(Notice.uid, post.uid),
             ))
     }
+    User_Notice(post.uid, -1)
     // 历史提醒（被回复人）
     const post_q = (await DB
         .select()
@@ -280,5 +286,6 @@ export async function pOmit(a: Context) {
                 eq(Notice.uid, post.quote_uid),
             ))
     }
+    User_Notice(post.quote_uid, -1)
     return a.text('ok')
 }
