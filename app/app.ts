@@ -17,7 +17,7 @@ import { tList } from './tList';
 export default await (async () => {
 
     await Config.init()
-    Counter.set('T', (
+    Counter.set(0, (
         await DB.select({ count: count() })
             .from(Thread)
             .where(eq(Thread.access, 0))

@@ -35,7 +35,7 @@ export async function tList(a: Context) {
         .orderBy(desc(Thread.last_date))
         .offset((page - 1) * Config.get('page_size_t'))
         .limit(Config.get('page_size_t'))
-    const pagination = Pagination(Config.get('page_size_t'), Counter.get('T') ?? 0, page, 2)
+    const pagination = Pagination(Config.get('page_size_t'), Counter.get(0) ?? 0, page, 2)
     const title = Config.get('site_name')
     return a.html(TList({ a, i, page, pagination, data, title }));
 }

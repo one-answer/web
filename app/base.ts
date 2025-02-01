@@ -20,17 +20,17 @@ export class Config {
 }
 
 export class Counter {
-    private static counters: Map<string, number> = new Map();
+    private static counters: Map<number, number> = new Map();
     private constructor() { }
-    public static get(name: string): number | null {
-        return Counter.counters.get(name) ?? null;
+    public static get(key: number): number | undefined {
+        return Counter.counters.get(key);
     }
-    public static set(name: string, value: number): number {
-        Counter.counters.set(name, value);
-        return value
+    public static set(key: number, val: number): number {
+        Counter.counters.set(key, val);
+        return val;
     }
-    public static del(name: string) {
-        Counter.counters.delete(name);
+    public static del(key: number) {
+        Counter.counters.delete(key);
     }
 }
 
@@ -45,14 +45,13 @@ export async function Auth(a: Context) {
 }
 
 export async function User_Notice(uid: number, unread: number = -2) {
-    const key = 'User_Notice_' + uid
     if (unread == -1) {
-        return Counter.del(key)
+        return Counter.del(uid)
     }
     if (unread >= 0) {
-        return Counter.set(key, unread)
+        return Counter.set(uid, unread)
     }
-    return Counter.get(key) ?? Counter.set(key, (await DB
+    return Counter.get(uid) ?? Counter.set(uid, (await DB
         .select({ unread: Notice.unread })
         .from(Notice)
         .where(and(
