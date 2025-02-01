@@ -1,6 +1,6 @@
 import { Context } from "hono";
 import { Props, DB, Notice, Post, Thread, User } from "./data";
-import { Auth, Config, Pagination, User_Notice } from "./base";
+import { Auth, Config, Pagination, Status } from "./base";
 import { asc, eq, or, getTableColumns, and, sql, lte } from 'drizzle-orm';
 import { alias } from "drizzle-orm/sqlite-core";
 import { raw } from "hono/html";
@@ -87,7 +87,7 @@ export async function pList(a: Context) {
             .returning()
         )?.[0]
         if (notice && !notice.unread) {
-            User_Notice(i.uid, 0)
+            Status(i.uid, 0)
         }
     }
     const pagination = Pagination(Config.get('page_size_p'), data ? (data?.[0]?.count as number ?? 0) : 0, page, 2)

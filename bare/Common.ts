@@ -1,6 +1,6 @@
 import { html } from "hono/html";
 import { Props } from "../app/data";
-import { Config, User_Notice } from "../app/base";
+import { Config, Status } from "../app/base";
 
 export async function Header(z: Props) {
     return html`
@@ -26,7 +26,7 @@ export async function Header(z: Props) {
                         ` : html`
                         <a class="login-btn" href="/e">发表</a>
                         `}
-                        <a class="login-btn" href="/n" style="${await User_Notice(z.i.uid) ? 'background:yellow' : ''}">通知</a>
+                        <a class="login-btn" href="/n" style="${await Status(z.i.uid) ? 'background:yellow' : ''}">通知</a>
                         <a class="login-btn" href="/i">设置</a>
                         <a class="login-btn" href="javascript:;" onclick="logout();">退出</a>
                     `: html`

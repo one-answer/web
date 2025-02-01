@@ -66,7 +66,7 @@ export type I = Omit<typeof User.$inferSelect, "hash" | "salt">
 
 export interface Props {
     a: Context
-    i: I | null
+    i: I | undefined
     title: string
     external_css?: string
 }
