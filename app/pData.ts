@@ -151,7 +151,6 @@ export async function pSave(a: Context) {
                 golds: sql`${User.golds} + 2`,
             })
             .where(eq(User.uid, i.uid))
-        Counter.set(0, (Counter.get(0) ?? 0) + 1)
         Counter.set(-i.uid, time)
         Status(i.uid, 10)
         return a.text(String(post.pid))
@@ -304,7 +303,6 @@ export async function pOmit(a: Context) {
         noticeUidArr.forEach(function (row) {
             Status(row.uid, null)
         })
-        Counter.set(0, (Counter.get(0) ?? 0) - 1)
     }
     return a.text('ok')
 }

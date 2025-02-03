@@ -16,15 +16,9 @@ import { tListInit, tListLessThan, tListMoreThan } from './tList';
 
 export default await (async () => {
 
-    await Config.init()
-    Counter.set(0, (
-        await DB.select({ count: count() })
-            .from(Thread)
-            .where(eq(Thread.access, 0))
-    )[0].count);
-
+    await Config.init();
     const app = new Hono();
-    app.use(csrf())
+    app.use(csrf());
 
     app.get('/', tListInit);
     app.get('/m/:pivot{[0-9]+}?', tListMoreThan);
