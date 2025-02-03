@@ -22,11 +22,12 @@ export function TList(z: TListProps) {
                 </a>
                 `)}
             </div>
+            ${z.data.length ? html`
             <div class="pagination">
-                ${z.pagination.map(item => html`
-                <a ${item ? html`href="/${item}"` : ''} class="page-btn ${item == z.page ? 'active' : ''}">${item ? item : '...'}</a>
-                `)}
+                <a href="/m/${z.data.at(0)?.last_date}" class="page-btn">上页</a>
+                <a href="/l/${z.data.at(-1)?.last_date}" class="page-btn">下页</a>
             </div>
+            `: ''}
         </main>
         ${Footer(z)}
     `

@@ -12,7 +12,7 @@ import { nList } from './nList';
 import { pList } from './pList';
 import { pEdit } from './pEdit';
 import { pJump } from './pJump';
-import { tList } from './tList';
+import { tListInit, tListLessThan, tListMoreThan } from './tList';
 
 export default await (async () => {
 
@@ -26,7 +26,10 @@ export default await (async () => {
     const app = new Hono();
     app.use(csrf())
 
-    app.get('/:page{[0-9]+}?', tList);
+    app.get('/', tListInit);
+    app.get('/m/:pivot{[0-9]+}?', tListMoreThan);
+    app.get('/l/:pivot{[0-9]+}?', tListLessThan);
+
     app.get('/t/:tid{[0-9]+}/:page{[0-9]+}?', pList);
     app.get('/p', pJump);
     app.get('/e/:eid{[-0-9]+}?', pEdit);

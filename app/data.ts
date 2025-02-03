@@ -10,7 +10,7 @@ export const DB = function () {
         authToken: process.env.TURSO_AUTH_TOKEN,
         syncInterval: 60,
     });
-    return drizzle(db);
+    return drizzle(db, { logger: false });
 }()
 
 export const Conf = sqliteTable("conf", {
