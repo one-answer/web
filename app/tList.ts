@@ -16,6 +16,7 @@ export interface TListProps extends Props {
 
 export async function tList(a: Context, pivot: number, reverse: boolean = false) {
     const i = await Auth(a)
+    const uid = parseInt(a.req.query('uid') ?? '0')
     const LastUser = alias(User, 'LastUser')
     const data = await DB
         .select({
@@ -28,6 +29,7 @@ export async function tList(a: Context, pivot: number, reverse: boolean = false)
         .from(Thread)
         .where(and(
             eq(Thread.access, 0),
+            (uid ? eq(Thread.uid, uid) : undefined),
             pivot ? (reverse ?
                 gt(Thread.last_date, pivot) :
                 lt(Thread.last_date, pivot)

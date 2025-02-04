@@ -20,7 +20,7 @@ export function IConf(z: Props) {
                 ID：${z.i.uid}<br />
                 经验：${z.i.credits}<br />
                 金币：${z.i.golds}<br />
-                主题：${z.i.threads}<br />
+                主题：<a href="/?uid=${z.i.uid}" target="_blank">${z.i.threads}</a><br />
                 帖子：${z.i.posts}<br />
                 职务：${z.i.gid}<br />
             </form>

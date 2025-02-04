@@ -1,6 +1,7 @@
 import { html, raw } from "hono/html";
 import { TListProps } from "../app/tList";
 import { Header, Footer } from "./Common"
+import { URLQuery } from "../app/base";
 
 export function TList(z: TListProps) {
     return html`
@@ -24,8 +25,8 @@ export function TList(z: TListProps) {
             </div>
             ${z.data.length ? html`
             <div class="pagination">
-                <a href="/m/${z.data.at(0)?.last_date}" class="page-btn">上页</a>
-                <a href="/l/${z.data.at(-1)?.last_date}" class="page-btn">下页</a>
+                <a href="/m/${z.data.at(0)?.last_date}${URLQuery(z.a)}" class="page-btn">上页</a>
+                <a href="/l/${z.data.at(-1)?.last_date}${URLQuery(z.a)}" class="page-btn">下页</a>
             </div>
             `: ''}
         </main>

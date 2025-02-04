@@ -1,5 +1,5 @@
 import { html, raw } from "hono/html";
-import { HTMLText } from "../app/base";
+import { HTMLText, URLQuery } from "../app/base";
 import { PListProps } from "../app/pList";
 import { Header, Footer } from "./Common"
 
@@ -34,8 +34,8 @@ export function PList(z: PListProps) {
             </div>
             ${z.data.length ? html`
             <div class="pagination">
-                <a href="/t/${z.topic.tid}/l/${z.data.at(0)?.pid}" class="page-btn">上页</a>
-                <a href="/t/${z.topic.tid}/m/${z.data.at(-1)?.pid}" class="page-btn">下页</a>
+                <a href="/t/${z.topic.tid}/l/${z.data.at(0)?.pid}${URLQuery(z.a)}" class="page-btn">上页</a>
+                <a href="/t/${z.topic.tid}/m/${z.data.at(-1)?.pid}${URLQuery(z.a)}" class="page-btn">下页</a>
             </div>
             `: ''}
         </main>
