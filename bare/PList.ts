@@ -19,7 +19,7 @@ export function PList(z: PListProps) {
                         ${raw(item.content)}
                     </div>
                     <div class="post-meta">
-                        <span class="author">${item.name}</span>
+                        <a href="/?uid=${item.uid}" target="_blank" class="author">${item.name}</a>
                         <span class="date" time_stamp="${item.create_date}"></span>
                             ${(z.i) ? html`
                             ${(z.i.uid == item.uid || z.i.gid == 1) ? html`
