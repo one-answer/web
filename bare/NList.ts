@@ -39,7 +39,7 @@ export function NList(z: NListProps) {
         ${z.data.map(item => html`
         <hr />
         <div style="${item.unread ? 'background:yellow' : ''}">
-            <a href="/p?tid=${item.tid}?uid=-${item.uid}&pid=${item.read_pid}&unread=${item.unread}" target="contentFrame">
+            <a href="/t/${item.tid}/m/${item.read_pid - 1}?uid=-${item.uid}#p${item.read_pid}" target="contentFrame">
                 ${raw(item.subject)}<br />
                 <small>${raw(HTMLText(item.content, 20))}</small>
             </a>

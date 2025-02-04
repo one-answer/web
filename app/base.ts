@@ -91,50 +91,6 @@ export async function Status(uid: number, status: 0 | 1 | 10 | 20 | null | undef
     return 0;
 }
 
-export function Pagination(perPage: number, sum: number, page: number, near: number) {
-    if (!page) { page = 1 }
-    // 首页
-    const navigation = [1]
-    const maxPage = Math.floor((sum + perPage - 1) / perPage)
-    if (page <= 1 + near) {
-        // 首页邻页
-        const edge = 1 + near * 2
-        for (let p = 2; p <= edge && p < maxPage; p++) {
-            navigation.push(p)
-        }
-        if (edge < maxPage - 1) {
-            navigation.push(0)
-        }
-    } else if (page >= maxPage - near) {
-        // 尾页邻页
-        const edge = maxPage - near * 2
-        if (edge > 2) {
-            navigation.push(0)
-        }
-        for (let p = edge; p < maxPage; p++) {
-            if (p > 1) {
-                navigation.push(p)
-            }
-        }
-    } else {
-        // 非首尾页
-        if (page - near > 2) {
-            navigation.push(0)
-        }
-        for (let p = page - near; p <= page + near; p++) {
-            navigation.push(p)
-        }
-        if (page + near < maxPage - 1) {
-            navigation.push(0)
-        }
-    }
-    // 尾页
-    if (maxPage > 1) {
-        navigation.push(maxPage)
-    }
-    return navigation
-}
-
 export function HTMLFilter(html: string) {
     DOMPurify.addHook('afterSanitizeElements', function (node) {
         if (!node.textContent?.trim() && !node.hasChildNodes() && node.parentNode) {

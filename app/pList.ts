@@ -68,7 +68,7 @@ export async function pList(a: Context, pivot: number, reverse: boolean = false)
         .leftJoin(QuoteUser, and(eq(QuotePost.uid, QuoteUser.uid), eq(QuotePost.access, 0)))
         .orderBy(asc(Post.tid), asc(Post.pid))
         .limit(Config.get('page_size_p'))
-    if (i && a.req.query('pid')) {
+    if (i && uid < 0) {
         const page_pid = data.at(-1)?.pid ?? 0
         const notice = (await DB
             .update(Notice)
