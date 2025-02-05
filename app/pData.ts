@@ -181,10 +181,7 @@ export async function pOmit(a: Context) {
             .set({
                 posts: sql`${Thread.posts} - 1`,
             })
-            .where(and(
-                eq(Thread.tid, post.tid),
-                [1].includes(i.gid) ? undefined : eq(Thread.uid, i.uid), // 管理和作者都能删除
-            ))
+            .where(eq(Thread.tid, post.tid))
         await DB
             .update(User)
             .set({
