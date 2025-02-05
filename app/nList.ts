@@ -35,7 +35,7 @@ export async function nList(a: Context, pivot: number, reverse: boolean = false)
         ))
         .leftJoin(Thread, eq(Notice.tid, Thread.tid))
         .leftJoin(Post, eq(Notice.last_pid, Post.pid))
-        .orderBy(desc(Notice.uid), desc(Notice.unread), desc(Notice.last_pid))
+        .orderBy(desc(Notice.last_pid))
         .limit(Config.get('page_size_n'))
     // 过滤掉已被删除的内容
     data.forEach(function (item) {

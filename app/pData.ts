@@ -176,10 +176,27 @@ export async function pOmit(a: Context) {
     if (!post) { return a.text('410:gone', 410) }
     if (post.tid) {
         // 如果删的是Post
+        const last = (await DB
+            .select()
+            .from(Post)
+            .where(and(
+                // access
+                eq(Post.access, 0),
+                // tid - pid
+                or(
+                    and(eq(Post.tid, 0), eq(Post.pid, post.tid)),
+                    eq(Post.tid, post.tid),
+                ),
+            ))
+            .orderBy(desc(Post.pid))
+            .limit(1)
+        )?.[0]
         await DB
             .update(Thread)
             .set({
                 posts: sql`${Thread.posts} - 1`,
+                last_uid: last.tid ? last.uid : 0,
+                last_date: last.create_date,
             })
             .where(eq(Thread.tid, post.tid))
         await DB
@@ -205,7 +222,7 @@ export async function pOmit(a: Context) {
                     and(eq(Post.tid, post.tid), lt(Post.pid, pid)),
                 ),
             ))
-            .orderBy(desc(Post.tid), desc(Post.pid))
+            .orderBy(desc(Post.pid))
             .limit(1)
         )?.[0]
         if (post.tid && post_u) {
@@ -245,7 +262,7 @@ export async function pOmit(a: Context) {
                     and(eq(Post.tid, post.tid), lt(Post.pid, pid))
                 ),
             ))
-            .orderBy(desc(Post.tid), desc(Post.pid))
+            .orderBy(desc(Post.pid))
             .limit(1)
         )?.[0]
         if (post.tid && post_q) {
