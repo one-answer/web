@@ -19,7 +19,7 @@ export function IAuth(z: Props) {
                     <div class="mdui-card-content">
                         <div class="mdui-textfield mdui-textfield-floating-label">
                             <label class="mdui-textfield-label">邮箱</label>
-                            <input class="mdui-textfield-input" type="email" name="user" required />
+                            <input class="mdui-textfield-input" type="text" name="user" required />
                             <div class="mdui-textfield-error">邮箱格式错误或为空</div>
                         </div>
                         <div class="mdui-textfield mdui-textfield-floating-label">
