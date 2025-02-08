@@ -5,10 +5,14 @@ import { Header, Footer } from "./Common"
 export function PEdit(z: PEditProps) {
     return html`
         ${Header(z)}
-        <main class="container">
-            <div name="content">${z.content}</div>
-            <button onclick="save()">提交</button>
-            <button onclick="omit()">删除</button>
+        <main class="mdui-container">
+            <div class="mdui-row mdui-m-t-2">
+                <div name="content">${z.content}</div>
+                <div class="mdui-row mdui-m-t-2">
+                    <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" onclick="save()">提交</button>
+                    <button class="mdui-btn mdui-btn-raised mdui-ripple" onclick="omit()">删除</button>
+                </div>
+            </div>
         </main>
         <script src="/quill.js"></script>
         <script>
