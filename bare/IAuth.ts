@@ -5,14 +5,39 @@ import { Header, Footer } from "./Common"
 export function IAuth(z: Props) {
     return html`
         ${Header(z)}
-        <main class="container">
-            <form onsubmit="auth(this);">
-                <input type="text" name="user" placeholder="邮箱" required style="font-size:26px;display:block;" />
-                <input type="password" name="pass" placeholder="密码" required style="font-size:26px;display:block;" />
-                <input type="password" name="pass_repeat" placeholder="重复密码" style="font-size:26px;display:none;" />
-                <input type="submit" name="login" value="登录" style="font-size:26px;" />
-                <input type="submit" name="register" value="注册" style="font-size:26px;" />
-                <a href="javascript:history.back()" style="font-size:26px;">返回</a>
+        <main class="mdui-container">
+            <form onsubmit="auth(this);" style="width: 40%; height: 100%; margin-top: 240px;" class="mdui-center mdui-valign">
+                <div class="mdui-card mdui-container">
+                    <div class="mdui-card-header">
+                        <div class="mdui-card-header-avatar">
+                            <button class="mdui-btn mdui-float-right mdui-btn-icon mdui-ripple" onclick="javascript:history.back()">
+                                <i class="mdui-icon material-icons">arrow_back</i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mdui-card-content">
+                        <div class="mdui-textfield mdui-textfield-floating-label">
+                            <label class="mdui-textfield-label">邮箱</label>
+                            <input class="mdui-textfield-input" type="email" name="user" required />
+                            <div class="mdui-textfield-error">邮箱格式错误或为空</div>
+                        </div>
+                        <div class="mdui-textfield mdui-textfield-floating-label">
+                            <label class="mdui-textfield-label">密码</label>
+                            <input class="mdui-textfield-input" type="password" name="pass" required />
+                            <div class="mdui-textfield-error">密码不能为空</div>
+                        </div>
+                        <div class="mdui-textfield mdui-textfield-floating-label">
+                            <label class="mdui-textfield-label">重复密码</label>
+                            <input class="mdui-textfield-input" type="password" name="pass_repeat" style="display:none;"/>
+                        </div>
+                    </div>
+
+                    <div class="mdui-card-actions">
+                        <button class="mdui-btn mdui-ripple mdui-btn-block mdui-m-b-2 mdui-color-theme-accent" type="submit" name="login">登录</button>
+                        <button class="mdui-btn mdui-ripple mdui-btn-block mdui-m-b-2" type="submit" name="register">注册</button>
+                    </div>
+                </div>
             </form>
             <script>
                 // 祖传大坨MD5
