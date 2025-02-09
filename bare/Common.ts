@@ -79,7 +79,7 @@ export function Footer(z: Props) {
         <script>
             async function logout() {
                 if ((await fetch(new Request("/logout", {method: "POST"}))).ok) {
-                    location.reload();
+                    window.location.href = "/";
                 }
             }
             window.addEventListener('load', function() {
