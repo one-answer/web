@@ -6,7 +6,7 @@ export function IAuth(z: Props) {
     return html`
         ${Header(z)}
         <main class="mdui-container">
-            <form onsubmit="auth(this);" style="width: 40%; height: 100%; margin-top: 240px;" class="mdui-center mdui-valign">
+            <form onsubmit="auth(this);" class="mdui-center mdui-valign mdui-m-t-5">
                 <div class="mdui-card mdui-container">
                     <div class="mdui-card-header">
                         <div class="mdui-card-header-avatar">
@@ -46,23 +46,76 @@ export function IAuth(z: Props) {
                     event.preventDefault();
                     if (event.submitter.name == 'register') {
                         const data = new FormData(form);
-                        if (!data.get('user')) {alert('邮箱地址为空');return;}
-                        if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(data.get('user'))) {alert('邮箱格式错误');return;}
+                        if (!data.get('user')) {
+                            mdui.dialog({
+                                title: '错误',
+                                content: '邮箱地址为空',
+                                buttons: [
+                                    {
+                                    text: '关闭'
+                                    }
+                                ]
+                            });
+                            return;
+                        }
+                        if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(data.get('user'))) {
+                            mdui.dialog({
+                                title: '错误',
+                                content: '邮箱格式错误',
+                                buttons: [
+                                    {
+                                    text: '关闭'
+                                    }
+                                ]
+                            });
+                            return;
+                        }
                         document.querySelector('input[name="pass_repeat"]').style.display = 'block';
-                        if (!data.get('pass_repeat')) {return;}
-                        if (data.get('pass') != data.get('pass_repeat')) {alert('密码不一致');return;}
+                        if (!data.get('pass_repeat')) { return; }
+                        if (data.get('pass') != data.get('pass_repeat')) {
+                            mdui.dialog({
+                                title: '错误',
+                                content: '密码不一致',
+                                buttons: [
+                                    {
+                                    text: '关闭'
+                                    }
+                                ]
+                            });
+                            return;
+                        }
                         data.set('pass', md5(data.get('pass')));
                         data.delete('pass_repeat');
                         if ((await fetch(new Request('/register', {method: 'POST', body: data}))).ok) {
                             window.location='/i';
-                        } else { alert('注册失败，邮箱已存在？'); }
+                        } else {
+                            mdui.dialog({
+                                title: '错误',
+                                content: '注册失败。邮箱已存在？',
+                                buttons: [
+                                    {
+                                    text: '关闭'
+                                    }
+                                ]
+                            });
+                        }
                     } else {
                         document.querySelector('input[name="pass_repeat"]').style.display = 'none';
                         const data = new FormData(form);
                         data.set('pass', md5(data.get('pass')));
                         if ((await fetch(new Request('/login', {method: 'POST', body: data}))).ok) {
                             window.location=document.referrer
-                        } else { alert('登录失败'); }
+                        } else {
+                            mdui.dialog({
+                                title: '错误',
+                                content: '用户名或密码错误，请重试。',
+                                buttons: [
+                                    {
+                                    text: '关闭'
+                                    }
+                                ]
+                            });
+                        }
                     }
                 }
             </script>
