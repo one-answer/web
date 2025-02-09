@@ -12,8 +12,8 @@ export function PList(z: PListProps) {
                 <div class="mdui-card mdui-m-b-2" id="p${item.pid}">
                     <div class="mdui-card-content">
                         ${item.quote_name ? html`
-                        <blockquote class="blockquote mdui-color-theme">
-                            <span class="mdui-text-color-theme">${raw(item.quote_name)}: ${raw(HTMLText(item.quote_content, 140))}</span>
+                        <blockquote class="blockquote mdui-color-theme-50">
+                            <span class="mdui-text-color-theme-text">${raw(item.quote_name)}: ${raw(HTMLText(item.quote_content, 140))}</span>
                         </blockquote>
                         ` : ''}
                         ${raw(item.content)}
