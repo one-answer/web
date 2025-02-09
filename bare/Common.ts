@@ -24,9 +24,37 @@ export async function Header(z: Props) {
                 <a href="/" class="mdui-typo-headline">${Config.get('site_name')}</a>
                 <div class="mdui-toolbar-spacer"></div>
                 <div>
-                    <input type="checkbox" id="menu-toggle" class="menu-toggle">
-                    <label for="menu-toggle" class="menu-toggle-label">菜单 ☰</label>
-                    <div class="header-buttons">
+                    <ul class="mdui-menu mdui-hidden-md-up" id="phone-menu">
+                        ${z.i ? html`
+                            ${Object.hasOwn(z.a.req.param(), 'tid') ? html`
+                            <li class="mdui-menu-item">
+                                <a href="/e/${z.a.req.param('tid')}" class="mdui-ripple">回复</a>
+                            </li>
+                            ` : html`
+                            <li class="mdui-menu-item">
+                                <a href="/e" class="mdui-ripple">发表</a>
+                            </li>
+                            `}
+                            <li class="mdui-menu-item">
+                                <a class="mdui-ripple ${await Status(z.i.uid) ? 'mdui-text-color-theme-accent' : '' }" href="/n">通知</a>
+                            </li>
+                            <li class="mdui-menu-item">
+                                <a class="mdui-ripple" href="/i"}>设置</a>
+                            </li>
+                            <li class="mdui-divider"></li>
+                            <li class="mdui-menu-item">
+                                <a class="mdui-ripple" href="javascript:;" onclick="logout();">退出</a>
+                            </li>
+                        `: html`
+                            <li class="mdui-menu-item">
+                                <a class="mdui-ripple" href="/auth">登录</a>
+                            </li>
+                        `}
+                    </ul>
+                    <button id="menu-toggle" class="mdui-btn mdui-hidden-md-up" mdui-menu="{target: '#phone-menu'}">
+                        <i class="mdui-icon material-icons">menu</i> 菜单
+                    </button>
+                    <div class="mdui-hidden-sm-down">
                         ${z.i ? html`
                             ${Object.hasOwn(z.a.req.param(), 'tid') ? html`
                             <a class="mdui-btn mdui-btn-dense mdui-btn-raised mdui-ripple mdui-shadow-2" href="/e/${z.a.req.param('tid')}">回复</a>
