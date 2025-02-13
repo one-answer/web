@@ -11,8 +11,8 @@ ${Header(z)}
 </div>
 
 <nav class="flex justify-center space-x-4 my-6">
-    <button class="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600" onclick="save()">提交</button>
-    <button class="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600" onclick="omit()">删除</button>
+    <button class="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 cursor-pointer" onclick="save()">提交</button>
+    <button class="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 cursor-pointer" onclick="omit()">删除</button>
 </nav>
 
 <script src="/quill.js"></script>
