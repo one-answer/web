@@ -38,7 +38,7 @@ export async function Header(z: Props) {
         </ul>
     </div>
 </nav>
-<main class="flex-grow pt-20">
+<main class="flex-grow break-words break-all pt-20">
     `
 }
 
