@@ -3,7 +3,7 @@ import { HTMLText } from "../app/base";
 import { NListProps } from "../app/nList";
 
 export function NList(z: NListProps) {
-    return html`
+return html`
 <!DOCTYPE html>
 <html lang="zh">
 <head>
@@ -51,5 +51,5 @@ export function NList(z: NListProps) {
     </div>
 </body>
 </html>
-    `;
+`;
 }
