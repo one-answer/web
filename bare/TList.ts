@@ -7,25 +7,20 @@ export function TList(z: TListProps) {
     return html`
 ${Header(z)}
 
-<div class="container max-w-4xl mx-auto px-6 bg-white shadow-md rounded-lg divide-y divide-gray-200">
+<div class="container w-full mx-auto max-w-4xl px-6 bg-white shadow-md rounded-lg divide-y divide-gray-200">
 ${z.data.map(item => html`
-    <a class="py-3 flex justify-between items-center" href="/t/${item.tid}">
-        <div>
-            <div class="text-base font-medium">
-                ${raw(item.subject)}
-            </div>
-            <div class="text-xs text-gray-400 mt-1">
-                <span class="author">${item.name}</span>
-                <span class="date" time_stamp="${item.create_date}"></span>
-                ${item.last_name ? html`
-                &nbsp;&#x276E;&nbsp;
-                <span class="author">${item.last_name}</span>
-                <span class="date" time_stamp="${item.last_date}"></span>
-                ` : ''}
-            </div>
+    <a class="py-3 block" href="/t/${item.tid}">
+        <div class="text-base font-medium">
+            ${raw(item.subject)}
         </div>
-        <div class="flex items-center space-x-4 text-sm text-gray-400 font-medium">
-            &#x276E;&nbsp;${item.posts - 1}
+        <div class="text-xs text-gray-400 mt-1">
+            <span class="author">${item.name}</span>
+            <span class="date" time_stamp="${item.create_date}"></span>
+            ${item.last_name ? html`
+            &nbsp;&#x276E;&nbsp;${item.posts - 1}&nbsp;
+            <span class="author">${item.last_name}</span>
+            <span class="date" time_stamp="${item.last_date}"></span>
+            ` : ''}
         </div>
     </a>
 `)}
