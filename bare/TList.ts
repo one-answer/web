@@ -9,12 +9,11 @@ ${Header(z)}
 
 <div class="space-y-2">
 ${z.data.map(item => html`
-    <a class="container block w-full mx-auto max-w-4xl px-6 py-3 bg-white shadow-md rounded-lg" href="/t/${item.tid}">
+    <a class="container block w-full mx-auto max-w-4xl px-6 py-3 bg-white shadow-md rounded-lg  ${item.is_top ? 'border-l-4 border-gray-500 pl-5' : ''}" href="/t/${item.tid}">
         <div class="text-base font-normal">
             ${raw(item.subject)}
         </div>
         <div class="text-xs text-gray-400 mt-1">
-            ${item.is_top ? raw(`<span>&#9206;</span>`) : ''}
             <span class="author">${item.name}</span>
             <span class="date" time_stamp="${item.create_date}"></span>
             ${item.last_name ? html`
