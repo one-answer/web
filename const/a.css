@@ -717,13 +717,13 @@
     border-style: var(--tw-border-style);
     border-width: 1px;
   }
-  .border-t-4 {
-    border-top-style: var(--tw-border-style);
-    border-top-width: 4px;
-  }
   .border-b {
     border-bottom-style: var(--tw-border-style);
     border-bottom-width: 1px;
+  }
+  .border-l-4 {
+    border-left-style: var(--tw-border-style);
+    border-left-width: 4px;
   }
   .border-gray-500 {
     border-color: var(--color-gray-500);
@@ -773,14 +773,14 @@
   .py-6 {
     padding-block: calc(var(--spacing) * 6);
   }
-  .pt-2 {
-    padding-top: calc(var(--spacing) * 2);
-  }
   .pt-20 {
     padding-top: calc(var(--spacing) * 20);
   }
   .pb-6 {
     padding-bottom: calc(var(--spacing) * 6);
+  }
+  .pl-5 {
+    padding-left: calc(var(--spacing) * 5);
   }
   .text-center {
     text-align: center;

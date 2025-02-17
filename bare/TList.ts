@@ -4,12 +4,13 @@ import { Header, Footer } from "./Common"
 import { URLQuery } from "../app/base";
 
 export function TList(z: TListProps) {
+    const lastDateArr = Array.from(z.data.values().map(value => value.last_date));
     return html`
 ${Header(z)}
 
 <div class="space-y-2">
 ${z.data.map(item => html`
-    <a class="container block w-full mx-auto max-w-4xl px-6 py-3 bg-white shadow-md rounded-lg  ${item.is_top ? 'border-t-4 border-gray-500 pt-2' : ''}" href="/t/${item.tid}">
+    <a class="container block w-full mx-auto max-w-4xl px-6 py-3 bg-white shadow-md rounded-lg  ${item.is_top ? 'border-l-4 border-gray-500 pl-5' : ''}" href="/t/${item.tid}">
         <div class="text-base font-normal">
             ${raw(item.subject)}
         </div>
@@ -28,10 +29,10 @@ ${z.data.map(item => html`
 
 ${z.data.length ? html`
 <nav class="flex justify-center space-x-4 mt-6">
-    <a href="/m/${z.data.at(0)?.last_date}${URLQuery(z.a)}" class="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600">
+    <a href="/m/${Math.max(...lastDateArr)}${URLQuery(z.a)}" class="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600">
         上页
     </a>
-    <a href="/l/${z.data.at(-1)?.last_date}${URLQuery(z.a)}" class="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600">
+    <a href="/l/${Math.min(...lastDateArr)}${URLQuery(z.a)}" class="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600">
         下页
     </a>
 </nav>
