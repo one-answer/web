@@ -14,7 +14,7 @@ ${z.data.map(item => html`
             ${raw(item.subject)}
         </div>
         <div class="text-xs text-gray-400 mt-1">
-            ${item.is_top ? raw(`&#11165;`) : ''}
+            ${item.is_top ? raw(`<span>&#11165;</span>`) : ''}
             <span class="author">${item.name}</span>
             <span class="date" time_stamp="${item.create_date}"></span>
             ${item.last_name ? html`
