@@ -11,7 +11,7 @@ export async function Header(z: Props) {
   <title>${z.title}</title>
   <link rel="stylesheet" type="text/css" href="/a.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  ${z.external_css ?? ''}
+  ${z.external ?? ''}
 </head>
 <body class="h-full flex flex-col">
 <nav class="fixed top-0 left-0 w-full bg-white shadow-md z-50">

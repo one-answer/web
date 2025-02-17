@@ -4,6 +4,13 @@ import { PListProps } from "../app/pList";
 import { Header, Footer } from "./Common"
 
 export function PList(z: PListProps) {
+    z.external = raw(`
+    <style>
+        .content a {
+            text-decoration: underline;
+        }
+    </style>
+    `);
     return html`
 ${Header(z)}
 
@@ -15,13 +22,16 @@ ${z.data.map(item => html`
             ${raw(item.quote_name)}: ${raw(HTMLText(item.quote_content, 140))}
         </blockquote>
         ` : ''}
-        <div class="text-base font-medium">
+        <div class="text-base font-medium content">
             ${raw(item.content)}
         </div>
         <div class="text-xs text-gray-400 mt-1">
             <a href="/?uid=${item.uid}" target="_blank" class="author">${item.name}</a>
             <span class="date" time_stamp="${item.create_date}"></span>
             ${(z.i) ? html`
+            ${(z.i.gid == 1 && !item.tid) ? html`
+            <a class="sticky ${z.thread.is_top ? 'font-bold' : ''}" href="javascript:peak(${item.pid});">置顶</a>
+            `: ''}
             ${(z.i.uid == item.uid || z.i.gid == 1) ? html`
             <a class="edit" href="/e/-${item.pid}">编辑</a>
             <a class="delete" href="javascript:omit(-${item.pid});">删除</a>
@@ -45,6 +55,13 @@ ${z.data.length ? html`
 `: ''}
 
 <script>
+async function peak(tid){
+        if(!confirm('置顶/取消置顶?')){return;}
+        const result = await fetch(new Request('/t/'+tid, {method: 'PUT'}))
+        if (result.ok) {
+            location.reload();
+        } else { alert('置顶失败：'+ await result.text()); }
+    }
     async function omit(eid){
         if(!confirm('真的要删除吗?')){return;}
         const result = await fetch(new Request('/e/'+eid, {method: 'DELETE'}))

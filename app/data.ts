@@ -41,6 +41,7 @@ export const Thread = sqliteTable("thread", {
     tid: integer().primaryKey(),
     uid: integer().notNull().default(0),
     access: integer().notNull().default(0),
+    is_top: integer().notNull().default(0),
     create_date: integer().notNull().default(0),
     last_date: integer().notNull().default(0),
     last_uid: integer().notNull().default(0),
@@ -68,5 +69,5 @@ export interface Props {
     a: Context
     i: I | undefined
     title: string
-    external_css?: string
+    external?: string
 }

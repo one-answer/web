@@ -1,8 +1,11 @@
-import { html } from "hono/html";
+import { html, raw } from "hono/html";
 import { PEditProps } from "../app/pEdit";
 import { Header, Footer } from "./Common"
 
 export function PEdit(z: PEditProps) {
+    z.external = raw(`
+        <link href="/quill.snow.css" rel="stylesheet" />
+    `)
     return html`
 ${Header(z)}
 

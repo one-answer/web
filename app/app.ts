@@ -7,6 +7,7 @@ import { iLogin, iLogout, iRegister, iSave } from './iData';
 import { iAuth } from './iAuth';
 import { iConf } from './iConf';
 import { pEdit } from './pEdit';
+import { tPeak } from './tData';
 import { nListInit, nListLessThan, nListMoreThan } from './nList';
 import { pListInit, pListLessThan, pListMoreThan } from './pList';
 import { tListInit, tListLessThan, tListMoreThan } from './tList';
@@ -24,6 +25,7 @@ export default await (async () => {
     app.get('/t/:tid{[0-9]+}', pListInit);
     app.get('/t/:tid{[0-9]+}/l/:pivot{[0-9]+}?', pListLessThan);
     app.get('/t/:tid{[0-9]+}/m/:pivot{[0-9]+}?', pListMoreThan);
+    app.put('/t/:tid{[-0-9]+}?', tPeak);
 
     app.get('/e/:eid{[-0-9]+}?', pEdit);
     app.post('/e/:eid{[-0-9]+}?', pSave);

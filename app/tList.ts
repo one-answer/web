@@ -1,7 +1,7 @@
 import { Context } from "hono";
 import { Props, DB, Thread, User } from "./data";
 import { Auth, Config } from "./base";
-import { and, desc, eq, getTableColumns, gt, lt } from 'drizzle-orm';
+import { and, desc, eq, getTableColumns, gt, lt, or } from 'drizzle-orm';
 import { alias } from "drizzle-orm/sqlite-core";
 import { TList } from "../bare/TList";
 
@@ -29,6 +29,7 @@ export async function tList(a: Context, pivot: number, reverse: boolean = false)
         .from(Thread)
         .where(and(
             eq(Thread.access, 0),
+            or(eq(Thread.is_top, 1), eq(Thread.is_top, 0)),
             (uid ? eq(Thread.uid, uid) : undefined),
             pivot ? (reverse ?
                 gt(Thread.last_date, pivot) :
@@ -37,7 +38,7 @@ export async function tList(a: Context, pivot: number, reverse: boolean = false)
         ))
         .leftJoin(User, eq(Thread.uid, User.uid))
         .leftJoin(LastUser, eq(Thread.last_uid, LastUser.uid))
-        .orderBy(desc(Thread.last_date))
+        .orderBy(desc(Thread.is_top), desc(Thread.last_date))
         .limit(Config.get('page_size_t'))
     const title = Config.get('site_name')
     return a.html(TList({ a, i, data, title }));

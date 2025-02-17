@@ -15,9 +15,6 @@ export async function pEdit(a: Context) {
     if (!i) { return a.text('401', 401) }
     const time = Math.floor(Date.now() / 1000)
     const eid = parseInt(a.req.param('eid') ?? '0')
-    const external_css = raw(`
-        <link href="/quill.snow.css" rel="stylesheet" />
-    `)
     let title = ""
     let content = ''
     if (eid < 0) {
@@ -39,5 +36,5 @@ export async function pEdit(a: Context) {
     } else {
         title = "发表"
     }
-    return a.html(PEdit({ a, i, title, external_css, eid, content }));
+    return a.html(PEdit({ a, i, title, eid, content }));
 }
