@@ -9,7 +9,7 @@ ${Header(z)}
 
 <div class="space-y-2">
 ${z.data.map(item => html`
-    <a class="container block w-full mx-auto max-w-4xl px-6 py-3 bg-white shadow-md rounded-lg  ${item.is_top ? 'border-l-4 border-gray-500 pl-5' : ''}" href="/t/${item.tid}">
+    <a class="container block w-full mx-auto max-w-4xl px-6 py-3 bg-white shadow-md rounded-lg  ${item.is_top ? 'border-t-4 border-gray-500 pt-2' : ''}" href="/t/${item.tid}">
         <div class="text-base font-normal">
             ${raw(item.subject)}
         </div>
