@@ -7,10 +7,10 @@ export function TList(z: TListProps) {
     return html`
 ${Header(z)}
 
-<div class="container w-full mx-auto max-w-4xl px-6 bg-white shadow-md rounded-lg divide-y divide-gray-200">
+<div class="space-y-2">
 ${z.data.map(item => html`
-    <a class="py-3 block" href="/t/${item.tid}">
-        <div class="text-base font-medium">
+    <a class="container block w-full mx-auto max-w-4xl px-6 py-3 bg-white shadow-md rounded-lg" href="/t/${item.tid}">
+        <div class="text-base font-normal">
             ${raw(item.subject)}
         </div>
         <div class="text-xs text-gray-400 mt-1">

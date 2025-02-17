@@ -14,15 +14,15 @@ export function PList(z: PListProps) {
     return html`
 ${Header(z)}
 
-<div class="container w-full mx-auto max-w-4xl px-6 bg-white shadow-md rounded-lg divide-y divide-gray-200">
+<div class="space-y-2">
 ${z.data.map(item => html`
-    <div id="p${item.pid}" class="py-3">
+    <div id="p${item.pid}" class="container block w-full mx-auto max-w-4xl px-6 py-3 bg-white shadow-md rounded-lg">
         ${item.quote_name ? html`
         <blockquote class="bg-gray-50 px-4 py-2 mb-2 text-gray-700 rounded-lg shadow-inner">
             ${raw(item.quote_name)}: ${raw(HTMLText(item.quote_content, 140))}
         </blockquote>
         ` : ''}
-        <div class="text-base font-medium content">
+        <div class="text-base font-normal content">
             ${raw(item.content)}
         </div>
         <div class="text-xs text-gray-400 mt-1">
