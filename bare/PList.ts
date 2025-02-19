@@ -5,11 +5,11 @@ import { Header, Footer } from "./Common"
 
 export function PList(z: PListProps) {
     z.external = raw(`
-    <style>
-        .content a {
-            text-decoration: underline;
-        }
-    </style>
+        <style>
+            .content a {
+                text-decoration: underline;
+            }
+        </style>
     `);
     return html`
 ${Header(z)}
