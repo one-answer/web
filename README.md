@@ -1,15 +1,5 @@
-To install dependencies:
-```sh
+装依赖：
 bun install
-```
-
-To run:
-```sh
-bun run dev
-```
-
-open http://localhost:3000
-
 
 杀进程：
 while pgrep -f "bun"; do pkill -f "bun"; done;
@@ -18,4 +8,4 @@ while pgrep -f "bun"; do pkill -f "bun"; done;
 cd /www/a && git fetch && git reset --hard && git pull
 
 热启动：
-cd /www/a && chmod 755 *; nohup bun run dev > app.log 2>&1 &
+cd /www/a && chmod 755 *; nohup bun dev > app.log 2>&1 &

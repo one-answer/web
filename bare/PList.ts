@@ -16,7 +16,7 @@ ${Header(z)}
 
 <div class="space-y-2">
 ${z.data.map(item => html`
-    <div id="p${item.pid}" class="container block w-full mx-auto max-w-4xl px-6 py-3 bg-white shadow-md rounded-lg">
+    <div id="p${item.pid}" class="container block w-full mx-auto max-w-4xl px-5 py-3 bg-white shadow-md rounded-lg">
         ${item.quote_name ? html`
         <blockquote class="bg-gray-50 px-4 py-2 mb-2 text-gray-700 rounded-lg shadow-inner">
             ${raw(item.quote_name)}: ${raw(HTMLText(item.quote_content, 140))}
