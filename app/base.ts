@@ -19,19 +19,19 @@ export class Config {
     }
 }
 
-export class Counter {
+export class Cache {
     // 正数：用户状态 负数：用户上次发帖时间（防止频繁发帖）
-    private static counters: Map<number, number> = new Map();
+    private static data: Map<number, number> = new Map();
     private constructor() { }
     public static get(key: number): number | undefined {
-        return Counter.counters.get(key);
+        return Cache.data.get(key);
     }
     public static set(key: number, val: number): number {
-        Counter.counters.set(key, val);
+        Cache.data.set(key, val);
         return val;
     }
     public static del(key: number) {
-        Counter.counters.delete(key);
+        Cache.data.delete(key);
     }
 }
 
@@ -58,10 +58,10 @@ export async function Auth(a: Context) {
 
 export async function Status(uid: number, status: 0 | 1 | 10 | 20 | null | undefined = undefined) {
     // 无提醒:0 有提醒:1 要刷新:10 已刷新:20 (从用户缓存中清除要刷新状态)
-    const counter = Counter.get(uid);
-    const noreset = (counter ?? 0) < 10;
+    const cache = Cache.get(uid);
+    const noreset = (cache ?? 0) < 10;
     if (status == undefined) {
-        return counter ?? Counter.set(uid, (await DB
+        return cache ?? Cache.set(uid, (await DB
             .select({ unread: Notice.unread })
             .from(Notice)
             .where(and(
@@ -71,23 +71,23 @@ export async function Status(uid: number, status: 0 | 1 | 10 | 20 | null | undef
             .limit(1)
         )?.[0]?.unread ?? 0)
     } else if (status == null) {
-        Counter.del(uid)
+        Cache.del(uid)
     } else if (status == 0) {
         if (noreset) {
-            Counter.set(uid, 0)
+            Cache.set(uid, 0)
         } else {
-            Counter.set(uid, 10)
+            Cache.set(uid, 10)
         }
     } else if (status == 1) {
         if (noreset) {
-            Counter.set(uid, 1)
+            Cache.set(uid, 1)
         } else {
-            Counter.set(uid, 11)
+            Cache.set(uid, 11)
         }
     } else if (status == 10 && noreset) {
-        Counter.set(uid, (counter ?? 0) + 10)
+        Cache.set(uid, (cache ?? 0) + 10)
     } else if (status == 20 && !noreset) {
-        Counter.set(uid, counter! - 10)
+        Cache.set(uid, cache! - 10)
     }
     return 0;
 }
