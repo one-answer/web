@@ -20,6 +20,7 @@ export class Config {
 }
 
 export class Counter {
+    // 正数：用户状态 负数：用户上次发帖时间（防止频繁发帖）
     private static counters: Map<number, number> = new Map();
     private constructor() { }
     public static get(key: number): number | undefined {
@@ -56,7 +57,7 @@ export async function Auth(a: Context) {
 }
 
 export async function Status(uid: number, status: 0 | 1 | 10 | 20 | null | undefined = undefined) {
-    // 无提醒:1 有提醒:2 要刷新:10
+    // 无提醒:0 有提醒:1 要刷新:10 已刷新:20 (从用户缓存中清除要刷新状态)
     const counter = Counter.get(uid);
     const noreset = (counter ?? 0) < 10;
     if (status == undefined) {
