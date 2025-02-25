@@ -32,12 +32,12 @@ export async function tList(a: Context) {
         .from(Thread)
         .where(and(
             eq(Thread.access, 0),
-            or(eq(Thread.is_top, 1), eq(Thread.is_top, 0)),
             (uid ? eq(Thread.uid, uid) : undefined),
+            or(eq(Thread.is_top, 1), eq(Thread.is_top, 0)),
         ))
         .leftJoin(User, eq(Thread.uid, User.uid))
         .leftJoin(LastUser, eq(Thread.last_uid, LastUser.uid))
-        .orderBy(desc(Thread.is_top), desc(Thread.last_date))
+        .orderBy(desc(Thread.is_top), desc(uid ? Thread.create_date : Thread.last_date))
         .offset((page - 1) * Config.get('page_size_t'))
         .limit(Config.get('page_size_t'))
     const pagination = Pagination(Config.get('page_size_t'), await Counter.get(uid, 0), page, 2)

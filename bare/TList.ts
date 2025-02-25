@@ -4,7 +4,6 @@ import { Header, Footer } from "./Common"
 import { URLQuery } from "../app/base";
 
 export function TList(z: TListProps) {
-    const lastDateArr = Array.from(z.data.values().map(value => value.last_date));
     return html`
 ${Header(z)}
 
