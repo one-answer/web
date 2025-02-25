@@ -15,7 +15,6 @@ export interface PListProps extends Props {
         gid: number | null;
         quote_content: string | null;
         quote_name: string | null;
-        count: number;
     })[]
 }
 
@@ -42,7 +41,6 @@ export async function pList(a: Context, pivot: number, reverse: boolean = false)
             gid: User.gid,
             quote_content: QuotePost.content,
             quote_name: QuoteUser.name,
-            count: sql<number>`COUNT() OVER()`,
         })
         .from(Post)
         .where(and(

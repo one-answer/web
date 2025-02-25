@@ -15,6 +15,8 @@ import { tListInit, tListLessThan, tListMoreThan } from './tList';
 export default await (async () => {
 
     await Config.init();
+
+
     const app = new Hono();
     app.use(csrf());
 
