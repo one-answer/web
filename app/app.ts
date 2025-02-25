@@ -7,28 +7,21 @@ import { iLogin, iLogout, iRegister, iSave } from './iData';
 import { iAuth } from './iAuth';
 import { iConf } from './iConf';
 import { pEdit } from './pEdit';
+import { pList } from './pList';
+import { tList } from './tList';
 import { tPeak } from './tData';
 import { nListInit, nListLessThan, nListMoreThan } from './nList';
-import { pListInit, pListLessThan, pListMoreThan } from './pList';
-import { tListInit, tListLessThan, tListMoreThan } from './tList';
 
 export default await (async () => {
 
     await Config.init();
-
-
     const app = new Hono();
     app.use(csrf());
 
-    app.get('/', tListInit);
-    app.get('/m/:pivot{[0-9]+}?', tListMoreThan);
-    app.get('/l/:pivot{[0-9]+}?', tListLessThan);
+    app.get('/:page{[0-9]+}?', tList);
+    app.get('/t/:tid{[0-9]+}/:page{[0-9]+}?', pList);
 
-    app.get('/t/:tid{[0-9]+}', pListInit);
-    app.get('/t/:tid{[0-9]+}/l/:pivot{[0-9]+}?', pListLessThan);
-    app.get('/t/:tid{[0-9]+}/m/:pivot{[0-9]+}?', pListMoreThan);
     app.put('/t/:tid{[-0-9]+}?', tPeak);
-
     app.get('/e/:eid{[-0-9]+}?', pEdit);
     app.post('/e/:eid{[-0-9]+}?', pSave);
     app.delete('/e/:eid{[-0-9]+}?', pOmit);

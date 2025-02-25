@@ -1,14 +1,15 @@
 import { Context } from "hono";
-import { Props, DB, Notice, Post, Thread, User } from "./data";
-import { Auth, Config, Status } from "./base";
-import { asc, eq, or, getTableColumns, and, sql, lte, lt, gt } from 'drizzle-orm';
+import { Props, DB, Post, Thread, User } from "./data";
+import { Auth, Config, Counter, Pagination } from "./base";
+import { asc, eq, or, getTableColumns, and } from 'drizzle-orm';
 import { alias } from "drizzle-orm/sqlite-core";
 import { raw } from "hono/html";
 import { PList } from "../bare/PList";
 
 export interface PListProps extends Props {
     thread: typeof Thread.$inferSelect
-    pid: number
+    page: number
+    pagination: number[]
     data: (typeof Post.$inferSelect & {
         name: string | null;
         credits: number | null;
@@ -18,7 +19,7 @@ export interface PListProps extends Props {
     })[]
 }
 
-export async function pList(a: Context, pivot: number, reverse: boolean = false) {
+export async function pList(a: Context) {
     const i = await Auth(a)
     const tid = parseInt(a.req.param('tid'))
     const thread = (await DB
@@ -30,6 +31,7 @@ export async function pList(a: Context, pivot: number, reverse: boolean = false)
         ))
     )?.[0]
     if (!thread) { return a.notFound() }
+    const page = parseInt(a.req.param('page') ?? '0') || 1
     const uid = parseInt(a.req.query('uid') ?? '0')
     const QuotePost = alias(Post, 'QuotePost')
     const QuoteUser = alias(User, 'QuoteUser')
@@ -47,59 +49,20 @@ export async function pList(a: Context, pivot: number, reverse: boolean = false)
             // access
             eq(Post.access, 0),
             // uid | quote_uid
-            (uid ?
-                ((uid > 0) ? eq(Post.uid, uid) : or(eq(Post.uid, -uid), eq(Post.quote_uid, -uid)))
-                : undefined
-            ),
+            (uid ? eq(Post.uid, uid) : undefined),
             // tid - pid
             or(
                 and(eq(Post.tid, 0), eq(Post.pid, tid)),
                 eq(Post.tid, tid),
             ),
-            pivot ? (reverse ?
-                lt(Post.pid, pivot) :
-                gt(Post.pid, pivot)
-            ) : undefined,
         ))
         .leftJoin(User, eq(Post.uid, User.uid))
         .leftJoin(QuotePost, and(eq(Post.quote_pid, QuotePost.pid), eq(QuotePost.access, 0)))
         .leftJoin(QuoteUser, and(eq(QuotePost.uid, QuoteUser.uid), eq(QuotePost.access, 0)))
         .orderBy(asc(Post.pid))
+        .offset((page - 1) * Config.get('page_size_p'))
         .limit(Config.get('page_size_p'))
-    if (i && uid < 0) {
-        const page_pid = data.at(-1)?.pid ?? 0
-        const notice = (await DB
-            .update(Notice)
-            .set({
-                read_pid: page_pid,
-                unread: sql`CASE WHEN ${Notice.last_pid} <= ${page_pid} THEN 0 ELSE 1 END`,
-            })
-            .where(
-                and(
-                    eq(Notice.tid, thread.tid),
-                    eq(Notice.uid, i.uid),
-                    lte(Notice.read_pid, page_pid),
-                )
-            )
-            .returning()
-        )?.[0]
-        if (notice && !notice.unread) {
-            Status(i.uid, 0)
-        }
-    }
+    const pagination = Pagination(Config.get('page_size_p'), await Counter.get(uid, tid), page, 2)
     const title = raw(thread.subject)
-    const pid = parseInt(a.req.query('pid') ?? 'Infinity')
-    return a.html(PList({ a, i, thread, data, title, pid }));
-}
-
-export async function pListInit(a: Context) {
-    return await pList(a, 0)
-}
-
-export async function pListMoreThan(a: Context) {
-    return await pList(a, parseInt(a.req.param('pivot') ?? '0'))
-}
-
-export async function pListLessThan(a: Context) {
-    return await pList(a, parseInt(a.req.param('pivot') ?? '0'), true)
+    return a.html(PList({ a, i, thread, page, pagination, data, title }));
 }

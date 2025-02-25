@@ -3,7 +3,7 @@ import { HTMLText } from "../app/base";
 import { NListProps } from "../app/nList";
 
 export function NList(z: NListProps) {
-return html`
+    return html`
 <!DOCTYPE html>
 <html lang="zh">
 <head>
@@ -39,7 +39,7 @@ return html`
         ${z.data.map(item => html`
         <hr />
         <div style="${item.unread ? 'background:yellow' : ''}">
-            <a href="/t/${item.tid}/m/${item.read_pid - 1}?uid=-${item.uid}#p${item.read_pid}" target="contentFrame">
+            <a href="/t/${item.tid}#p${item.read_pid}" target="contentFrame">
                 ${raw(item.subject)}<br />
                 <small>${raw(HTMLText(item.content, 20))}</small>
             </a>

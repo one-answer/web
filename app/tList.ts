@@ -1,11 +1,13 @@
 import { Context } from "hono";
 import { Props, DB, Thread, User } from "./data";
-import { Auth, Config } from "./base";
-import { and, desc, eq, getTableColumns, gt, lt, or } from 'drizzle-orm';
+import { Auth, Config, Counter, Pagination } from "./base";
+import { and, desc, eq, getTableColumns, or } from 'drizzle-orm';
 import { alias } from "drizzle-orm/sqlite-core";
 import { TList } from "../bare/TList";
 
 export interface TListProps extends Props {
+    page: number
+    pagination: number[]
     data: (typeof Thread.$inferSelect & {
         name: string | null;
         credits: number | null;
@@ -14,8 +16,9 @@ export interface TListProps extends Props {
     })[]
 }
 
-export async function tList(a: Context, pivot: number, reverse: boolean = false) {
+export async function tList(a: Context) {
     const i = await Auth(a)
+    const page = parseInt(a.req.param('page') ?? '0') || 1
     const uid = parseInt(a.req.query('uid') ?? '0')
     const LastUser = alias(User, 'LastUser')
     const data = await DB
@@ -31,27 +34,13 @@ export async function tList(a: Context, pivot: number, reverse: boolean = false)
             eq(Thread.access, 0),
             or(eq(Thread.is_top, 1), eq(Thread.is_top, 0)),
             (uid ? eq(Thread.uid, uid) : undefined),
-            pivot ? (reverse ?
-                gt(Thread.last_date, pivot) :
-                lt(Thread.last_date, pivot)
-            ) : undefined,
         ))
         .leftJoin(User, eq(Thread.uid, User.uid))
         .leftJoin(LastUser, eq(Thread.last_uid, LastUser.uid))
         .orderBy(desc(Thread.is_top), desc(Thread.last_date))
+        .offset((page - 1) * Config.get('page_size_t'))
         .limit(Config.get('page_size_t'))
+    const pagination = Pagination(Config.get('page_size_t'), await Counter.get(uid, 0), page, 2)
     const title = Config.get('site_name')
-    return a.html(TList({ a, i, data, title }));
-}
-
-export async function tListInit(a: Context) {
-    return await tList(a, 0)
-}
-
-export async function tListLessThan(a: Context) {
-    return await tList(a, parseInt(a.req.param('pivot') ?? '0'))
-}
-
-export async function tListMoreThan(a: Context) {
-    return await tList(a, parseInt(a.req.param('pivot') ?? '0'), true)
+    return a.html(TList({ a, i, page, pagination, data, title }));
 }

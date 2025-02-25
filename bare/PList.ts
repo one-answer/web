@@ -44,13 +44,14 @@ ${z.data.map(item => html`
 </div>
 
 ${z.data.length ? html`
-<nav class="flex justify-center space-x-4 mt-6">
-    <a href="/t/${z.thread.tid}/l/${z.data.at(0)?.pid}${URLQuery(z.a)}" class="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600">
-        上页
-    </a>
-    <a href="/t/${z.thread.tid}/m/${z.data.at(-1)?.pid}${URLQuery(z.a)}" class="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600">
-        下页
-    </a>
+<nav class="flex justify-center -space-x-px mt-6">
+    ${z.pagination.map(item => html`
+    <a ${item ? html`href="/t/${z.thread.tid}/${item}${URLQuery(z.a)}"` : ''} class="${item == z.page ?
+            'relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
+            :
+            'relative inline-flex items-center bg-white px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus:z-20 focus:outline-offset-0'
+        }">${item ? item : '...'}</a>
+    `)}
 </nav>
 `: ''}
 
