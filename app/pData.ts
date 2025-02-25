@@ -1,6 +1,6 @@
 import { Context } from "hono";
 import { DB, Notice, Post, Thread, User } from "./data";
-import { Auth, Cache, HTMLFilter, HTMLSubject, Status } from "./base";
+import { Auth, Cache, Counter, HTMLFilter, HTMLSubject, Status } from "./base";
 import { and, desc, eq, gt, lt, or, sql } from "drizzle-orm";
 
 export async function pSave(a: Context) {
@@ -9,7 +9,7 @@ export async function pSave(a: Context) {
     const time = Math.floor(Date.now() / 1000)
     const body = await a.req.formData()
     const eid = parseInt(a.req.param('eid') ?? '0')
-    if (eid < 0) {
+    if (eid < 0) { // 编辑
         const content = HTMLFilter(body.get('content')?.toString() ?? '')
         if (!content) { return a.text('406', 406) }
         const post = (await DB
@@ -35,7 +35,7 @@ export async function pSave(a: Context) {
                 .where(eq(Thread.tid, post.pid))
         }
         return a.text('ok')
-    } else if (eid > 0) {
+    } else if (eid > 0) { // 回复
         if (time - (Cache.get(-i.uid) ?? 0) < 60) { return a.text('too_fast', 403) }
         const post = (await DB
             .select()
@@ -83,6 +83,8 @@ export async function pSave(a: Context) {
                 golds: sql`${User.golds} + 1`,
             })
             .where(eq(User.uid, reply.uid))
+        Counter.add(0, thread.tid); // 帖子回复+1
+        Counter.add(reply.uid, thread.tid); // 用户帖子回复+1
         // 回复通知 Notice 开始
         // [通知]有回复所在的Thread 则更新自己的回帖
         await DB
@@ -119,7 +121,7 @@ export async function pSave(a: Context) {
         Cache.set(-i.uid, time)
         Status(i.uid, 10)
         return a.text('ok') //! 返回tid/pid和posts数量
-    } else {
+    } else { // 发帖
         if (time - (Cache.get(-i.uid) ?? 0) < 60) { return a.text('too_fast', 403) }
         const content = HTMLFilter(body.get('content')?.toString() ?? '')
         if (!content) { return a.text('406', 406) }
@@ -151,6 +153,8 @@ export async function pSave(a: Context) {
                 golds: sql`${User.golds} + 2`,
             })
             .where(eq(User.uid, i.uid))
+        Counter.add(0, 0); // 全局发帖+1
+        Counter.add(i.uid, 0); // 用户发帖+1
         Cache.set(-i.uid, time)
         Status(i.uid, 10)
         return a.text(String(post.pid))
@@ -207,6 +211,8 @@ export async function pOmit(a: Context) {
                 golds: sql`${User.golds} - 1`,
             })
             .where(eq(User.uid, post.uid))
+        Counter.sub(0, post.tid); // 帖子回复-1
+        Counter.sub(post.uid, post.tid); // 用户帖子回复-1
         // 历史提醒（用户自己）
         const post_u = (await DB
             .select()
@@ -307,6 +313,8 @@ export async function pOmit(a: Context) {
                 golds: sql`${User.golds} - 2`,
             })
             .where(eq(User.uid, post.uid))
+        Counter.sub(0, 0); // 全局发帖-1
+        Counter.sub(post.uid, 0); // 用户发帖-1
         const noticeUidArr = (await DB
             .delete(Notice)
             .where(and(
