@@ -12,7 +12,7 @@ import { tList } from './tList';
 import { tPeak } from './tData';
 import { nListInit, nListLessThan, nListMoreThan } from './nList';
 
-export default await (async () => {
+const hono = await (async () => {
 
     await Config.init();
     const app = new Hono();
@@ -43,3 +43,8 @@ export default await (async () => {
     return app;
 
 })();
+
+export default {
+    port: 3000,
+    fetch: hono.fetch,
+}

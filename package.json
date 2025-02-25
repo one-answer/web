@@ -2,15 +2,15 @@
   "name": "a",
   "dependencies": {
     "@libsql/client": "^0.14.0",
-    "@tailwindcss/cli": "^4.0.7",
-    "@types/bun": "^1.2.2",
+    "@tailwindcss/cli": "^4.0.9",
+    "@types/bun": "^1.2.3",
     "dompurify": "^3.2.4",
     "drizzle-orm": "^0.38.4",
     "happy-dom": "^16.8.1",
     "hono": "^4.7.2",
-    "isomorphic-dompurify": "^2.21.0",
-    "tailwindcss": "^4.0.7",
-    "xregexp": "^5.1.1"
+    "isomorphic-dompurify": "^2.22.0",
+    "tailwindcss": "^4.0.9",
+    "xregexp": "^5.1.2"
   },
   "scripts": {
     "dev": "concurrently 'bun run --hot app/app.ts' 'bunx @tailwindcss/cli -o ./const/a.css --watch'"
