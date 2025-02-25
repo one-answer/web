@@ -8,6 +8,7 @@ import { PList } from "../bare/PList";
 
 export interface PListProps extends Props {
     thread: typeof Thread.$inferSelect
+    uid: number
     page: number
     pagination: number[]
     data: (typeof Post.$inferSelect & {
@@ -64,5 +65,5 @@ export async function pList(a: Context) {
         .limit(Config.get('page_size_p'))
     const pagination = Pagination(Config.get('page_size_p'), await Counter.get(uid, tid), page, 2)
     const title = raw(thread.subject)
-    return a.html(PList({ a, i, thread, page, pagination, data, title }));
+    return a.html(PList({ a, i, thread, uid, page, pagination, data, title }));
 }

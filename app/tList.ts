@@ -6,6 +6,7 @@ import { alias } from "drizzle-orm/sqlite-core";
 import { TList } from "../bare/TList";
 
 export interface TListProps extends Props {
+    uid: number
     page: number
     pagination: number[]
     data: (typeof Thread.$inferSelect & {
@@ -37,10 +38,10 @@ export async function tList(a: Context) {
         ))
         .leftJoin(User, eq(Thread.uid, User.uid))
         .leftJoin(LastUser, eq(Thread.last_uid, LastUser.uid))
-        .orderBy(desc(Thread.is_top), desc(uid ? Thread.create_date : Thread.last_date))
+        .orderBy(...(uid ? [desc(Thread.create_date)] : [desc(Thread.is_top), desc(Thread.last_date)]))
         .offset((page - 1) * Config.get('page_size_t'))
         .limit(Config.get('page_size_t'))
     const pagination = Pagination(Config.get('page_size_t'), await Counter.get(uid, 0), page, 2)
     const title = Config.get('site_name')
-    return a.html(TList({ a, i, page, pagination, data, title }));
+    return a.html(TList({ a, i, uid, page, pagination, data, title }));
 }
