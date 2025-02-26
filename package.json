@@ -3,7 +3,7 @@
   "dependencies": {
     "@libsql/client": "^0.14.0",
     "@tailwindcss/cli": "^4.0.9",
-    "@types/bun": "^1.2.3",
+    "@types/bun": "^1.2.4",
     "dompurify": "^3.2.4",
     "drizzle-orm": "^0.38.4",
     "happy-dom": "^16.8.1",

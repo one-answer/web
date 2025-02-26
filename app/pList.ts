@@ -49,7 +49,7 @@ export async function pList(a: Context) {
         .where(and(
             // access
             eq(Post.access, 0),
-            // uid | quote_uid
+            // uid
             (uid ? eq(Post.uid, uid) : undefined),
             // tid - pid
             or(
