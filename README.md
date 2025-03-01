@@ -155,6 +155,7 @@ bun run dev
 - `credits_post`: 发帖奖励积分
 - `theme`: 主题设置（JSON 格式）
 - `secret_key`: JWT 签名密钥
+- `friend_link`: 友情链接列表（JSON 格式）
 
 ## 部署说明
 

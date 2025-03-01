@@ -119,7 +119,10 @@ async function main() {
                 secondaryColor: '#6c757d',
                 backgroundColor: '#f8f9fa'
             })},
-            { key: 'secret_key', value: JSON.stringify('your-secret-key-here') }
+            { key: 'secret_key', value: JSON.stringify('your-secret-key-here') },
+            { key: 'friend_link', value: JSON.stringify([
+                { name: 'ASSBBS', url: 'https://github.com/your-username/assbbs' }
+            ])}
         ];
 
         for (const config of configs) {
