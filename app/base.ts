@@ -7,15 +7,24 @@ import { Window } from "happy-dom";
 import * as DOMPurify from 'isomorphic-dompurify';
 
 export class Config {
-    private static conf: { [key: string]: any } = {};
+    private static data: Map<string, any> = new Map();
     private constructor() { }
-    public static async init() {
-        (await DB.select().from(Conf).all()).forEach(item => {
-            Config.conf[item.key] = JSON.parse(item.value ?? 'null');
+    static async init() {
+        const configs = await DB.select().from(Conf);
+        configs.forEach(({ key, value }) => {
+            try {
+                this.data.set(key, JSON.parse(value));
+            } catch (error) {
+                console.error(`Failed to parse config ${key}:`, error);
+                this.data.set(key, value);
+            }
         });
+        console.log('Loaded configs:', Object.fromEntries(this.data));
     }
-    public static get(key: string) {
-        return Config.conf[key];
+    static get(key: string): any {
+        const value = this.data.get(key);
+        console.log(`Getting config ${key}:`, value);
+        return value;
     }
 }
 

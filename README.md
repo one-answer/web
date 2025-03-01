@@ -87,6 +87,20 @@ assbbs-web/
   - `read_pid`: 已读帖子 ID
   - `unread`: 未读数量
 
+## 安全说明
+
+### 密码处理
+- 前端使用 MD5 对密码进行一次性加密后传输
+- 后端直接存储 MD5 加密后的密码值
+- 登录时比对 MD5 值进行验证
+- 虽然保留了 salt 字段,但目前未使用(为后续加强安全性预留)
+
+### 配置处理
+- 所有配置值统一使用 JSON 格式存储
+- 配置读取时会尝试 JSON.parse
+- 如果解析失败则使用原始值
+- 包含 secret_key 用于 JWT 签名
+
 ## 开发环境设置
 
 1. 安装依赖:
@@ -118,12 +132,12 @@ bun run dev
 系统初始化后会创建以下账号：
 
 - 管理员账号
-  - 用户名：admin
+  - 邮箱：admin@example.com
   - 密码：admin123
   - 权限：管理员组（gid=99）
 
 - 测试账号
-  - 用户名：test
+  - 邮箱：test@example.com
   - 密码：test123
   - 权限：普通用户组（gid=0）
 
@@ -139,6 +153,7 @@ bun run dev
 - `credits_login`: 登录奖励积分
 - `credits_post`: 发帖奖励积分
 - `theme`: 主题设置（JSON 格式）
+- `secret_key`: JWT 签名密钥
 
 ## 部署说明
 
