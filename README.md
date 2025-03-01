@@ -36,7 +36,8 @@ assbbs-web/
 ├── drizzle/           # 数据库迁移文件
 └── scripts/           # 脚本文件
     └── init-db.ts     # 数据库初始化脚本
-
+    
+```
 ## 数据库结构
 
 系统使用 SQLite 数据库，通过 Drizzle ORM 进行管理，主要包含以下表：
