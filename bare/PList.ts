@@ -29,14 +29,17 @@ ${z.data.map(item => html`
             <a href="/?uid=${item.uid}" target="_blank" class="author">${item.name}</a>
             <span class="date" time_stamp="${item.create_date}"></span>
             ${(z.i) ? html`
-            ${(z.i.gid == 1 && !item.tid) ? html`
-            <a class="sticky ${z.thread.is_top ? 'font-bold' : ''}" href="javascript:peak(${item.pid});">置顶</a>
-            `: ''}
-            ${(z.i.uid == item.uid || z.i.gid == 1) ? html`
-            <a class="edit" href="/e/-${item.pid}">编辑</a>
-            <a class="delete" href="javascript:omit(-${item.pid});">删除</a>
-            `: ''}
-            <a class="reply" href="/e/${item.pid}">回复</a>
+                ${(z.i.gid == 1 && !item.tid) ? html`
+                    <a class="sticky ${z.thread.is_top ? 'font-bold' : ''}" href="javascript:peak(${item.pid});">置顶</a>
+                `: ''}
+                ${(z.i.gid == 1) ? html`
+                    <a class="edit" href="/e/-${item.pid}">编辑</a>
+                    <a class="delete" href="javascript:omit(-${item.pid});">删除</a>
+                `: (z.i.uid == item.uid) ? html`
+                    <a class="edit" href="/e/-${item.pid}">编辑</a>
+                    <a class="delete" href="javascript:omit(-${item.pid});">删除</a>
+                `: ''}
+                <a class="reply" href="/e/${item.pid}">回复</a>
             `: ''}
         </div>
     </div>

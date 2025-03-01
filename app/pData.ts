@@ -69,7 +69,7 @@ export async function pSave(a: Context) {
                 tid: post.tid ? post.tid : post.pid,
                 uid: i.uid,
                 create_date: time,
-                quote_pid: post.tid ? post.pid : 0, // 如果回复的是首层 则不引用
+                quote_pid: eid, // 直接使用被回复帖子的 pid
                 quote_uid: post.uid,
                 content: content,
             })
@@ -150,19 +150,37 @@ export async function pOmit(a: Context) {
     const i = await Auth(a)
     if (!i) { return a.text('401', 401) }
     const pid = -parseInt(a.req.param('eid') ?? '0')
-    const post = (await DB
-        .update(Post)
-        .set({
-            access: 3,
-        })
-        .where(and(
-            eq(Post.pid, pid),
-            [1].includes(i.gid) ? undefined : eq(Post.uid, i.uid), // 管理和作者都能删除
-        ))
-        .returning()
-    )?.[0]
-    // 如果无法删除则报错
-    if (!post) { return a.text('410:gone', 410) }
+    
+    let post;  // 声明post变量在外部作用域
+
+    // 检查用户权限
+    if (i.gid !== 1) {
+        // 非管理员只能删除自己的帖子
+        post = (await DB
+            .update(Post)
+            .set({
+                access: 3,
+            })
+            .where(and(
+                eq(Post.pid, pid),
+                eq(Post.uid, i.uid), // 普通用户只能删除自己的帖子
+            ))
+            .returning()
+        )?.[0]
+        if (!post) { return a.text('410:gone', 410) }
+    } else {
+        // 管理员可以删除任何帖子
+        post = (await DB
+            .update(Post)
+            .set({
+                access: 3,
+            })
+            .where(eq(Post.pid, pid))
+            .returning()
+        )?.[0]
+        if (!post) { return a.text('410:gone', 410) }
+    }
+
     if (post.tid) {
         // 如果删的是Post
         const last = (await DB

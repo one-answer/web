@@ -138,7 +138,7 @@ async function main() {
         const adminSalt = randomBytes(16).toString('hex');
         const adminUser = {
             uid: 1,
-            gid: 99, // 管理员组
+            gid: 1, // 管理员组
             mail: 'admin@example.com',
             name: 'admin',
             hash: md5('admin123'), // 直接存储密码的md5值,与前端一致
