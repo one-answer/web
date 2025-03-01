@@ -90,18 +90,67 @@ function md5(r: string): string {
 }
 
 export async function iLogin(a: Context) {
-    const body = await a.req.formData()
-    const user = body.get('user')?.toString().toLowerCase() ?? ''
-    const pass = body.get('pass')?.toString() ?? ''
-    const data = (await DB
+    const body = await a.req.formData();
+    const mail = body.get('user')?.toString();
+    const pass = body.get('pass')?.toString();
+
+    console.log('Login attempt:', { mail });
+
+    if (!mail || !pass) {
+        console.log('Login failed: missing credentials');
+        return a.text('401', 401);
+    }
+
+    const user = (await DB
         .select()
         .from(User)
-        .where(or(eq(User.name, user), eq(User.mail, user)))
-    )?.[0]
-    if (!data || md5(pass + data.salt) != data.hash) { return a.notFound() }
-    const { hash, salt, ...i } = data
-    setCookie(a, 'JWT', await sign(i, Config.get('secret_key')), { maxAge: 2592000 })
-    return a.text('ok')
+        .where(eq(User.mail, mail))
+    )?.[0];
+
+    console.log('Found user:', { 
+        uid: user?.uid,
+        mail: user?.mail,
+        inputHash: pass,
+        storedHash: user?.hash,
+        salt: user?.salt 
+    });
+
+    if (!user) {
+        console.log('Login failed: user not found');
+        return a.text('401', 401);
+    }
+
+    const inputHash = pass;
+    const storedHash = user.hash;
+
+    console.log('Hash comparison:', {
+        inputHash,
+        storedHash,
+        matches: inputHash === storedHash
+    });
+
+    if (inputHash !== storedHash) {
+        console.log('Login failed: password mismatch');
+        return a.text('401', 401);
+    }
+
+    const { hash, salt, ...i } = user;
+    
+    console.log('Preparing JWT:', {
+        userData: i,
+        secretKey: Config.get('secret_key')
+    });
+
+    try {
+        const token = await sign(i, Config.get('secret_key'));
+        console.log('JWT signed successfully:', { token });
+        
+        setCookie(a, 'JWT', token, { maxAge: 2592000 });
+        return a.text('ok');
+    } catch (error) {
+        console.error('JWT signing failed:', error);
+        return a.text('500', 500);
+    }
 }
 
 export async function iLogout(a: Context) {

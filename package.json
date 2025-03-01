@@ -5,7 +5,7 @@
     "@tailwindcss/cli": "^4.0.9",
     "@types/bun": "^1.2.4",
     "dompurify": "^3.2.4",
-    "drizzle-orm": "^0.38.4",
+    "drizzle-orm": "^0.40.0",
     "happy-dom": "^16.8.1",
     "hono": "^4.7.2",
     "isomorphic-dompurify": "^2.22.0",
@@ -13,9 +13,13 @@
     "xregexp": "^5.1.2"
   },
   "scripts": {
-    "dev": "concurrently 'bun run --hot app/app.ts' 'bunx @tailwindcss/cli -o ./const/a.css --watch'"
+    "dev": "concurrently 'bun run --hot app/app.ts' 'bunx @tailwindcss/cli -o ./const/a.css --watch'",
+    "db:generate": "bunx drizzle-kit generate",
+    "db:push": "bunx drizzle-kit push",
+    "db:init": "bun run scripts/init-db.ts"
   },
   "devDependencies": {
-    "concurrently": "^9.1.2"
+    "concurrently": "^9.1.2",
+    "drizzle-kit": "^0.30.5"
   }
 }

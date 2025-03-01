@@ -69,7 +69,7 @@ export async function pSave(a: Context) {
                 tid: post.tid ? post.tid : post.pid,
                 uid: i.uid,
                 create_date: time,
-                quote_pid: post.tid ? post.pid : 0, // 如果回复的是首层 则不引用
+                quote_pid: eid, // 直接使用被回复帖子的 pid
                 quote_uid: post.uid,
                 content: content,
             })
@@ -99,22 +99,7 @@ export async function pSave(a: Context) {
             ))
         // 给回复目标的[通知]增加提醒
         if (post.uid != reply.uid) {
-            await DB
-                .insert(Notice)
-                .values({
-                    uid: reply.quote_uid,
-                    tid: reply.tid,
-                    last_pid: reply.pid,
-                    read_pid: reply.pid - 1,
-                    unread: 1,
-                })
-                .onConflictDoUpdate({
-                    target: [Notice.tid, Notice.uid],
-                    set: {
-                        last_pid: reply.pid,
-                        unread: 1,
-                    },
-                })
+            await updateNotice(reply.tid, reply.quote_uid, reply.pid)
             Status(post.uid, 1)
         }
         // 回复通知 Notice 结束
@@ -165,19 +150,37 @@ export async function pOmit(a: Context) {
     const i = await Auth(a)
     if (!i) { return a.text('401', 401) }
     const pid = -parseInt(a.req.param('eid') ?? '0')
-    const post = (await DB
-        .update(Post)
-        .set({
-            access: 3,
-        })
-        .where(and(
-            eq(Post.pid, pid),
-            [1].includes(i.gid) ? undefined : eq(Post.uid, i.uid), // 管理和作者都能删除
-        ))
-        .returning()
-    )?.[0]
-    // 如果无法删除则报错
-    if (!post) { return a.text('410:gone', 410) }
+    
+    let post;  // 声明post变量在外部作用域
+
+    // 检查用户权限
+    if (i.gid !== 1) {
+        // 非管理员只能删除自己的帖子
+        post = (await DB
+            .update(Post)
+            .set({
+                access: 3,
+            })
+            .where(and(
+                eq(Post.pid, pid),
+                eq(Post.uid, i.uid), // 普通用户只能删除自己的帖子
+            ))
+            .returning()
+        )?.[0]
+        if (!post) { return a.text('410:gone', 410) }
+    } else {
+        // 管理员可以删除任何帖子
+        post = (await DB
+            .update(Post)
+            .set({
+                access: 3,
+            })
+            .where(eq(Post.pid, pid))
+            .returning()
+        )?.[0]
+        if (!post) { return a.text('410:gone', 410) }
+    }
+
     if (post.tid) {
         // 如果删的是Post
         const last = (await DB
@@ -327,4 +330,46 @@ export async function pOmit(a: Context) {
         })
     }
     return a.text('ok')
+}
+
+async function updateNotice(tid: number, uid: number, pid: number) {
+    try {
+        // 先查询是否存在通知
+        const existingNotice = await DB
+            .select()
+            .from(Notice)
+            .where(and(
+                eq(Notice.tid, tid),
+                eq(Notice.uid, uid)
+            ))
+            .execute();
+
+        if (existingNotice.length > 0) {
+            // 如果存在，更新
+            await DB.update(Notice)
+                .set({
+                    last_pid: pid,
+                    unread: 1
+                })
+                .where(and(
+                    eq(Notice.tid, tid),
+                    eq(Notice.uid, uid)
+                ))
+                .execute();
+        } else {
+            // 如果不存在，插入新记录
+            await DB.insert(Notice)
+                .values({
+                    tid,
+                    uid,
+                    last_pid: pid,
+                    read_pid: 0,
+                    unread: 1
+                })
+                .execute();
+        }
+    } catch (error) {
+        console.error('更新通知失败:', error);
+        // 不抛出错误，避免影响主流程
+    }
 }
