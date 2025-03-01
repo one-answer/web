@@ -33,25 +33,59 @@ assbbs-web/
 │   └── tList.ts       # 主题列表
 ├── bare/              # 静态资源目录
 ├── const/             # 常量和配置文件
-└── package.json       # 项目依赖配置
+├── drizzle/           # 数据库迁移文件
+└── scripts/           # 脚本文件
+    └── init-db.ts     # 数据库初始化脚本
 
 ## 数据库结构
 
 系统使用 SQLite 数据库，通过 Drizzle ORM 进行管理，主要包含以下表：
 
 - **conf**: 系统配置表
-- **notice**: 通知表
-- **post**: 帖子表
+  - `key`: 配置键（主键）
+  - `value`: 配置值（JSON 格式）
+
+- **user**: 用户表
+  - `uid`: 用户 ID（主键）
+  - `gid`: 用户组 ID
+  - `mail`: 邮箱（唯一）
+  - `name`: 用户名（唯一）
+  - `hash`: 密码哈希
+  - `salt`: 密码盐值
+  - `threads`: 发帖数
+  - `posts`: 回帖数
+  - `credits`: 积分
+  - `golds`: 金币
+  - `create_date`: 注册时间
+
 - **thread**: 主题表
-- **user**: 用户表 (推测)
+  - `tid`: 主题 ID（主键）
+  - `uid`: 发帖用户 ID
+  - `subject`: 主题标题
+  - `access`: 访问权限
+  - `is_top`: 是否置顶
+  - `create_date`: 创建时间
+  - `last_date`: 最后回复时间
+  - `last_uid`: 最后回复用户 ID
+  - `posts`: 回复数量
 
-## 主要功能
+- **post**: 帖子表
+  - `pid`: 帖子 ID（主键）
+  - `tid`: 主题 ID
+  - `uid`: 发帖用户 ID
+  - `content`: 帖子内容
+  - `access`: 访问权限
+  - `create_date`: 发帖时间
+  - `quote_pid`: 引用帖子 ID
+  - `quote_uid`: 引用用户 ID
 
-- 用户认证（登录/注册）
-- 主题管理
-- 帖子管理
-- 通知系统
-- 内容过滤和安全处理
+- **notice**: 通知表
+  - `nid`: 通知 ID（主键）
+  - `tid`: 主题 ID
+  - `uid`: 用户 ID
+  - `last_pid`: 最新帖子 ID
+  - `read_pid`: 已读帖子 ID
+  - `unread`: 未读数量
 
 ## 开发环境设置
 
@@ -60,11 +94,16 @@ assbbs-web/
 bun install
 ```
 
-2. 配置环境变量:
-创建 .env 文件并设置以下变量:
-```
-TURSO_DATABASE_URL=your_turso_database_url
-TURSO_AUTH_TOKEN=your_turso_auth_token
+2. 初始化数据库:
+```bash
+# 生成数据库迁移文件
+bun run db:generate
+
+# 应用数据库变更
+bun run db:push
+
+# 初始化基础数据
+bun run db:init
 ```
 
 3. 启动开发服务器:
@@ -74,16 +113,60 @@ bun run dev
 
 服务器将在 http://localhost:3000 启动。
 
-## 部署脚本
+## 默认账号
 
-### 装依赖：
+系统初始化后会创建以下账号：
+
+- 管理员账号
+  - 用户名：admin
+  - 密码：admin123
+  - 权限：管理员组（gid=99）
+
+- 测试账号
+  - 用户名：test
+  - 密码：test123
+  - 权限：普通用户组（gid=0）
+
+## 系统配置
+
+系统的主要配置存储在 conf 表中，包括：
+
+- `site_name`: 站点名称
+- `site_description`: 站点描述
+- `register_enable`: 是否开放注册
+- `post_interval`: 发帖间隔（秒）
+- `credits_initial`: 新用户初始积分
+- `credits_login`: 登录奖励积分
+- `credits_post`: 发帖奖励积分
+- `theme`: 主题设置（JSON 格式）
+
+## 部署说明
+
+### 生产环境部署
+
+```bash
+# 安装依赖
 bun install
 
-### 杀进程：
-while pgrep -f "bun"; do pkill -f "bun"; done;
+# 应用数据库迁移
+bun run db:push
 
-### 拉代码：
-cd /www/assbbs_com && git fetch && git reset --hard && git pull
+# 启动服务器
+bun run start
+```
 
-### 热启动：
-cd /www/assbbs_com && chmod 755 *; nohup bun dev > app.log 2>&1 &
+### 数据库备份
+
+建议定期备份 `app.db` 文件以保护数据安全。
+
+## 贡献指南
+
+1. Fork 项目
+2. 创建特性分支
+3. 提交变更
+4. 推送到分支
+5. 创建 Pull Request
+
+## 许可证
+
+MIT License
