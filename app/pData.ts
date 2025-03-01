@@ -99,22 +99,7 @@ export async function pSave(a: Context) {
             ))
         // 给回复目标的[通知]增加提醒
         if (post.uid != reply.uid) {
-            await DB
-                .insert(Notice)
-                .values({
-                    uid: reply.quote_uid,
-                    tid: reply.tid,
-                    last_pid: reply.pid,
-                    read_pid: reply.pid - 1,
-                    unread: 1,
-                })
-                .onConflictDoUpdate({
-                    target: [Notice.tid, Notice.uid],
-                    set: {
-                        last_pid: reply.pid,
-                        unread: 1,
-                    },
-                })
+            await updateNotice(reply.tid, reply.quote_uid, reply.pid)
             Status(post.uid, 1)
         }
         // 回复通知 Notice 结束
@@ -327,4 +312,46 @@ export async function pOmit(a: Context) {
         })
     }
     return a.text('ok')
+}
+
+async function updateNotice(tid: number, uid: number, pid: number) {
+    try {
+        // 先查询是否存在通知
+        const existingNotice = await DB
+            .select()
+            .from(Notice)
+            .where(and(
+                eq(Notice.tid, tid),
+                eq(Notice.uid, uid)
+            ))
+            .execute();
+
+        if (existingNotice.length > 0) {
+            // 如果存在，更新
+            await DB.update(Notice)
+                .set({
+                    last_pid: pid,
+                    unread: 1
+                })
+                .where(and(
+                    eq(Notice.tid, tid),
+                    eq(Notice.uid, uid)
+                ))
+                .execute();
+        } else {
+            // 如果不存在，插入新记录
+            await DB.insert(Notice)
+                .values({
+                    tid,
+                    uid,
+                    last_pid: pid,
+                    read_pid: 0,
+                    unread: 1
+                })
+                .execute();
+        }
+    } catch (error) {
+        console.error('更新通知失败:', error);
+        // 不抛出错误，避免影响主流程
+    }
 }

@@ -89,7 +89,23 @@ async function main() {
     const currentTime = Math.floor(Date.now() / 1000);
 
     try {
+        console.log('开始初始化数据库...');
+        
+        // 检查数据库表结构
+        console.log('检查数据库表结构...');
+        
+        // 获取 Notice 表结构
+        const noticeTableInfo = await DB.select()
+            .from(Notice)
+            .limit(0)
+            .execute();
+        console.log('Notice 表结构:', {
+            columns: Object.keys(Notice),
+            sample: noticeTableInfo
+        });
+
         // 初始化系统配置
+        console.log('正在初始化系统配置...');
         const configs = [
             { key: 'site_name', value: JSON.stringify('ASSBBS') },
             { key: 'site_description', value: JSON.stringify('A Simple and Sweet BBS') },
@@ -107,13 +123,15 @@ async function main() {
         ];
 
         for (const config of configs) {
+            console.log(`正在设置配置: ${config.key} = ${config.value}`);
             await DB.insert(Conf).values(config).onConflictDoUpdate({
                 target: Conf.key,
                 set: { value: config.value }
             });
         }
 
-        // 修改创建管理员用户部分
+        // 创建管理员用户
+        console.log('正在创建管理员用户...');
         const adminSalt = randomBytes(16).toString('hex');
         const adminUser = {
             uid: 1,
@@ -126,13 +144,21 @@ async function main() {
             golds: 100,
             create_date: currentTime
         };
+        console.log('管理员用户数据:', adminUser);
 
-        await DB.insert(User).values(adminUser).onConflictDoUpdate({
-            target: User.uid,
-            set: { ...adminUser }
-        });
+        try {
+            await DB.insert(User).values(adminUser).onConflictDoUpdate({
+                target: User.uid,
+                set: { ...adminUser }
+            });
+            console.log('管理员用户创建成功');
+        } catch (error) {
+            console.error('创建管理员用户失败:', error);
+            throw error;
+        }
 
-        // 修改创建测试用户部分
+        // 创建测试用户
+        console.log('正在创建测试用户...');
         const testSalt = randomBytes(16).toString('hex');
         const testUser = {
             uid: 2,
@@ -145,13 +171,21 @@ async function main() {
             golds: 10,
             create_date: currentTime
         };
+        console.log('测试用户数据:', testUser);
 
-        await DB.insert(User).values(testUser).onConflictDoUpdate({
-            target: User.uid,
-            set: { ...testUser }
-        });
+        try {
+            await DB.insert(User).values(testUser).onConflictDoUpdate({
+                target: User.uid,
+                set: { ...testUser }
+            });
+            console.log('测试用户创建成功');
+        } catch (error) {
+            console.error('创建测试用户失败:', error);
+            throw error;
+        }
 
         // 创建欢迎主题
+        console.log('正在创建欢迎主题...');
         const welcomeThread = {
             tid: 1,
             uid: 1, // 管理员发布
@@ -163,13 +197,21 @@ async function main() {
             posts: 1,
             subject: '欢迎来到 ASSBBS！'
         };
+        console.log('欢迎主题数据:', welcomeThread);
 
-        await DB.insert(Thread).values(welcomeThread).onConflictDoUpdate({
-            target: Thread.tid,
-            set: { ...welcomeThread }
-        });
+        try {
+            await DB.insert(Thread).values(welcomeThread).onConflictDoUpdate({
+                target: Thread.tid,
+                set: { ...welcomeThread }
+            });
+            console.log('欢迎主题创建成功');
+        } catch (error) {
+            console.error('创建欢迎主题失败:', error);
+            throw error;
+        }
 
         // 创建欢迎帖子
+        console.log('正在创建欢迎帖子...');
         const welcomePost = {
             pid: 1,
             tid: 1,
@@ -196,21 +238,103 @@ async function main() {
 
 祝您使用愉快！`
         };
+        console.log('欢迎帖子数据:', welcomePost);
 
-        await DB.insert(Post).values(welcomePost).onConflictDoUpdate({
-            target: Post.pid,
-            set: { ...welcomePost }
-        });
+        try {
+            await DB.insert(Post).values(welcomePost).onConflictDoUpdate({
+                target: Post.pid,
+                set: { ...welcomePost }
+            });
+            console.log('欢迎帖子创建成功');
+        } catch (error) {
+            console.error('创建欢迎帖子失败:', error);
+            throw error;
+        }
 
-        // 更新管理员的发帖统计
-        await DB.update(User)
-            .set({ threads: 1, posts: 1 })
-            .where(eq(User.uid, 1));
+        // 创建通知记录
+        console.log('正在创建通知记录...');
+        const welcomeNotice = {
+            nid: 1,
+            tid: 1,
+            uid: 1,
+            last_pid: 1,
+            read_pid: 1,
+            unread: 0
+        };
+        console.log('管理员通知数据:', welcomeNotice);
+
+        try {
+            // 先删除可能存在的记录
+            await DB.delete(Notice)
+                .where(eq(Notice.nid, welcomeNotice.nid))
+                .execute();
+            
+            // 然后插入新记录
+            await DB.insert(Notice)
+                .values(welcomeNotice)
+                .execute();
+                
+            console.log('管理员通知创建成功');
+        } catch (error) {
+            console.error('创建管理员通知失败:', error);
+            console.error('错误详情:', {
+                error,
+                notice: welcomeNotice,
+                table: await DB.select().from(Notice).execute()
+            });
+            throw error;
+        }
+
+        // 更新管理员统计
+        console.log('正在更新管理员统计...');
+        try {
+            await DB.update(User)
+                .set({ threads: 1, posts: 1 })
+                .where(eq(User.uid, 1));
+            console.log('管理员统计更新成功');
+        } catch (error) {
+            console.error('更新管理员统计失败:', error);
+            throw error;
+        }
+
+        // 创建测试用户通知
+        console.log('正在创建测试用户通知...');
+        const testNotice = {
+            nid: 2,
+            tid: 1,
+            uid: 2,
+            last_pid: 1,
+            read_pid: 1,
+            unread: 0
+        };
+        console.log('测试用户通知数据:', testNotice);
+
+        try {
+            // 先删除可能存在的记录
+            await DB.delete(Notice)
+                .where(eq(Notice.nid, testNotice.nid))
+                .execute();
+            
+            // 然后插入新记录
+            await DB.insert(Notice)
+                .values(testNotice)
+                .execute();
+                
+            console.log('测试用户通知创建成功');
+        } catch (error) {
+            console.error('创建测试用户通知失败:', error);
+            console.error('错误详情:', {
+                error,
+                notice: testNotice,
+                table: await DB.select().from(Notice).execute()
+            });
+            throw error;
+        }
 
         console.log('数据库初始化完成！');
-        console.log('管理员账号：admin');
+        console.log('管理员账号：admin@example.com');
         console.log('管理员密码：admin123');
-        console.log('测试账号：test');
+        console.log('测试账号：test@example.com');
         console.log('测试密码：test123');
 
     } catch (error) {
