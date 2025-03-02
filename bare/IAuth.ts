@@ -1,5 +1,5 @@
 import { html } from "hono/html";
-import { Props } from "../app/data";
+import { Props } from "../app/base";
 import { Header, Footer } from "./Common"
 
 export function IAuth(z: Props) {

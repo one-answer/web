@@ -20,8 +20,8 @@ ASSBBS Web 是一个基于 Bun + Hono 的轻量级论坛系统。
 assbbs-web/
 ├── app/                # 主应用代码目录
 │   ├── app.ts         # 应用入口文件
-│   ├── base.ts        # 基础配置和工具函数
-│   ├── data.ts        # 数据库模型定义
+│   ├── base.ts        # 数据库模型定义
+│   ├── core.ts        # 基础配置和工具函数
 │   ├── iAuth.ts       # 认证相关
 │   ├── iConf.ts       # 配置相关
 │   ├── iData.ts       # 用户数据处理

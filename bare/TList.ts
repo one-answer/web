@@ -1,7 +1,7 @@
 import { html, raw } from "hono/html";
 import { TListProps } from "../app/tList";
 import { Header, Footer } from "./Common"
-import { URLQuery } from "../app/base";
+import { URLQuery } from "../app/core";
 
 export function TList(z: TListProps) {
     return html`

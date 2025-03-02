@@ -1,5 +1,5 @@
 import { Context } from "hono";
-import { Auth } from "./base";
+import { Auth } from "./core";
 import { IAuth } from "../bare/IAuth";
 
 export async function iAuth(a: Context) {

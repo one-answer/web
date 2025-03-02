@@ -1,5 +1,5 @@
 import { html, raw } from "hono/html";
-import { HTMLText, URLQuery } from "../app/base";
+import { HTMLText, URLQuery } from "../app/core";
 import { PListProps } from "../app/pList";
 import { Header, Footer } from "./Common"
 

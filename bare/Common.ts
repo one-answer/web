@@ -1,6 +1,6 @@
 import { html } from "hono/html";
-import { Props } from "../app/data";
-import { Config, Status } from "../app/base";
+import { Props } from "../app/base";
+import { Config, Status } from "../app/core";
 
 export async function Header(z: Props) {
     return html`

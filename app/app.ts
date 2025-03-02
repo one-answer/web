@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { csrf } from 'hono/csrf'
 import { serveStatic } from 'hono/bun'
-import { Config } from './base';
+import { Config } from './core';
 import { pOmit, pSave } from './pData';
 import { iLogin, iLogout, iRegister, iSave } from './iData';
 import { iAuth } from './iAuth';

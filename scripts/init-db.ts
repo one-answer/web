@@ -1,4 +1,4 @@
-import { DB, Conf, User, Thread, Post } from '../app/data';
+import { DB, Conf, User, Thread, Post } from '../app/base';
 import { eq } from 'drizzle-orm';
 import { createHash, randomBytes } from 'crypto';
 

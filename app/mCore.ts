@@ -1,5 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import { DB, Message } from "./data";
+import { DB, Message } from "./base";
 
 // 增加消息
 export async function mAdd(uid: number, type: number, time: number, pid: number) {

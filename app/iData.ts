@@ -1,8 +1,8 @@
 import { randomBytes } from "crypto";
 import { Context } from "hono";
 import { sign } from "hono/jwt";
-import { DB, User } from "./data";
-import { Auth, Config } from "./base";
+import { DB, User } from "./base";
+import { Auth, Config } from "./core";
 import { eq, or } from "drizzle-orm";
 import { deleteCookie, setCookie } from "hono/cookie";
 import XRegExp from "xregexp";

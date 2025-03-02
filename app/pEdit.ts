@@ -1,7 +1,7 @@
 import { Context } from "hono";
 import { raw } from "hono/html";
-import { Props, DB, Post } from "./data";
-import { Auth, IsAdmin } from "./base";
+import { Props, DB, Post } from "./base";
+import { Auth, IsAdmin } from "./core";
 import { and, eq, gt, sql } from "drizzle-orm";
 import { PEdit } from "../bare/PEdit";
 
