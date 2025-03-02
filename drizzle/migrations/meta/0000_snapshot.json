@@ -28,54 +28,6 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "notice": {
-      "name": "notice",
-      "columns": {
-        "tid": {
-          "name": "tid",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "uid": {
-          "name": "uid",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "last_pid": {
-          "name": "last_pid",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": 0
-        },
-        "read_pid": {
-          "name": "read_pid",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": 0
-        },
-        "unread": {
-          "name": "unread",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": 0
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {}
-    },
     "post": {
       "name": "post",
       "columns": {

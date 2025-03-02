@@ -3,14 +3,6 @@ CREATE TABLE `conf` (
 	`value` text
 );
 --> statement-breakpoint
-CREATE TABLE `notice` (
-	`tid` integer PRIMARY KEY NOT NULL,
-	`uid` integer PRIMARY KEY NOT NULL,
-	`last_pid` integer DEFAULT 0 NOT NULL,
-	`read_pid` integer DEFAULT 0 NOT NULL,
-	`unread` integer DEFAULT 0 NOT NULL
-);
---> statement-breakpoint
 CREATE TABLE `post` (
 	`pid` integer PRIMARY KEY NOT NULL,
 	`tid` integer DEFAULT 0 NOT NULL,

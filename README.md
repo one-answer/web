@@ -78,14 +78,6 @@ assbbs-web/
   - `create_date`: 发帖时间
   - `quote_pid`: 引用帖子 ID
 
-- **notice**: 通知表
-  - `nid`: 通知 ID（主键）
-  - `tid`: 主题 ID
-  - `uid`: 用户 ID
-  - `last_pid`: 最新帖子 ID
-  - `read_pid`: 已读帖子 ID
-  - `unread`: 未读数量
-
 ## 安全说明
 
 ### 密码处理
