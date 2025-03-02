@@ -10,7 +10,6 @@ import { pEdit } from './pEdit';
 import { pList } from './pList';
 import { tList } from './tList';
 import { tPeak } from './tData';
-import { nListInit, nListLessThan, nListMoreThan } from './nList';
 
 const hono = await (async () => {
 
@@ -25,10 +24,6 @@ const hono = await (async () => {
     app.get('/e/:eid{[-0-9]+}?', pEdit);
     app.post('/e/:eid{[-0-9]+}?', pSave);
     app.delete('/e/:eid{[-0-9]+}?', pOmit);
-
-    app.get('/n', nListInit);
-    app.get('/n/m/:pivot{[0-9]+}?', nListMoreThan);
-    app.get('/n/l/:pivot{[0-9]+}?', nListLessThan);
 
     app.get('/i', iConf);
     app.post('/i', iSave);

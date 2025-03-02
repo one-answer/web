@@ -1,7 +1,7 @@
 import { Context } from "hono";
 import { sign, verify } from "hono/jwt";
 import { getCookie, setCookie } from "hono/cookie";
-import { DB, Conf, Notice, I, User, Thread, Post } from "./data";
+import { DB, Conf, I, User, Thread, Post, Message } from "./data";
 import { and, count, eq, or } from 'drizzle-orm';
 import { Window } from "happy-dom";
 import * as DOMPurify from 'isomorphic-dompurify';
@@ -144,19 +144,19 @@ export async function Auth(a: Context) {
 }
 
 export async function Status(uid: number, status: 0 | 1 | 10 | 20 | null | undefined = undefined) {
-    // 无提醒:0 有提醒:1 要刷新:10 已刷新:20 (从用户缓存中清除要刷新状态)
+    // 无提醒:0 有提醒:1 要刷新:10 已刷新:20 null:从用户缓存中清除要刷新状态
     const cache = Cache.get(uid);
     const noreset = (cache ?? 0) < 10;
     if (status == undefined) {
         return cache ?? Cache.set(uid, (await DB
-            .select({ unread: Notice.unread })
-            .from(Notice)
+            .select()
+            .from(Message)
             .where(and(
-                eq(Notice.uid, uid),
-                eq(Notice.unread, 1),
+                eq(Message.uid, uid),
+                eq(Message.type, 1),
             ))
             .limit(1)
-        )?.[0]?.unread ?? 0)
+        )?.[0] ? 1 : 0)
     } else if (status == null) {
         Cache.del(uid)
     } else if (status == 0) {

@@ -25,7 +25,6 @@ assbbs-web/
 │   ├── iAuth.ts       # 认证相关
 │   ├── iConf.ts       # 配置相关
 │   ├── iData.ts       # 用户数据处理
-│   ├── nList.ts       # 通知列表
 │   ├── pData.ts       # 帖子数据处理
 │   ├── pEdit.ts       # 帖子编辑
 │   ├── pList.ts       # 帖子列表
@@ -78,7 +77,6 @@ assbbs-web/
   - `access`: 访问权限
   - `create_date`: 发帖时间
   - `quote_pid`: 引用帖子 ID
-  - `quote_uid`: 引用用户 ID
 
 - **notice**: 通知表
   - `nid`: 通知 ID（主键）
@@ -136,6 +134,7 @@ bun run dev
   - 邮箱：admin@example.com
   - 密码：admin123
   - 权限：管理员组（gid=99）
+  - 2025.03.02 目前管理员组gid还是1 这是沿用xiuno
 
 - 测试账号
   - 邮箱：test@example.com

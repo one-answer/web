@@ -1,4 +1,4 @@
-import { DB, Conf, User, Thread, Post, Notice } from '../app/data';
+import { DB, Conf, User, Thread, Post } from '../app/data';
 import { eq } from 'drizzle-orm';
 import { createHash, randomBytes } from 'crypto';
 
@@ -93,16 +93,6 @@ async function main() {
         
         // 检查数据库表结构
         console.log('检查数据库表结构...');
-        
-        // 获取 Notice 表结构
-        const noticeTableInfo = await DB.select()
-            .from(Notice)
-            .limit(0)
-            .execute();
-        console.log('Notice 表结构:', {
-            columns: Object.keys(Notice),
-            sample: noticeTableInfo
-        });
 
         // 初始化系统配置
         console.log('正在初始化系统配置...');
@@ -222,7 +212,6 @@ async function main() {
             access: 0,
             create_date: currentTime,
             quote_pid: 0,
-            quote_uid: 0,
             content: `# 欢迎来到 ASSBBS！
 
 这是一个简单而温馨的论坛系统。
@@ -254,40 +243,6 @@ async function main() {
             throw error;
         }
 
-        // 创建通知记录
-        console.log('正在创建通知记录...');
-        const welcomeNotice = {
-            nid: 1,
-            tid: 1,
-            uid: 1,
-            last_pid: 1,
-            read_pid: 1,
-            unread: 0
-        };
-        console.log('管理员通知数据:', welcomeNotice);
-
-        try {
-            // 先删除可能存在的记录
-            await DB.delete(Notice)
-                .where(eq(Notice.nid, welcomeNotice.nid))
-                .execute();
-            
-            // 然后插入新记录
-            await DB.insert(Notice)
-                .values(welcomeNotice)
-                .execute();
-                
-            console.log('管理员通知创建成功');
-        } catch (error) {
-            console.error('创建管理员通知失败:', error);
-            console.error('错误详情:', {
-                error,
-                notice: welcomeNotice,
-                table: await DB.select().from(Notice).execute()
-            });
-            throw error;
-        }
-
         // 更新管理员统计
         console.log('正在更新管理员统计...');
         try {
@@ -297,40 +252,6 @@ async function main() {
             console.log('管理员统计更新成功');
         } catch (error) {
             console.error('更新管理员统计失败:', error);
-            throw error;
-        }
-
-        // 创建测试用户通知
-        console.log('正在创建测试用户通知...');
-        const testNotice = {
-            nid: 2,
-            tid: 1,
-            uid: 2,
-            last_pid: 1,
-            read_pid: 1,
-            unread: 0
-        };
-        console.log('测试用户通知数据:', testNotice);
-
-        try {
-            // 先删除可能存在的记录
-            await DB.delete(Notice)
-                .where(eq(Notice.nid, testNotice.nid))
-                .execute();
-            
-            // 然后插入新记录
-            await DB.insert(Notice)
-                .values(testNotice)
-                .execute();
-                
-            console.log('测试用户通知创建成功');
-        } catch (error) {
-            console.error('创建测试用户通知失败:', error);
-            console.error('错误详情:', {
-                error,
-                notice: testNotice,
-                table: await DB.select().from(Notice).execute()
-            });
             throw error;
         }
 

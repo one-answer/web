@@ -18,7 +18,6 @@ CREATE TABLE `post` (
 	`access` integer DEFAULT 0 NOT NULL,
 	`create_date` integer DEFAULT 0 NOT NULL,
 	`quote_pid` integer DEFAULT 0 NOT NULL,
-	`quote_uid` integer DEFAULT 0 NOT NULL,
 	`content` text DEFAULT '' NOT NULL
 );
 --> statement-breakpoint

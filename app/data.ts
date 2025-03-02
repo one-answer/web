@@ -24,16 +24,6 @@ export const Conf = sqliteTable("conf", {
     value: text(),
 });
 
-//! 预定废弃。这是做聊天室用的消息传递结构，对论坛来说太繁琐了。
-export const Notice = sqliteTable("notice", {
-    nid: integer().primaryKey(),
-    tid: integer().notNull(),
-    uid: integer().notNull(),
-    last_pid: integer().notNull().default(0),
-    read_pid: integer().notNull().default(0),
-    unread: integer().notNull().default(0),
-});
-
 export const Message = sqliteTable("message", {
     uid: integer().notNull().default(0), // 向哪个用户发送的消息
     type: integer().notNull().default(0), // 消息类别 1:回复提醒 -1:已读回复提醒
@@ -58,7 +48,6 @@ export const Post = sqliteTable("post", {
     access: integer().notNull().default(0),
     create_date: integer().notNull().default(0),
     quote_pid: integer().notNull().default(0),
-    quote_uid: integer().notNull().default(0),
     content: text().notNull().default(''),
 }, (table) => [
     index("post:access,tid,pid").on(table.access, table.tid, table.pid), // 帖子内的回复

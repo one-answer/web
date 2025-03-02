@@ -133,14 +133,6 @@
           "autoincrement": false,
           "default": 0
         },
-        "quote_uid": {
-          "name": "quote_uid",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": 0
-        },
         "content": {
           "name": "content",
           "type": "text",
