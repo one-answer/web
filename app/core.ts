@@ -19,11 +19,9 @@ export class Config {
                 this.data.set(key, value);
             }
         });
-        console.log('Loaded configs:', Object.fromEntries(this.data));
     }
     static get(key: string): any {
         const value = this.data.get(key);
-        console.log(`Getting config ${key}:`, value);
         return value;
     }
 }

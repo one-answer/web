@@ -93,53 +93,25 @@ export async function iLogin(a: Context) {
     const body = await a.req.formData();
     const acct = body.get('acct')?.toString().toLowerCase() // 登录凭证 邮箱 或 昵称
     const pass = body.get('pass')?.toString();
-
-    console.log('Login attempt:', { acct });
-
     if (!acct || !pass) {
-        console.log('Login failed: missing credentials');
         return a.text('401', 401);
     }
-
     const user = (await DB
         .select()
         .from(User)
         .where(or(eq(User.mail, acct), eq(User.name, acct)))
     )?.[0];
-
-    console.log('Found user:', {
-        uid: user?.uid,
-        mail: user?.mail,
-        inputHash: pass,
-        storedHash: user?.hash,
-        salt: user?.salt
-    });
-
     if (!user) {
-        console.log('Login failed: user not found');
         return a.text('401', 401);
     }
-
     const inputHash = md5(pass + user.salt);
     const storedHash = user.hash;
-
-    console.log('Hash comparison:', {
-        inputHash,
-        storedHash,
-        matches: inputHash === storedHash
-    });
-
     if (inputHash !== storedHash) {
-        console.log('Login failed: password mismatch');
         return a.text('401', 401);
     }
-
     const { hash, salt, ...i } = user;
-
     try {
         const token = await sign(i, Config.get('secret_key'));
-        console.log('JWT signed successfully:', { token });
-
         setCookie(a, 'JWT', token, { maxAge: 2592000 });
         return a.text('ok');
     } catch (error) {
