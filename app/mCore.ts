@@ -1,10 +1,11 @@
 import { and, eq } from "drizzle-orm";
 import { DB, Message } from "./base";
+import { Status } from "./core";
 
 // 增加消息
 export async function mAdd(uid: number, type: number, time: number, pid: number) {
     try {
-        await DB
+        const message = (await DB
             .insert(Message)
             .values({
                 uid,
@@ -12,7 +13,11 @@ export async function mAdd(uid: number, type: number, time: number, pid: number)
                 time,
                 pid,
             })
-            .execute();
+            .returning({ uid: Message.uid })
+        )?.[0]
+        if (message) {
+            Status(message.uid, 1) // 回复目标增加消息通知
+        }
     } catch (error) {
         console.error('插入失败:', error);
         // 如果插入失败则提醒 因为发帖时只运行一次 应该不会有冲突 但以防万一
@@ -22,7 +27,7 @@ export async function mAdd(uid: number, type: number, time: number, pid: number)
 // 删除消息
 export async function mDel(uid: number, type: number, time: number, pid: number) {
     try {
-        await DB
+        const message = (await DB
             .delete(Message)
             .where(and(
                 eq(Message.uid, uid),
@@ -30,7 +35,11 @@ export async function mDel(uid: number, type: number, time: number, pid: number)
                 eq(Message.time, time),
                 eq(Message.pid, pid),
             ))
-            .execute();
+            .returning({ uid: Message.uid })
+        )?.[0]
+        if (message) {
+            Status(message.uid, -1) // 回复目标重置消息状态
+        }
     } catch (error) {
         console.error('删除失败:', error);
         // 如果记录已经被删除 也不会报错 但以防万一
@@ -51,9 +60,8 @@ export async function mRead(uid: number, type: number, time: number, pid: number
                 eq(Message.time, time),
                 eq(Message.pid, pid),
             ))
-            .execute();
+            .returning()
     } catch (error) {
-        console.error('删除失败:', error);
-        // 如果记录已经被删除 也不会报错 但以防万一
+        console.error('切换失败:', error);
     }
 }

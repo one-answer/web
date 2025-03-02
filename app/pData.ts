@@ -2,7 +2,8 @@ import { Context } from "hono";
 import { DB, Post, Thread, User } from "./base";
 import { Auth, Cache, Counter, HTMLFilter, HTMLSubject, IsAdmin, Status } from "./core";
 import { mAdd, mDel } from "./mCore";
-import { and, desc, eq, gt, or, sql } from "drizzle-orm";
+import { and, desc, eq, gt, inArray, ne, or, sql } from "drizzle-orm";
+import { alias } from "drizzle-orm/sqlite-core";
 
 export async function pSave(a: Context) {
     const i = await Auth(a)
@@ -87,8 +88,7 @@ export async function pSave(a: Context) {
         Counter.add(post.uid, thread.tid); // 用户帖子回复+1
         // 回复通知开始 如果回复的不是自己
         if (post.uid != quote.uid) {
-            await mAdd(quote.uid, 1, post.time, post.quote_pid)
-            Status(quote.uid, 1) // 回复目标增加消息通知
+            await mAdd(quote.uid, 1, post.time, post.pid)
         }
         // 回复通知结束
         Cache.set(-i.uid, time) // 记录发帖时间
@@ -194,8 +194,7 @@ export async function pOmit(a: Context) {
         )?.[0]
         // 如果存在被回复帖 且回复的不是自己
         if (quote && post.uid != quote.uid) {
-            await mDel(quote.uid, 1, post.time, post.quote_pid)
-            Status(quote.uid, null) // 回复目标重置消息状态
+            await mDel(quote.uid, 1, post.time, post.pid)
         }
         // 回复通知结束
     } else {
@@ -206,7 +205,7 @@ export async function pOmit(a: Context) {
                 access: 3,
             })
             .where(and(
-                eq(Thread.tid, post.pid),
+                eq(Thread.tid, post.pid), // thread首帖 post.pid=thread.tid post.tid=0
                 IsAdmin(i, undefined, eq(Thread.uid, i.uid)), // 管理和作者都能删除
             ))
         await DB
@@ -221,19 +220,28 @@ export async function pOmit(a: Context) {
         Counter.sub(0, 0); // 全局发帖-1
         Counter.sub(post.uid, 0); // 用户发帖-1
         // 回复通知开始
-        /*
-        待修改：轮询所有 quote_pid
-        const noticeUidArr = (await DB
-            .delete(Notice)
+        const QuotePost = alias(Post, 'QuotePost')
+        const QuoteUser = alias(User, 'QuoteUser')
+        // 向被引用人发送了回复通知的帖子
+        const postArr = await DB
+            .select({
+                pid: Post.pid,
+                time: Post.time,
+                quote_uid: QuoteUser.uid,
+            })
+            .from(Post)
             .where(and(
-                eq(Notice.tid, post.tid || post.pid),
+                inArray(Post.access, [0, 1, 2, 3]),
+                eq(Post.tid, post.pid),
+                ne(Post.uid, QuoteUser.uid),
             ))
-            .returning({ uid: Notice.uid })
-        )
-        noticeUidArr.forEach(function (row) {
-            Status(row.uid, null) // 回复目标重置消息状态
+            .leftJoin(QuotePost, eq(QuotePost.pid, Post.quote_pid))
+            .leftJoin(QuoteUser, eq(QuoteUser.uid, QuotePost.uid))
+        postArr.forEach(async function (post) {
+            if (post.quote_uid) {
+                await mDel(post.quote_uid, 1, post.time, post.pid)
+            }
         })
-        */
         // 回复通知结束
     }
     return a.text('ok')

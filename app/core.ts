@@ -122,10 +122,10 @@ export class Cache {
     }
 }
 
-export async function Status(uid: number, status: 0 | 1 | 10 | 20 | null | undefined = undefined) {
+export async function Status(uid: number, status: -1 | 0 | 1 | 10 | -10 | undefined = undefined) {
     const cache = Cache.get(uid);
     const noreset = (cache ?? 0) < 10;
-    if (status == undefined) {
+    if (status === undefined) {
         // status:undefined 获取用户状态 0:无消息 1:有消息
         return cache ?? Cache.set(uid, (await DB
             .select()
@@ -136,28 +136,28 @@ export async function Status(uid: number, status: 0 | 1 | 10 | 20 | null | undef
             ))
             .limit(1)
         )?.[0] ? 1 : 0)
-    } else if (status == null) {
-        // status:null 清除用户状态 下次重新获取 要刷新+重新读取消息
+    } else if (status === -1) {
+        // status:-1 清除用户状态 重新读取消息
         Cache.del(uid)
-    } else if (status == 0) {
+    } else if (status === 0) {
         // status:0 0/10:无消息(要刷新)
         if (noreset) {
             Cache.set(uid, 0)
         } else {
             Cache.set(uid, 10)
         }
-    } else if (status == 1) {
+    } else if (status === 1) {
         // status:1 1/11:有消息(要刷新)
         if (noreset) {
             Cache.set(uid, 1)
         } else {
             Cache.set(uid, 11)
         }
-    } else if (status == 10 && noreset) {
-        // status:10 10/11:要刷新 添加要刷新状态
+    } else if (status === 10 && noreset) {
+        // status:10 添加要刷新状态
         Cache.set(uid, (cache ?? 0) + 10)
-    } else if (status == 20 && !noreset) {
-        // status:20 20/21:已刷新 清除要刷新状态
+    } else if (status === -10 && !noreset) {
+        // status:-10 清除要刷新状态
         Cache.set(uid, cache! - 10)
     }
     return 0;
@@ -177,7 +177,7 @@ export async function Auth(a: Context) {
         if (!data) { return undefined }
         const { hash, salt, ...iNew } = data
         setCookie(a, 'JWT', await sign(iNew, Config.get('secret_key')), { maxAge: 2592000 })
-        Status(i.uid, 20) // 清除要刷新状态 无需重新读取消息数量
+        Status(i.uid, -10) // 清除要刷新状态 无需重新读取消息数量
         return iNew
     } catch (error) {
         return undefined
