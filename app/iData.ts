@@ -91,12 +91,12 @@ function md5(r: string): string {
 
 export async function iLogin(a: Context) {
     const body = await a.req.formData();
-    const mail = body.get('user')?.toString();
+    const acct = body.get('acct')?.toString().toLowerCase() // 登录凭证 邮箱 或 昵称
     const pass = body.get('pass')?.toString();
 
-    console.log('Login attempt:', { mail });
+    console.log('Login attempt:', { acct });
 
-    if (!mail || !pass) {
+    if (!acct || !pass) {
         console.log('Login failed: missing credentials');
         return a.text('401', 401);
     }
@@ -104,15 +104,15 @@ export async function iLogin(a: Context) {
     const user = (await DB
         .select()
         .from(User)
-        .where(eq(User.mail, mail))
+        .where(or(eq(User.mail, acct), eq(User.name, acct)))
     )?.[0];
 
-    console.log('Found user:', { 
+    console.log('Found user:', {
         uid: user?.uid,
         mail: user?.mail,
         inputHash: pass,
         storedHash: user?.hash,
-        salt: user?.salt 
+        salt: user?.salt
     });
 
     if (!user) {
@@ -120,7 +120,7 @@ export async function iLogin(a: Context) {
         return a.text('401', 401);
     }
 
-    const inputHash = pass;
+    const inputHash = md5(pass + user.salt);
     const storedHash = user.hash;
 
     console.log('Hash comparison:', {
@@ -135,7 +135,7 @@ export async function iLogin(a: Context) {
     }
 
     const { hash, salt, ...i } = user;
-    
+
     console.log('Preparing JWT:', {
         userData: i,
         secretKey: Config.get('secret_key')
@@ -144,7 +144,7 @@ export async function iLogin(a: Context) {
     try {
         const token = await sign(i, Config.get('secret_key'));
         console.log('JWT signed successfully:', { token });
-        
+
         setCookie(a, 'JWT', token, { maxAge: 2592000 });
         return a.text('ok');
     } catch (error) {
@@ -160,9 +160,9 @@ export async function iLogout(a: Context) {
 
 export async function iRegister(a: Context) {
     const body = await a.req.formData()
-    const user = body.get('user')?.toString().toLowerCase() ?? ''
+    const acct = body.get('acct')?.toString().toLowerCase() ?? ''
     const pass = body.get('pass')?.toString() ?? ''
-    if (!user || !pass) { return a.notFound() }
+    if (!acct || !pass) { return a.notFound() }
     const time = Math.floor(Date.now() / 1000)
     let rand = randomBytes(Math.ceil(8))
         .toString("base64")
@@ -172,7 +172,7 @@ export async function iRegister(a: Context) {
     const data = (await DB
         .insert(User)
         .values({
-            mail: user,
+            mail: acct,
             name: '#' + time,
             hash: md5(pass + rand),
             salt: rand,

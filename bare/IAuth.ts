@@ -12,7 +12,7 @@ ${Header(z)}
         <h2 class="text-center text-2xl/9 font-bold tracking-tight text-gray-900">Tailwind CSS</h2>
       </div>
       <div>
-        <input type="text" name="user" placeholder="邮箱" required class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+        <input type="text" name="acct" placeholder="邮箱" required class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
         <input type="password" name="pass" placeholder="密码" required class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
         <input type="password" name="pass_repeat" placeholder="确认密码" class="hidden block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
       </div>
@@ -30,8 +30,8 @@ ${Header(z)}
         event.preventDefault();
         if (event.submitter.name == 'register') {
             const data = new FormData(form);
-            if (!data.get('user')) {alert('邮箱地址为空');return;}
-            if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(data.get('user'))) {alert('邮箱格式错误');return;}
+            if (!data.get('acct')) {alert('邮箱地址为空');return;}
+            if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(data.get('acct'))) {alert('邮箱格式错误');return;}
             document.querySelector('input[name="pass_repeat"]').style.display = 'block';
             if (!data.get('pass_repeat')) {return;}
             if (data.get('pass') != data.get('pass_repeat')) {alert('密码不一致');return;}
