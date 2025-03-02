@@ -58,8 +58,8 @@ export async function pList(a: Context) {
             ),
         ))
         .leftJoin(User, eq(Post.uid, User.uid))
-        .leftJoin(QuotePost, and(ne(Post.quote_pid, Post.tid), eq(Post.quote_pid, QuotePost.pid), eq(QuotePost.access, 0)))
-        .leftJoin(QuoteUser, and(ne(Post.quote_pid, Post.tid), eq(QuotePost.uid, QuoteUser.uid), eq(QuotePost.access, 0)))
+        .leftJoin(QuotePost, and(ne(Post.quote_pid, Post.tid), eq(QuotePost.pid, Post.quote_pid), eq(QuotePost.access, 0)))
+        .leftJoin(QuoteUser, eq(QuoteUser.uid, QuotePost.uid))
         .orderBy(asc(Post.pid))
         .offset((page - 1) * Config.get('page_size_p'))
         .limit(Config.get('page_size_p'))
