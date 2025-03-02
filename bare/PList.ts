@@ -27,7 +27,7 @@ ${z.data.map(item => html`
         </div>
         <div class="text-xs text-gray-400 mt-1">
             <a href="/?uid=${item.uid}" target="_blank" class="author">${item.name}</a>
-            <span class="date" time_stamp="${item.create_date}"></span>
+            <span class="date" time_stamp="${item.time}"></span>
             ${(z.i) ? html`
             ${(z.i.gid == 1 && !item.tid) ? html`
             <a class="sticky ${z.thread.is_top ? 'font-bold' : ''}" href="javascript:peak(${item.pid});">置顶</a>

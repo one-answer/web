@@ -62,8 +62,8 @@
           "autoincrement": false,
           "default": 0
         },
-        "create_date": {
-          "name": "create_date",
+        "time": {
+          "name": "time",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
@@ -127,16 +127,16 @@
           "autoincrement": false,
           "default": 0
         },
-        "create_date": {
-          "name": "create_date",
+        "time": {
+          "name": "time",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
           "default": 0
         },
-        "last_date": {
-          "name": "last_date",
+        "last_time": {
+          "name": "last_time",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
@@ -256,8 +256,8 @@
           "autoincrement": false,
           "default": 0
         },
-        "create_date": {
-          "name": "create_date",
+        "time": {
+          "name": "time",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,

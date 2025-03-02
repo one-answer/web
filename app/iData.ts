@@ -176,7 +176,7 @@ export async function iRegister(a: Context) {
             name: '#' + time,
             hash: md5(pass + rand),
             salt: rand,
-            create_date: time,
+            time,
         })
         .onConflictDoNothing()
         .returning()

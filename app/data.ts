@@ -45,8 +45,8 @@ export const Post = sqliteTable("post", {
     pid: integer().primaryKey(),
     tid: integer().notNull().default(0),
     uid: integer().notNull().default(0),
+    time: integer().notNull().default(0),
     access: integer().notNull().default(0),
-    create_date: integer().notNull().default(0),
     quote_pid: integer().notNull().default(0),
     content: text().notNull().default(''),
 }, (table) => [
@@ -57,21 +57,22 @@ export const Post = sqliteTable("post", {
 export const Thread = sqliteTable("thread", {
     tid: integer().primaryKey(),
     uid: integer().notNull().default(0),
+    time: integer().notNull().default(0),
     access: integer().notNull().default(0),
     is_top: integer().notNull().default(0),
-    create_date: integer().notNull().default(0),
-    last_date: integer().notNull().default(0),
+    last_time: integer().notNull().default(0),
     last_uid: integer().notNull().default(0),
     posts: integer().notNull().default(0),
     subject: text().notNull().default(''),
 }, (table) => [
-    index("thread:access,is_top,last_date").on(table.access, table.is_top, table.last_date), // 按帖子置顶与最后回复排序
-    index("thread:access,uid,create_date").on(table.access, table.uid, table.create_date), // 按用户发帖时间排序
+    index("thread:access,is_top,last_time").on(table.access, table.is_top, table.last_time), // 按帖子置顶与最后回复排序
+    index("thread:access,uid,time").on(table.access, table.uid, table.time), // 按用户发帖时间排序
 ]);
 
 export const User = sqliteTable("user", {
     uid: integer().primaryKey(),
     gid: integer().notNull().default(0),
+    time: integer().notNull().default(0),
     mail: text().notNull().default('').unique(),
     name: text().notNull().default('').unique(),
     hash: text().notNull().default(''),
@@ -80,7 +81,6 @@ export const User = sqliteTable("user", {
     posts: integer().notNull().default(0),
     credits: integer().notNull().default(0),
     golds: integer().notNull().default(0),
-    create_date: integer().notNull().default(0),
 });
 
 export type I = Omit<typeof User.$inferSelect, "hash" | "salt">

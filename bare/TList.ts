@@ -15,11 +15,11 @@ ${z.data.map(item => html`
         </div>
         <div class="text-xs text-gray-400 mt-1">
             <span class="author">${item.name}</span>
-            <span class="date" time_stamp="${item.create_date}"></span>
+            <span class="date" time_stamp="${item.time}"></span>
             ${item.last_name ? html`
             &nbsp;&#x276E;&nbsp;${item.posts - 1}&nbsp;
             <span class="author">${item.last_name}</span>
-            <span class="date" time_stamp="${item.last_date}"></span>
+            <span class="date" time_stamp="${item.last_time}"></span>
             ` : ''}
         </div>
     </a>

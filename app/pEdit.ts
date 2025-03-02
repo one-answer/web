@@ -26,7 +26,7 @@ export async function pEdit(a: Context) {
                 eq(Post.pid, -eid),
                 eq(Post.access, 0),
                 IsAdmin(i, undefined, eq(Post.uid, i.uid)), // 管理和作者都能编辑
-                IsAdmin(i, undefined, gt(sql`${Post.create_date} + 604800`, time)), // 7天后禁止编辑
+                IsAdmin(i, undefined, gt(sql`${Post.time} + 604800`, time)), // 7天后禁止编辑
             ))
         )?.[0]
         if (!post) { return a.text('403', 403) }

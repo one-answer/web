@@ -56,7 +56,7 @@ assbbs-web/
   - `posts`: 回帖数
   - `credits`: 积分
   - `golds`: 金币
-  - `create_date`: 注册时间
+  - `time`: 注册时间
 
 - **thread**: 主题表
   - `tid`: 主题 ID（主键）
@@ -64,8 +64,8 @@ assbbs-web/
   - `subject`: 主题标题
   - `access`: 访问权限
   - `is_top`: 是否置顶
-  - `create_date`: 创建时间
-  - `last_date`: 最后回复时间
+  - `time`: 创建时间
+  - `last_time`: 最后回复时间
   - `last_uid`: 最后回复用户 ID
   - `posts`: 回复数量
 
@@ -75,7 +75,7 @@ assbbs-web/
   - `uid`: 发帖用户 ID
   - `content`: 帖子内容
   - `access`: 访问权限
-  - `create_date`: 发帖时间
+  - `time`: 发帖时间
   - `quote_pid`: 引用帖子 ID
 
 ## 安全说明

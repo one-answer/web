@@ -37,7 +37,7 @@ export async function tList(a: Context) {
         ))
         .leftJoin(User, eq(Thread.uid, User.uid))
         .leftJoin(LastUser, eq(Thread.last_uid, LastUser.uid))
-        .orderBy(...(uid ? [desc(Thread.create_date)] : [desc(Thread.is_top), desc(Thread.last_date)]))
+        .orderBy(...(uid ? [desc(Thread.time)] : [desc(Thread.is_top), desc(Thread.last_time)]))
         .offset((page - 1) * Config.get('page_size_t'))
         .limit(Config.get('page_size_t'))
     const pagination = Pagination(Config.get('page_size_t'), await Counter.get(uid, 0), page, 2)

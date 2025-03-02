@@ -22,7 +22,7 @@ export async function pSave(a: Context) {
                 eq(Post.pid, -eid),
                 eq(Post.access, 0),
                 IsAdmin(i, undefined, eq(Post.uid, i.uid)), // 管理和作者都能编辑
-                IsAdmin(i, undefined, gt(sql`${Post.create_date} + 604800`, time)), // 7天后禁止编辑
+                IsAdmin(i, undefined, gt(sql`${Post.time} + 604800`, time)), // 7天后禁止编辑
             ))
             .returning()
         )?.[0]
@@ -54,11 +54,11 @@ export async function pSave(a: Context) {
             .set({
                 posts: sql`${Thread.posts}+1`,
                 last_uid: i.uid,
-                last_date: time,
+                last_time: time,
             })
             .where(and(
                 eq(Thread.tid, quote.tid ? quote.tid : quote.pid),
-                gt(sql`${Thread.last_date} + 604800`, time),
+                gt(sql`${Thread.last_time} + 604800`, time),
             ))
             .returning()
         )?.[0]
@@ -69,7 +69,7 @@ export async function pSave(a: Context) {
             .values({
                 tid: quote.tid ? quote.tid : quote.pid,
                 uid: i.uid,
-                create_date: time,
+                time,
                 quote_pid: quote.pid,
                 content: content,
             })
@@ -88,7 +88,7 @@ export async function pSave(a: Context) {
         // 回复通知开始 如果回复的不是自己
         if (post.uid != quote.uid) {
             //给回复目标增加通知
-            await mAdd(quote.uid, 1, post.create_date, post.quote_pid)
+            await mAdd(quote.uid, 1, post.time, post.quote_pid)
             Status(quote.uid, 1)
         }
         // 回复通知结束
@@ -103,7 +103,7 @@ export async function pSave(a: Context) {
             .insert(Post)
             .values({
                 uid: i.uid,
-                create_date: time,
+                time,
                 content: content,
             })
             .returning()
@@ -114,8 +114,8 @@ export async function pSave(a: Context) {
                 tid: post.pid,
                 uid: i.uid,
                 subject: HTMLSubject(content, 140),
-                create_date: time,
-                last_date: time,
+                time,
+                last_time: time,
                 posts: 1,
             })
         await DB
@@ -174,7 +174,7 @@ export async function pOmit(a: Context) {
             .set({
                 posts: sql`${Thread.posts} - 1`,
                 last_uid: last.tid ? last.uid : 0,
-                last_date: last.create_date,
+                last_time: last.time,
             })
             .where(eq(Thread.tid, post.tid))
         await DB
@@ -195,7 +195,7 @@ export async function pOmit(a: Context) {
         )?.[0]
         // 如果存在被回复帖 且回复的不是自己
         if (quote && post.uid != quote.uid) {
-            await mDel(quote.uid, 1, post.create_date, post.quote_pid)
+            await mDel(quote.uid, 1, post.time, post.quote_pid)
             Status(quote.uid, null)
         }
         // 回复通知结束

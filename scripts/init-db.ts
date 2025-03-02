@@ -135,7 +135,7 @@ async function main() {
             salt: adminSalt,
             credits: 1000,
             golds: 100,
-            create_date: currentTime
+            time: currentTime
         };
         console.log('管理员用户数据:', adminUser);
 
@@ -162,7 +162,7 @@ async function main() {
             salt: testSalt,
             credits: 100,
             golds: 10,
-            create_date: currentTime
+            time: currentTime
         };
         console.log('测试用户数据:', testUser);
 
@@ -184,8 +184,8 @@ async function main() {
             uid: 1, // 管理员发布
             access: 0,
             is_top: 1, // 置顶
-            create_date: currentTime,
-            last_date: currentTime,
+            time: currentTime,
+            last_time: currentTime,
             last_uid: 1,
             posts: 1,
             subject: '欢迎来到 ASSBBS！'
@@ -210,7 +210,7 @@ async function main() {
             tid: 1,
             uid: 1,
             access: 0,
-            create_date: currentTime,
+            time: currentTime,
             quote_pid: 0,
             content: `# 欢迎来到 ASSBBS！
 

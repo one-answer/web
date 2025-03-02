@@ -8,7 +8,7 @@ CREATE TABLE `post` (
 	`tid` integer DEFAULT 0 NOT NULL,
 	`uid` integer DEFAULT 0 NOT NULL,
 	`access` integer DEFAULT 0 NOT NULL,
-	`create_date` integer DEFAULT 0 NOT NULL,
+	`time` integer DEFAULT 0 NOT NULL,
 	`quote_pid` integer DEFAULT 0 NOT NULL,
 	`content` text DEFAULT '' NOT NULL
 );
@@ -18,8 +18,8 @@ CREATE TABLE `thread` (
 	`uid` integer DEFAULT 0 NOT NULL,
 	`access` integer DEFAULT 0 NOT NULL,
 	`is_top` integer DEFAULT 0 NOT NULL,
-	`create_date` integer DEFAULT 0 NOT NULL,
-	`last_date` integer DEFAULT 0 NOT NULL,
+	`time` integer DEFAULT 0 NOT NULL,
+	`last_time` integer DEFAULT 0 NOT NULL,
 	`last_uid` integer DEFAULT 0 NOT NULL,
 	`posts` integer DEFAULT 0 NOT NULL,
 	`subject` text DEFAULT '' NOT NULL
@@ -36,7 +36,7 @@ CREATE TABLE `user` (
 	`posts` integer DEFAULT 0 NOT NULL,
 	`credits` integer DEFAULT 0 NOT NULL,
 	`golds` integer DEFAULT 0 NOT NULL,
-	`create_date` integer DEFAULT 0 NOT NULL
+	`time` integer DEFAULT 0 NOT NULL
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `user_mail_unique` ON `user` (`mail`);--> statement-breakpoint
