@@ -1,4 +1,4 @@
-import { DB, Conf, User, Thread, Post } from '../app/base';
+import { DB, Conf, User, Thread, Post } from './app/base';
 import { eq } from 'drizzle-orm';
 import { randomBytes } from 'crypto';
 
@@ -106,6 +106,8 @@ async function main() {
             { key: 'credits_initial', value: JSON.stringify(100) }, // 新用户初始积分
             { key: 'credits_login', value: JSON.stringify(10) }, // 登录奖励积分
             { key: 'credits_post', value: JSON.stringify(5) }, // 发帖奖励积分
+            { key: 'page_size_p', value: JSON.stringify(20) }, // 帖子回复页内容数量
+            { key: 'page_size_t', value: JSON.stringify(20) }, // 帖子列表页内容数量
             {
                 key: 'theme', value: JSON.stringify({
                     primaryColor: '#007bff',

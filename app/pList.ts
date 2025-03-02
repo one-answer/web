@@ -34,6 +34,7 @@ export async function pList(a: Context) {
     if (!thread) { return a.notFound() }
     const page = parseInt(a.req.param('page') ?? '0') || 1
     const uid = parseInt(a.req.query('uid') ?? '0')
+    const page_size_p = Config.get('page_size_p')
     const QuotePost = alias(Post, 'QuotePost')
     const QuoteUser = alias(User, 'QuoteUser')
     const data = await DB
@@ -61,9 +62,9 @@ export async function pList(a: Context) {
         .leftJoin(QuotePost, and(ne(Post.quote_pid, Post.tid), eq(QuotePost.pid, Post.quote_pid), eq(QuotePost.access, 0)))
         .leftJoin(QuoteUser, eq(QuoteUser.uid, QuotePost.uid))
         .orderBy(asc(Post.pid))
-        .offset((page - 1) * Config.get('page_size_p'))
-        .limit(Config.get('page_size_p'))
-    const pagination = Pagination(Config.get('page_size_p'), await Counter.get(uid, tid), page, 2)
+        .offset((page - 1) * page_size_p)
+        .limit(page_size_p)
+    const pagination = Pagination(page_size_p, await Counter.get(uid, tid), page, 2)
     const title = raw(thread.subject)
     return a.html(PList({ a, i, thread, uid, page, pagination, data, title }));
 }

@@ -1,4 +1,5 @@
 .env
+migrations/
 node_modules/
 upload/
 app.db

@@ -21,6 +21,7 @@ export async function tList(a: Context) {
     const i = await Auth(a)
     const page = parseInt(a.req.param('page') ?? '0') || 1
     const uid = parseInt(a.req.query('uid') ?? '0')
+    const page_size_t = Config.get('page_size_t')
     const LastUser = alias(User, 'LastUser')
     const data = await DB
         .select({
@@ -38,9 +39,9 @@ export async function tList(a: Context) {
         .leftJoin(User, eq(Thread.uid, User.uid))
         .leftJoin(LastUser, eq(Thread.last_uid, LastUser.uid))
         .orderBy(...(uid ? [desc(Thread.time)] : [desc(Thread.is_top), desc(Thread.last_time)]))
-        .offset((page - 1) * Config.get('page_size_t'))
-        .limit(Config.get('page_size_t'))
-    const pagination = Pagination(Config.get('page_size_t'), await Counter.get(uid, 0), page, 2)
+        .offset((page - 1) * page_size_t)
+        .limit(page_size_t)
+    const pagination = Pagination(page_size_t, await Counter.get(uid, 0), page, 2)
     const title = Config.get('site_name')
     return a.html(TList({ a, i, uid, page, pagination, data, title }));
 }

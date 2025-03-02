@@ -136,11 +136,6 @@ export async function iLogin(a: Context) {
 
     const { hash, salt, ...i } = user;
 
-    console.log('Preparing JWT:', {
-        userData: i,
-        secretKey: Config.get('secret_key')
-    });
-
     try {
         const token = await sign(i, Config.get('secret_key'));
         console.log('JWT signed successfully:', { token });

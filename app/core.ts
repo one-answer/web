@@ -167,7 +167,8 @@ export async function Auth(a: Context) {
     const jwt = getCookie(a, 'JWT');
     if (!jwt) { return undefined }
     try {
-        let i = await verify(jwt, Config.get('secret_key')) as I
+        const secret_key = Config.get('secret_key')
+        let i = await verify(jwt, secret_key) as I
         if (await Status(i.uid) < 10) { return i } // 不要刷新 直接返回用户
         const data = (await DB
             .select()
@@ -176,7 +177,7 @@ export async function Auth(a: Context) {
         )?.[0]
         if (!data) { return undefined }
         const { hash, salt, ...iNew } = data
-        setCookie(a, 'JWT', await sign(iNew, Config.get('secret_key')), { maxAge: 2592000 })
+        setCookie(a, 'JWT', await sign(iNew, secret_key), { maxAge: 2592000 })
         Status(i.uid, -10) // 清除要刷新状态 无需重新读取消息数量
         return iNew
     } catch (error) {

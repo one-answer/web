@@ -32,9 +32,8 @@ assbbs-web/
 │   └── tList.ts       # 主题列表
 ├── bare/              # 静态资源目录
 ├── const/             # 常量和配置文件
-├── drizzle/           # 数据库迁移文件
-└── scripts/           # 脚本文件
-    └── init-db.ts     # 数据库初始化脚本
+├── migrations/        # 数据库迁移文件
+└── init.ts     # 数据库初始化脚本
     
 ```
 ## 数据库结构
