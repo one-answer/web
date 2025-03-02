@@ -90,7 +90,7 @@ async function main() {
 
     try {
         console.log('开始初始化数据库...');
-        
+
         // 检查数据库表结构
         console.log('检查数据库表结构...');
 
@@ -104,15 +104,19 @@ async function main() {
             { key: 'credits_initial', value: JSON.stringify(100) }, // 新用户初始积分
             { key: 'credits_login', value: JSON.stringify(10) }, // 登录奖励积分
             { key: 'credits_post', value: JSON.stringify(5) }, // 发帖奖励积分
-            { key: 'theme', value: JSON.stringify({
-                primaryColor: '#007bff',
-                secondaryColor: '#6c757d',
-                backgroundColor: '#f8f9fa'
-            })},
+            {
+                key: 'theme', value: JSON.stringify({
+                    primaryColor: '#007bff',
+                    secondaryColor: '#6c757d',
+                    backgroundColor: '#f8f9fa'
+                })
+            },
             { key: 'secret_key', value: JSON.stringify('your-secret-key-here') },
-            { key: 'friend_link', value: JSON.stringify([
-                { name: 'ASSBBS', url: 'https://github.com/your-username/assbbs' }
-            ])}
+            {
+                key: 'friend_link', value: JSON.stringify([
+                    { name: 'ASSBBS', url: 'https://github.com/your-username/assbbs' }
+                ])
+            }
         ];
 
         for (const config of configs) {
@@ -131,7 +135,7 @@ async function main() {
             gid: 1, // 管理员组
             mail: 'admin@example.com',
             name: 'admin',
-            hash: md5('admin123'), // 直接存储密码的md5值,与前端一致
+            hash: md5(md5('admin123') + adminSalt),
             salt: adminSalt,
             credits: 1000,
             golds: 100,
@@ -158,7 +162,7 @@ async function main() {
             gid: 0, // 普通用户组
             mail: 'test@example.com',
             name: 'test',
-            hash: md5('test123'), // 直接存储密码的md5值,与前端一致
+            hash: md5(md5('test123') + testSalt),
             salt: testSalt,
             credits: 100,
             golds: 10,
