@@ -3,6 +3,12 @@ import { drizzle } from "drizzle-orm/libsql";
 import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
 import { createClient } from '@libsql/client';
 
+/*
+【致开发者】
+感谢您的贡献，核心数据库结构，请尽量避免修改。
+如果需要做结构上的变动，请先在GitHub讨论区发帖。
+*/
+
 export const DB = function () {
     const db = createClient({
         url: "file:app.db",
@@ -55,8 +61,8 @@ export const Post = sqliteTable("post", {
     quote_uid: integer().notNull().default(0),
     content: text().notNull().default(''),
 }, (table) => [
-    index("post:access,tid,pid").on(table.access, table.tid, table.pid),
-    index("post:access,uid,tid,pid").on(table.access, table.uid, table.tid, table.pid),
+    index("post:access,tid,pid").on(table.access, table.tid, table.pid), // 帖子内的回复
+    index("post:access,uid,tid,pid").on(table.access, table.uid, table.tid, table.pid), // 帖子内某个用户的回复
 ]);
 
 export const Thread = sqliteTable("thread", {
