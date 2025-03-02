@@ -179,6 +179,15 @@ export async function Status(uid: number, status: 0 | 1 | 10 | 20 | null | undef
     return 0;
 }
 
+export function IsAdmin(i: I, allow: any, disallow: any) {
+    // 是否拥有管理权限 是则返回 allow 否则返回 disallow
+    if ([1].includes(i.gid)) {
+        return allow;
+    } else {
+        return disallow;
+    }
+}
+
 export function Pagination(perPage: number, sum: number, page: number, near: number) {
     if (!page) { page = 1 }
     // 首页

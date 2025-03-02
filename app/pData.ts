@@ -1,6 +1,6 @@
 import { Context } from "hono";
 import { DB, Post, Thread, User } from "./data";
-import { Auth, Cache, Counter, HTMLFilter, HTMLSubject, Status } from "./base";
+import { Auth, Cache, Counter, HTMLFilter, HTMLSubject, IsAdmin, Status } from "./base";
 import { mAdd, mDel } from "./mBase";
 import { and, desc, eq, gt, lt, or, sql } from "drizzle-orm";
 
@@ -21,8 +21,8 @@ export async function pSave(a: Context) {
             .where(and(
                 eq(Post.pid, -eid),
                 eq(Post.access, 0),
-                [1].includes(i.gid) ? undefined : eq(Post.uid, i.uid), // 只有作者可以编辑
-                [1].includes(i.gid) ? undefined : gt(sql`${Post.create_date} + 604800`, time), // 7天后禁止编辑
+                IsAdmin(i, undefined, eq(Post.uid, i.uid)), // 管理和作者都能编辑
+                IsAdmin(i, undefined, gt(sql`${Post.create_date} + 604800`, time)), // 7天后禁止编辑
             ))
             .returning()
         )?.[0]
@@ -146,7 +146,7 @@ export async function pOmit(a: Context) {
         })
         .where(and(
             eq(Post.pid, pid),
-            [1].includes(i.gid) ? undefined : eq(Post.uid, i.uid), // 管理和作者都能删除
+            IsAdmin(i, undefined, eq(Post.uid, i.uid)), // 管理和作者都能删除
         ))
         .returning()
     )?.[0]
@@ -208,7 +208,7 @@ export async function pOmit(a: Context) {
             })
             .where(and(
                 eq(Thread.tid, post.pid),
-                [1].includes(i.gid) ? undefined : eq(Thread.uid, i.uid), // 管理和作者都能删除
+                IsAdmin(i, undefined, eq(Thread.uid, i.uid)), // 管理和作者都能删除
             ))
         await DB
             .update(User)

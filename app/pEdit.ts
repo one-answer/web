@@ -1,7 +1,7 @@
 import { Context } from "hono";
 import { raw } from "hono/html";
 import { Props, DB, Post } from "./data";
-import { Auth } from "./base";
+import { Auth, IsAdmin } from "./base";
 import { and, eq, gt, sql } from "drizzle-orm";
 import { PEdit } from "../bare/PEdit";
 
@@ -25,8 +25,8 @@ export async function pEdit(a: Context) {
             .where(and(
                 eq(Post.pid, -eid),
                 eq(Post.access, 0),
-                [1].includes(i.gid) ? undefined : eq(Post.uid, i.uid), // 只有作者可以编辑
-                [1].includes(i.gid) ? undefined : gt(sql`${Post.create_date} + 604800`, time), // 7天后禁止编辑
+                IsAdmin(i, undefined, eq(Post.uid, i.uid)), // 管理和作者都能编辑
+                IsAdmin(i, undefined, gt(sql`${Post.create_date} + 604800`, time)), // 7天后禁止编辑
             ))
         )?.[0]
         if (!post) { return a.text('403', 403) }
