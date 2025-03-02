@@ -1,6 +1,6 @@
 import { DB, Conf, User, Thread, Post } from '../app/base';
 import { eq } from 'drizzle-orm';
-import { createHash, randomBytes } from 'crypto';
+import { randomBytes } from 'crypto';
 
 // 删除原有的 generatePassword 函数,改用与前端一致的 md5 函数
 function md5(r: string): string {
@@ -86,7 +86,9 @@ function md5(r: string): string {
 }
 
 async function main() {
+
     const currentTime = Math.floor(Date.now() / 1000);
+    const randomSecretKey = md5(randomBytes(16).toString('hex') + currentTime)
 
     try {
         console.log('开始初始化数据库...');
@@ -111,7 +113,7 @@ async function main() {
                     backgroundColor: '#f8f9fa'
                 })
             },
-            { key: 'secret_key', value: JSON.stringify('your-secret-key-here') },
+            { key: 'secret_key', value: JSON.stringify(randomSecretKey) },
             {
                 key: 'friend_link', value: JSON.stringify([
                     { name: 'ASSBBS', url: 'https://github.com/your-username/assbbs' }
@@ -133,13 +135,13 @@ async function main() {
         const adminUser = {
             uid: 1,
             gid: 1, // 管理员组
+            time: currentTime,
             mail: 'admin@example.com',
             name: 'admin',
             hash: md5(md5('admin123') + adminSalt),
             salt: adminSalt,
             credits: 1000,
             golds: 100,
-            time: currentTime
         };
         console.log('管理员用户数据:', adminUser);
 
@@ -160,13 +162,13 @@ async function main() {
         const testUser = {
             uid: 2,
             gid: 0, // 普通用户组
+            time: currentTime,
             mail: 'test@example.com',
             name: 'test',
             hash: md5(md5('test123') + testSalt),
             salt: testSalt,
             credits: 100,
             golds: 10,
-            time: currentTime
         };
         console.log('测试用户数据:', testUser);
 
@@ -186,9 +188,9 @@ async function main() {
         const welcomeThread = {
             tid: 1,
             uid: 1, // 管理员发布
+            time: currentTime,
             access: 0,
             is_top: 1, // 置顶
-            time: currentTime,
             last_time: currentTime,
             last_uid: 1,
             posts: 1,
@@ -213,8 +215,8 @@ async function main() {
             pid: 1,
             tid: 1,
             uid: 1,
-            access: 0,
             time: currentTime,
+            access: 0,
             quote_pid: 0,
             content: `# 欢迎来到 ASSBBS！
 
