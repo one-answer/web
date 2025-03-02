@@ -13,7 +13,7 @@ export class Config {
         const configs = await DB.select().from(Conf);
         configs.forEach(({ key, value }) => {
             try {
-                this.data.set(key, JSON.parse(value));
+                this.data.set(key, value ? JSON.parse(value) : null);
             } catch (error) {
                 console.error(`Failed to parse config ${key}:`, error);
                 this.data.set(key, value);
