@@ -37,7 +37,7 @@ export async function pSave(a: Context) {
         }
         return a.text('ok')
     } else if (eid > 0) { // 回复
-        if (time - (Cache.get(-i.uid) ?? 0) < 60) { return a.text('too_fast', 403) }
+        if (time - (Cache.get(-i.uid) ?? 0) < 60) { return a.text('too_fast', 403) } // 防止频繁发帖
         const quote = (await DB
             .select()
             .from(Post)
@@ -87,16 +87,15 @@ export async function pSave(a: Context) {
         Counter.add(post.uid, thread.tid); // 用户帖子回复+1
         // 回复通知开始 如果回复的不是自己
         if (post.uid != quote.uid) {
-            //给回复目标增加通知
             await mAdd(quote.uid, 1, post.time, post.quote_pid)
-            Status(quote.uid, 1)
+            Status(quote.uid, 1) // 回复目标增加消息通知
         }
         // 回复通知结束
-        Cache.set(-i.uid, time)
-        Status(i.uid, 10)
+        Cache.set(-i.uid, time) // 记录发帖时间
+        Status(i.uid, 10) // 刷新自己的COOKIE
         return a.text('ok') //! 返回tid/pid和posts数量
     } else { // 发帖
-        if (time - (Cache.get(-i.uid) ?? 0) < 60) { return a.text('too_fast', 403) }
+        if (time - (Cache.get(-i.uid) ?? 0) < 60) { return a.text('too_fast', 403) } // 防止频繁发帖
         const content = HTMLFilter(body.get('content')?.toString() ?? '')
         if (!content) { return a.text('406', 406) }
         const post = (await DB
@@ -129,8 +128,8 @@ export async function pSave(a: Context) {
             .where(eq(User.uid, i.uid))
         Counter.add(0, 0); // 全局发帖+1
         Counter.add(i.uid, 0); // 用户发帖+1
-        Cache.set(-i.uid, time)
-        Status(i.uid, 10)
+        Cache.set(-i.uid, time) // 记录发帖时间
+        Status(i.uid, 10) // 刷新自己的COOKIE
         return a.text(String(post.pid))
     }
 }
@@ -196,7 +195,7 @@ export async function pOmit(a: Context) {
         // 如果存在被回复帖 且回复的不是自己
         if (quote && post.uid != quote.uid) {
             await mDel(quote.uid, 1, post.time, post.quote_pid)
-            Status(quote.uid, null)
+            Status(quote.uid, null) // 回复目标重置消息状态
         }
         // 回复通知结束
     } else {
@@ -232,7 +231,7 @@ export async function pOmit(a: Context) {
             .returning({ uid: Notice.uid })
         )
         noticeUidArr.forEach(function (row) {
-            Status(row.uid, null)
+            Status(row.uid, null) // 回复目标重置消息状态
         })
         */
         // 回复通知结束
