@@ -1,10 +1,10 @@
 import { Context } from "hono";
 import { DB, Post, Thread, User } from "./base";
-import { Auth, Config, HTMLFilter, HTMLSubject, IsAdmin, Status } from "./core";
+import { Auth, Config, HTMLFilter, HTMLSubject, IsAdmin } from "./core";
 import { mAdd, mDel } from "./mCore";
+import { cookieReset, lastPostTime } from "./uCore";
 import { and, desc, eq, gt, inArray, ne, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
-import { lastPostTime } from "./uCore";
 
 export async function pSave(a: Context) {
     const i = await Auth(a)
@@ -91,7 +91,7 @@ export async function pSave(a: Context) {
         }
         // 回复通知结束
         lastPostTime(i.uid, time) // 记录发帖时间
-        Status(i.uid, 10) // 刷新自己的COOKIE
+        cookieReset(i.uid, true) // 刷新自己的COOKIE
         return a.text('ok') //! 返回tid/pid和posts数量
     } else { // 发帖
         if (time - lastPostTime(i.uid) < 60) { return a.text('too_fast', 403) } // 防止频繁发帖
@@ -127,7 +127,7 @@ export async function pSave(a: Context) {
             .where(eq(User.uid, i.uid))
         await Config.set('threads', (await Config.get<number>('threads') || 0) + 1)
         lastPostTime(i.uid, time) // 记录发帖时间
-        Status(i.uid, 10) // 刷新自己的COOKIE
+        cookieReset(i.uid, true) // 刷新自己的COOKIE
         return a.text(String(post.pid))
     }
 }

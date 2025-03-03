@@ -1,8 +1,9 @@
 import { Context } from "hono";
 import { sign, verify } from "hono/jwt";
 import { getCookie, setCookie } from "hono/cookie";
-import { DB, Conf, I, User, Message } from "./base";
-import { and, eq } from 'drizzle-orm';
+import { DB, Conf, I, User } from "./base";
+import { cookieReset } from "./uCore";
+import { eq } from 'drizzle-orm';
 import { Window } from "happy-dom";
 import * as DOMPurify from 'isomorphic-dompurify';
 
@@ -68,70 +69,13 @@ export class Config {
     }
 }
 
-export class Cache {
-    // 正数：用户状态
-    private static data: Map<number, number> = new Map();
-    private constructor() { }
-    public static get(key: number): number | undefined {
-        return this.data.get(key);
-    }
-    public static set(key: number, val: number): number {
-        this.data.set(key, val);
-        return val;
-    }
-    public static del(key: number) {
-        this.data.delete(key);
-    }
-}
-
-export async function Status(uid: number, status: -1 | 0 | 1 | 10 | -10 | undefined = undefined) {
-    const cache = Cache.get(uid);
-    const noreset = (cache ?? 0) < 10;
-    if (status === undefined) {
-        // status:undefined 获取用户状态 0:无消息 1:有消息
-        return cache ?? Cache.set(uid, (await DB
-            .select()
-            .from(Message)
-            .where(and(
-                eq(Message.uid, uid),
-                eq(Message.type, 1),
-            ))
-            .limit(1)
-        )?.[0] ? 1 : 0)
-    } else if (status === -1) {
-        // status:-1 清除用户状态 重新读取消息
-        Cache.del(uid)
-    } else if (status === 0) {
-        // status:0 0/10:无消息(要刷新)
-        if (noreset) {
-            Cache.set(uid, 0)
-        } else {
-            Cache.set(uid, 10)
-        }
-    } else if (status === 1) {
-        // status:1 1/11:有消息(要刷新)
-        if (noreset) {
-            Cache.set(uid, 1)
-        } else {
-            Cache.set(uid, 11)
-        }
-    } else if (status === 10 && noreset) {
-        // status:10 添加要刷新状态
-        Cache.set(uid, (cache ?? 0) + 10)
-    } else if (status === -10 && !noreset) {
-        // status:-10 清除要刷新状态
-        Cache.set(uid, cache! - 10)
-    }
-    return 0;
-}
-
 export async function Auth(a: Context) {
     const jwt = getCookie(a, 'JWT');
     if (!jwt) { return undefined }
     try {
         const secret_key = await Config.get<string>('secret_key')
         let i = await verify(jwt, secret_key) as I
-        if (await Status(i.uid) < 10) { return i } // 不要刷新 直接返回用户
+        if (!cookieReset(i.uid)) { return i } // 不要刷新时 直接返回用户
         const data = (await DB
             .select()
             .from(User)
@@ -140,7 +84,7 @@ export async function Auth(a: Context) {
         if (!data) { return undefined }
         const { hash, salt, ...iNew } = data
         setCookie(a, 'JWT', await sign(iNew, secret_key), { maxAge: 2592000 })
-        Status(i.uid, -10) // 清除要刷新状态 无需重新读取消息数量
+        cookieReset(i.uid, false) // 清除要刷新状态
         return iNew
     } catch (error) {
         return undefined
