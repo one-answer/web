@@ -69,7 +69,7 @@ export class Config {
 }
 
 export class Cache {
-    // 正数：用户状态 负数：用户上次发帖时间（防止频繁发帖）
+    // 正数：用户状态
     private static data: Map<number, number> = new Map();
     private constructor() { }
     public static get(key: number): number | undefined {
