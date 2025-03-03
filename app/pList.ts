@@ -32,7 +32,7 @@ export async function pList(a: Context) {
     )?.[0]
     if (!thread) { return a.notFound() }
     const page = parseInt(a.req.param('page') ?? '0') || 1
-    const page_size_p = await Config.get<number>('page_size_p')
+    const page_size_p = await Config.get<number>('page_size_p') || 20
     const QuotePost = alias(Post, 'QuotePost')
     const QuoteUser = alias(User, 'QuoteUser')
     const data = await DB
