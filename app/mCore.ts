@@ -1,6 +1,6 @@
 import { and, eq } from "drizzle-orm";
 import { DB, Message } from "./base";
-import { Status } from "./core";
+import { unreadReply } from "./uCore";
 
 // 增加消息
 export async function mAdd(uid: number, type: number, time: number, pid: number) {
@@ -16,7 +16,7 @@ export async function mAdd(uid: number, type: number, time: number, pid: number)
             .returning({ uid: Message.uid })
         )?.[0]
         if (message) {
-            Status(message.uid, 1) // 回复目标增加消息通知
+            unreadReply(message.uid, 1) // 增加未读回复计数
         }
     } catch (error) {
         console.error('插入失败:', error);
@@ -38,7 +38,7 @@ export async function mDel(uid: number, type: number, time: number, pid: number)
             .returning({ uid: Message.uid })
         )?.[0]
         if (message) {
-            Status(message.uid, -1) // 回复目标重置消息状态
+            unreadReply(message.uid, -1) // 减少未读回复计数
         }
     } catch (error) {
         console.error('删除失败:', error);
@@ -49,7 +49,7 @@ export async function mDel(uid: number, type: number, time: number, pid: number)
 // 已读消息 type也可输入负数 从已读切换到未读
 export async function mRead(uid: number, type: number, time: number, pid: number) {
     try {
-        await DB
+        const message = (await DB
             .update(Message)
             .set({
                 type: -type,
@@ -60,7 +60,11 @@ export async function mRead(uid: number, type: number, time: number, pid: number
                 eq(Message.time, time),
                 eq(Message.pid, pid),
             ))
-            .returning()
+            .returning({ uid: Message.uid })
+        )?.[0]
+        if (message) {
+            unreadReply(message.uid, (type > 0) ? -1 : 1) // 变更未读回复计数
+        }
     } catch (error) {
         console.error('切换失败:', error);
     }

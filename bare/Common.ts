@@ -1,6 +1,7 @@
 import { html } from "hono/html";
 import { Props } from "../app/base";
-import { Config, Status } from "../app/core";
+import { Config } from "../app/core";
+import { unreadReply } from "../app/uCore";
 
 export async function Header(z: Props) {
     return html`
@@ -29,7 +30,7 @@ export async function Header(z: Props) {
           ` : html`
             <li class="px-4 py-2 md:px-0 md:py-0 border-b md:border-none"><a href="/e" class="block text-gray-700 hover:text-blue-600">发表</a></li>
           `}
-            <li class="px-4 py-2 md:px-0 md:py-0 border-b md:border-none"><a href="/n" class="block text-gray-700 hover:text-blue-600 ${await Status(z.i.uid) ? 'text-orange-500 drop-shadow-xs' : ''}">通知</a></li>
+            <li class="px-4 py-2 md:px-0 md:py-0 border-b md:border-none"><a href="/n" class="block text-gray-700 hover:text-blue-600 ${await unreadReply(z.i.uid) ? 'text-orange-500 drop-shadow-xs' : ''}">通知</a></li>
             <li class="px-4 py-2 md:px-0 md:py-0 border-b md:border-none"><a href="/i" class="block text-gray-700 hover:text-blue-600">设置</a></li>
             <li class="px-4 py-2 md:px-0 md:py-0 border-b md:border-none"><a href="javascript:logout();" class="block text-gray-700 hover:text-blue-600">退出</a></li>
         `: html`

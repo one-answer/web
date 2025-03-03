@@ -4,7 +4,7 @@ import { Auth, Config, HTMLFilter, HTMLSubject, IsAdmin, Status } from "./core";
 import { mAdd, mDel } from "./mCore";
 import { and, desc, eq, gt, inArray, ne, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
-import { uLastPostTime } from "./uCore";
+import { lastPostTime } from "./uCore";
 
 export async function pSave(a: Context) {
     const i = await Auth(a)
@@ -39,7 +39,7 @@ export async function pSave(a: Context) {
         }
         return a.text('ok')
     } else if (eid > 0) { // 回复
-        if (time - uLastPostTime(i.uid) < 60) { return a.text('too_fast', 403) } // 防止频繁发帖
+        if (time - lastPostTime(i.uid) < 60) { return a.text('too_fast', 403) } // 防止频繁发帖
         const quote = (await DB
             .select()
             .from(Post)
@@ -90,11 +90,11 @@ export async function pSave(a: Context) {
             await mAdd(quote.uid, 1, post.time, post.pid)
         }
         // 回复通知结束
-        uLastPostTime(i.uid, time) // 记录发帖时间
+        lastPostTime(i.uid, time) // 记录发帖时间
         Status(i.uid, 10) // 刷新自己的COOKIE
         return a.text('ok') //! 返回tid/pid和posts数量
     } else { // 发帖
-        if (time - uLastPostTime(i.uid) < 60) { return a.text('too_fast', 403) } // 防止频繁发帖
+        if (time - lastPostTime(i.uid) < 60) { return a.text('too_fast', 403) } // 防止频繁发帖
         const content = HTMLFilter(body.get('content')?.toString() ?? '')
         if (!content) { return a.text('406', 406) }
         const post = (await DB
@@ -126,7 +126,7 @@ export async function pSave(a: Context) {
             })
             .where(eq(User.uid, i.uid))
         await Config.set('threads', (await Config.get<number>('threads') || 0) + 1)
-        uLastPostTime(i.uid, time) // 记录发帖时间
+        lastPostTime(i.uid, time) // 记录发帖时间
         Status(i.uid, 10) // 刷新自己的COOKIE
         return a.text(String(post.pid))
     }
