@@ -194,7 +194,7 @@ async function main() {
             access: 0,
             is_top: 1, // 置顶
             last_time: currentTime,
-            last_uid: 1,
+            last_uid: 0,
             posts: 1,
             subject: '欢迎来到 ASSBBS！'
         };
