@@ -1,6 +1,6 @@
 import { Context } from "hono";
 import { Props, DB, Thread, User } from "./base";
-import { Auth, Config, Counter, Pagination } from "./core";
+import { Auth, Config, TPCounter, Pagination } from "./core";
 import { and, desc, eq, getTableColumns, or } from 'drizzle-orm';
 import { alias } from "drizzle-orm/sqlite-core";
 import { TList } from "../bare/TList";
@@ -41,7 +41,7 @@ export async function tList(a: Context) {
         .orderBy(...(uid ? [desc(Thread.time)] : [desc(Thread.is_top), desc(Thread.last_time)]))
         .offset((page - 1) * page_size_t)
         .limit(page_size_t)
-    const pagination = Pagination(page_size_t, await Counter.get(uid, 0), page, 2)
+    const pagination = Pagination(page_size_t, await TPCounter.get(uid, 0), page, 2)
     const title = Config.get('site_name')
     return a.html(TList({ a, i, uid, page, pagination, data, title }));
 }

@@ -26,12 +26,39 @@ export class Config {
     }
 }
 
-export class Counter {
+export class Maps {
+    // 存储 map 的内存容器
+    private static maps: Map<string, Map<any, any>> = new Map();
+    // 创建一个新的 map，并保存到静态存储中
+    static set<K, V>(name: string, entries?: [K, V][]): Map<K, V> {
+        const map = new Map<K, V>(entries);
+        this.maps.set(name, map);
+        return map;
+    }
+    // 取出指定名称的 map 如果不存在则自动创建一个新的 map
+    static get<K, V>(name: string): Map<K, V> {
+        if (!this.maps.has(name)) {
+            this.set<K, V>(name);
+        }
+        return this.maps.get(name) as Map<K, V>;
+    }
+    // 删除一个 map
+    static del(name: string): boolean {
+        return this.maps.delete(name);
+    }
+    // 列出所有 map 的名字
+    static all(): string[] {
+        return Array.from(this.maps.keys());
+    }
+}
+
+export class TPCounter {
     // uid=0,tid=0,全局帖子数
     // uid=0,tid=*,某帖回复数
     // uid=*,tid=0,用户帖子数
     // uid=*,tid=*,用户在某贴回复数
-    private static data: Map<bigint, number> = new Map();
+    //private static data: Map<bigint, number> = new Map();
+    private static data = Maps.get<bigint, number>('TPCounter');
     private constructor() { }
     private static big(uid: number, tid: number): bigint {
         const view = new DataView(new ArrayBuffer(8));

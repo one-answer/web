@@ -1,6 +1,6 @@
 import { Context } from "hono";
 import { Props, DB, Post, Thread, User } from "./base";
-import { Auth, Config, Counter, Pagination } from "./core";
+import { Auth, Config, TPCounter, Pagination } from "./core";
 import { asc, eq, or, getTableColumns, and, ne } from 'drizzle-orm';
 import { alias } from "drizzle-orm/sqlite-core";
 import { raw } from "hono/html";
@@ -64,7 +64,7 @@ export async function pList(a: Context) {
         .orderBy(asc(Post.pid))
         .offset((page - 1) * page_size_p)
         .limit(page_size_p)
-    const pagination = Pagination(page_size_p, await Counter.get(uid, tid), page, 2)
+    const pagination = Pagination(page_size_p, await TPCounter.get(uid, tid), page, 2)
     const title = raw(thread.subject)
     return a.html(PList({ a, i, thread, uid, page, pagination, data, title }));
 }
