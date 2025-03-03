@@ -1,4 +1,5 @@
 import { DB, Conf, User, Thread, Post } from './app/base';
+import { Config } from './app/core';
 import { eq } from 'drizzle-orm';
 import { randomBytes } from 'crypto';
 
@@ -205,6 +206,7 @@ async function main() {
                 target: Thread.tid,
                 set: { ...welcomeThread }
             });
+            await Config.set('threads', 1);
             console.log('欢迎主题创建成功');
         } catch (error) {
             console.error('创建欢迎主题失败:', error);

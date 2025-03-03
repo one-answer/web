@@ -111,7 +111,7 @@ export async function iLogin(a: Context) {
     }
     const { hash, salt, ...i } = user;
     try {
-        const token = await sign(i, Config.get('secret_key'));
+        const token = await sign(i, await Config.get<string>('secret_key'));
         setCookie(a, 'JWT', token, { maxAge: 2592000 });
         return a.text('ok');
     } catch (error) {
@@ -150,7 +150,7 @@ export async function iRegister(a: Context) {
     )?.[0]
     if (!data) { return a.text('data_conflict', 409) }
     const { hash, salt, ...i } = data
-    setCookie(a, 'JWT', await sign(i, Config.get('secret_key')), { maxAge: 2592000 })
+    setCookie(a, 'JWT', await sign(i, await Config.get<string>('secret_key')), { maxAge: 2592000 })
     return a.text('ok')
 }
 
@@ -188,6 +188,6 @@ export async function iSave(a: Context) {
     }
     i.mail = mail
     i.name = name
-    setCookie(a, 'JWT', await sign(i, Config.get('secret_key')), { maxAge: 2592000 })
+    setCookie(a, 'JWT', await sign(i, await Config.get<string>('secret_key')), { maxAge: 2592000 })
     return a.text('ok')
 }

@@ -1,30 +1,10 @@
 import { Context } from "hono";
 import { sign, verify } from "hono/jwt";
 import { getCookie, setCookie } from "hono/cookie";
-import { DB, Conf, I, User, Thread, Post, Message } from "./base";
-import { and, count, eq, or } from 'drizzle-orm';
+import { DB, Conf, I, User, Message } from "./base";
+import { and, eq } from 'drizzle-orm';
 import { Window } from "happy-dom";
 import * as DOMPurify from 'isomorphic-dompurify';
-
-export class Config {
-    private static data: Map<string, any> = new Map();
-    private constructor() { }
-    static async init() {
-        const configs = await DB.select().from(Conf);
-        configs.forEach(({ key, value }) => {
-            try {
-                this.data.set(key, value ? JSON.parse(value) : null);
-            } catch (error) {
-                console.error(`Failed to parse config ${key}:`, error);
-                this.data.set(key, value);
-            }
-        });
-    }
-    static get(key: string): any {
-        const value = this.data.get(key);
-        return value;
-    }
-}
 
 export class Maps {
     // 存储 map 的内存容器
@@ -52,82 +32,39 @@ export class Maps {
     }
 }
 
-export class TPCounter {
-    // uid=0,tid=0,全局帖子数
-    // uid=0,tid=*,某帖回复数
-    // uid=*,tid=0,用户帖子数
-    // uid=*,tid=*,用户在某贴回复数
-    //private static data: Map<bigint, number> = new Map();
-    private static data = Maps.get<bigint, number>('TPCounter');
+export class Config {
+    private static data = Maps.get<string, any>('Config');
+    private static void = true;
     private constructor() { }
-    private static big(uid: number, tid: number): bigint {
-        const view = new DataView(new ArrayBuffer(8));
-        // false = 大端序 Big-Endian
-        view.setUint32(0, uid, false);
-        view.setUint32(4, tid, false);
-        return view.getBigUint64(0, false);
+    static async init() {
+        const configs = await DB.select().from(Conf);
+        configs.forEach(({ key, value }) => {
+            try {
+                this.data.set(key, value ? JSON.parse(value) : null);
+                this.void = false;
+            } catch (error) {
+                console.error(`Failed to parse config ${key}:`, error);
+            }
+        });
     }
-    public static async get(uid: number, tid: number): Promise<number> {
-        const key = this.big(uid, tid);
-        let val = this.data.get(key);
-        if (val) { return val; };
-        // 如果没有数据则执行SQL查询
-        if (uid && tid) {
-            val = (await DB
-                .select({ count: count(Post.pid) })
-                .from(Post)
-                .where(and(
-                    eq(Post.access, 0),
-                    eq(Post.uid, uid),
-                    or(
-                        and(eq(Post.tid, 0), eq(Post.pid, tid)),
-                        eq(Post.tid, tid),
-                    )
-                ))
-            )[0].count
-        } else if (tid) {
-            val = (await DB
-                .select({ count: count(Post.pid) })
-                .from(Post)
-                .where(and(
-                    eq(Post.access, 0),
-                    or(
-                        and(eq(Post.tid, 0), eq(Post.pid, tid)),
-                        eq(Post.tid, tid),
-                    )
-                ))
-            )[0].count
-        } else if (uid) {
-            val = (await DB
-                .select({ count: count(Thread.tid) })
-                .from(Thread)
-                .where(and(
-                    eq(Thread.access, 0),
-                    eq(Thread.uid, uid),
-                ))
-            )[0].count
-        } else {
-            val = (await DB
-                .select({ count: count(Thread.tid) })
-                .from(Thread)
-                .where(eq(Thread.access, 0))
-            )[0].count
+    static async get<T>(key: string): Promise<T> {
+        if (this.void) { await this.init(); }
+        return this.data.get(key) as T;
+    }
+    static async set(key: string, value: any) {
+        if (this.void) { await this.init(); }
+        try {
+            await DB
+                .insert(Conf)
+                .values({ key, value })
+                .onConflictDoUpdate({
+                    target: Conf.key,
+                    set: { value }
+                });
+            this.data.set(key, value);
+        } catch (error) {
+            console.error(`Failed to set config ${key}:`, error);
         }
-        this.data.set(key, val);
-        return val;
-    }
-    public static async add(uid: number, tid: number): Promise<number> {
-        const val = await this.get(uid, tid) + 1;
-        this.data.set(this.big(uid, tid), val);
-        return val;
-    }
-    public static async sub(uid: number, tid: number): Promise<number> {
-        const val = await this.get(uid, tid) - 1;
-        this.data.set(this.big(uid, tid), val);
-        return val;
-    }
-    public static del(uid: number, tid: number) {
-        this.data.delete(this.big(uid, tid));
     }
 }
 
@@ -192,7 +129,7 @@ export async function Auth(a: Context) {
     const jwt = getCookie(a, 'JWT');
     if (!jwt) { return undefined }
     try {
-        const secret_key = Config.get('secret_key')
+        const secret_key = await Config.get<string>('secret_key')
         let i = await verify(jwt, secret_key) as I
         if (await Status(i.uid) < 10) { return i } // 不要刷新 直接返回用户
         const data = (await DB

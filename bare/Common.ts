@@ -16,7 +16,7 @@ export async function Header(z: Props) {
 <body class="h-full flex flex-col">
 <nav class="fixed top-0 left-0 w-full bg-white shadow-md z-50">
     <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-        <a href="/" class="text-xl font-bold">${Config.get('site_name')}</a>
+        <a href="/" class="text-xl font-bold">${await Config.get<string>('site_name')}</a>
         <button onclick="document.getElementById('nav-menu').classList.toggle('hidden')" class="md:hidden text-gray-700 focus:outline-none">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
@@ -42,7 +42,7 @@ export async function Header(z: Props) {
     `
 }
 
-export function Footer(z: Props) {
+export async function Footer(z: Props) {
     return html`
 </main>
 <script>
@@ -65,7 +65,7 @@ export function Footer(z: Props) {
     });
 </script>
 <footer class="bg-gray-800 px-4 py-6 w-full text-center flex flex-wrap justify-center space-x-4 mt-6">
-  ${Object.values(Config.get('friend_link') as { url: string, name: string; }[] ?? {}).map(item => html`
+  ${Object.values(await Config.get<{ url: string; name: string; }[]>('friend_link') ?? {}).map(item => html`
   <a href="${item.url}" target="_blank" class="text-gray-300 hover:text-white transition">${item.name}</a>
   `)}
 </footer>

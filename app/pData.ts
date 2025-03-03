@@ -1,6 +1,6 @@
 import { Context } from "hono";
 import { DB, Post, Thread, User } from "./base";
-import { Auth, Cache, TPCounter, HTMLFilter, HTMLSubject, IsAdmin, Status } from "./core";
+import { Auth, Cache, Config, HTMLFilter, HTMLSubject, IsAdmin, Status } from "./core";
 import { mAdd, mDel } from "./mCore";
 import { and, desc, eq, gt, inArray, ne, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
@@ -84,8 +84,6 @@ export async function pSave(a: Context) {
                 golds: sql`${User.golds} + 1`,
             })
             .where(eq(User.uid, post.uid))
-        TPCounter.add(0, thread.tid); // 帖子回复+1
-        TPCounter.add(post.uid, thread.tid); // 用户帖子回复+1
         // 回复通知开始 如果回复的不是自己
         if (post.uid != quote.uid) {
             await mAdd(quote.uid, 1, post.time, post.pid)
@@ -126,8 +124,7 @@ export async function pSave(a: Context) {
                 golds: sql`${User.golds} + 2`,
             })
             .where(eq(User.uid, i.uid))
-        TPCounter.add(0, 0); // 全局发帖+1
-        TPCounter.add(i.uid, 0); // 用户发帖+1
+        await Config.set('threads', (await Config.get<number>('threads') || 0) + 1)
         Cache.set(-i.uid, time) // 记录发帖时间
         Status(i.uid, 10) // 刷新自己的COOKIE
         return a.text(String(post.pid))
@@ -184,8 +181,6 @@ export async function pOmit(a: Context) {
                 golds: sql`${User.golds} - 1`,
             })
             .where(eq(User.uid, post.uid))
-        TPCounter.sub(0, post.tid); // 帖子回复-1
-        TPCounter.sub(post.uid, post.tid); // 用户帖子回复-1
         // 回复通知开始
         const quote = (await DB
             .select()
@@ -217,8 +212,7 @@ export async function pOmit(a: Context) {
                 golds: sql`${User.golds} - 2`,
             })
             .where(eq(User.uid, post.uid))
-        TPCounter.sub(0, 0); // 全局发帖-1
-        TPCounter.sub(post.uid, 0); // 用户发帖-1
+        await Config.set('threads', (await Config.get<number>('threads') || 0) - 1)
         // 回复通知开始
         const QuotePost = alias(Post, 'QuotePost')
         const QuoteUser = alias(User, 'QuoteUser')

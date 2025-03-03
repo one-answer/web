@@ -51,7 +51,6 @@ export const Post = sqliteTable("post", {
     content: text().notNull().default(''),
 }, (table) => [
     index("post:access,tid,pid").on(table.access, table.tid, table.pid), // 帖子内的回复
-    index("post:access,uid,tid,pid").on(table.access, table.uid, table.tid, table.pid), // 帖子内某个用户的回复
 ]);
 
 export const Thread = sqliteTable("thread", {

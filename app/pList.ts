@@ -1,6 +1,6 @@
 import { Context } from "hono";
 import { Props, DB, Post, Thread, User } from "./base";
-import { Auth, Config, TPCounter, Pagination } from "./core";
+import { Auth, Config, Pagination } from "./core";
 import { asc, eq, or, getTableColumns, and, ne } from 'drizzle-orm';
 import { alias } from "drizzle-orm/sqlite-core";
 import { raw } from "hono/html";
@@ -8,7 +8,6 @@ import { PList } from "../bare/PList";
 
 export interface PListProps extends Props {
     thread: typeof Thread.$inferSelect
-    uid: number
     page: number
     pagination: number[]
     data: (typeof Post.$inferSelect & {
@@ -33,8 +32,7 @@ export async function pList(a: Context) {
     )?.[0]
     if (!thread) { return a.notFound() }
     const page = parseInt(a.req.param('page') ?? '0') || 1
-    const uid = parseInt(a.req.query('uid') ?? '0')
-    const page_size_p = Config.get('page_size_p')
+    const page_size_p = await Config.get<number>('page_size_p')
     const QuotePost = alias(Post, 'QuotePost')
     const QuoteUser = alias(User, 'QuoteUser')
     const data = await DB
@@ -50,8 +48,6 @@ export async function pList(a: Context) {
         .where(and(
             // access
             eq(Post.access, 0),
-            // uid
-            (uid ? eq(Post.uid, uid) : undefined),
             // tid - pid
             or(
                 and(eq(Post.tid, 0), eq(Post.pid, tid)),
@@ -64,7 +60,7 @@ export async function pList(a: Context) {
         .orderBy(asc(Post.pid))
         .offset((page - 1) * page_size_p)
         .limit(page_size_p)
-    const pagination = Pagination(page_size_p, await TPCounter.get(uid, tid), page, 2)
+    const pagination = Pagination(page_size_p, thread.posts, page, 2)
     const title = raw(thread.subject)
-    return a.html(PList({ a, i, thread, uid, page, pagination, data, title }));
+    return a.html(PList({ a, i, thread, page, pagination, data, title }));
 }
