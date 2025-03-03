@@ -190,7 +190,8 @@ export async function pOmit(a: Context) {
         )?.[0]
         // 如果存在被回复帖 且回复的不是自己
         if (quote && post.uid != quote.uid) {
-            await mDel(quote.uid, 1, post.time, post.pid)
+            // 未读 已读 消息都删
+            await mDel(quote.uid, [-1, 1], post.time, post.pid)
         }
         // 回复通知结束
     } else {
@@ -234,7 +235,8 @@ export async function pOmit(a: Context) {
             .leftJoin(QuoteUser, eq(QuoteUser.uid, QuotePost.uid))
         postArr.forEach(async function (post) {
             if (post.quote_uid) {
-                await mDel(post.quote_uid, 1, post.time, post.pid)
+                // 未读 已读 消息都删
+                await mDel(post.quote_uid, [-1, 1], post.time, post.pid)
             }
         })
         // 回复通知结束
