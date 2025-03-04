@@ -3,7 +3,7 @@ import { PEditProps } from "../app/pEdit";
 import { Header, Footer } from "./Common"
 
 export function PEdit(z: PEditProps) {
-    z.external = raw(`
+    z.head_external = raw(`
         <link href="/quill.snow.css" rel="stylesheet" />
     `)
     return html`

@@ -4,7 +4,7 @@ import { PListProps } from "../app/pList";
 import { Header, Footer } from "./Common"
 
 export function PList(z: PListProps) {
-    z.external = raw(`
+    z.head_external = raw(`
         <style>
             .content a {
                 text-decoration: underline;

@@ -88,5 +88,6 @@ export interface Props {
     a: Context
     i: I | undefined
     title: string
-    external?: string
+    edit_forbid?: boolean
+    head_external?: string
 }

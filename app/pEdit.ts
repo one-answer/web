@@ -36,5 +36,6 @@ export async function pEdit(a: Context) {
     } else {
         title = "发表"
     }
-    return a.html(PEdit({ a, i, title, eid, content }));
+    const edit_forbid = true;
+    return a.html(PEdit({ a, i, title, eid, content, edit_forbid }));
 }

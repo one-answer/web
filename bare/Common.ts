@@ -12,7 +12,7 @@ export async function Header(z: Props) {
   <title>${z.title}</title>
   <link rel="stylesheet" type="text/css" href="/a.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  ${z.external ?? ''}
+  ${z.head_external ?? ''}
 </head>
 <body class="h-full flex flex-col">
 <nav class="fixed top-0 left-0 w-full bg-white shadow-md z-50">
@@ -25,11 +25,11 @@ export async function Header(z: Props) {
         </button>
         <ul id="nav-menu" class="hidden md:flex md:space-x-6 absolute md:relative top-full md:top-0 left-0 w-full md:w-auto bg-white shadow-md md:shadow-none py-2 md:py-0 flex-col md:flex-row items-center md:items-start">
         ${z.i ? html`
-          ${Object.hasOwn(z.a.req.param(), 'tid') ? html`
+          ${z.edit_forbid ? '' : (Object.hasOwn(z.a.req.param(), 'tid') ? html`
             <li class="px-4 py-2 md:px-0 md:py-0 border-b md:border-none"><a href="/e/${z.a.req.param('tid')}" class="block text-gray-700 hover:text-blue-600">回复</a></li>
           ` : html`
             <li class="px-4 py-2 md:px-0 md:py-0 border-b md:border-none"><a href="/e" class="block text-gray-700 hover:text-blue-600">发表</a></li>
-          `}
+          `)}
             <li class="px-4 py-2 md:px-0 md:py-0 border-b md:border-none"><a href="/n" class="block text-gray-700 hover:text-blue-600 ${await unreadReply(z.i.uid) ? 'text-orange-500 drop-shadow-xs' : ''}">通知</a></li>
             <li class="px-4 py-2 md:px-0 md:py-0 border-b md:border-none"><a href="/i" class="block text-gray-700 hover:text-blue-600">设置</a></li>
             <li class="px-4 py-2 md:px-0 md:py-0 border-b md:border-none"><a href="javascript:logout();" class="block text-gray-700 hover:text-blue-600">退出</a></li>

@@ -60,7 +60,7 @@ export async function pSave(a: Context) {
             })
             .where(and(
                 eq(Thread.tid, quote.tid ? quote.tid : quote.pid),
-                gt(sql`${Thread.last_time} + 604800`, time),
+                gt(sql`${Thread.last_time} + 604800`, time), // 7天后禁止回复
             ))
             .returning()
         )?.[0]
