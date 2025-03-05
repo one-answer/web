@@ -49,7 +49,11 @@ export async function Footer(z: Props) {
 <script>
     async function logout() {
         if ((await fetch(new Request("/logout", {method: "POST"}))).ok) {
-            location.reload();
+            if (location.pathname == "/i") {
+                location.href = "/auth";
+            }else{
+                location.reload();
+            }
         }
     }
     window.addEventListener('load', function() {

@@ -34,17 +34,20 @@ assbbs-web/
 ├── const/             # 常量和配置文件
 ├── migrations/        # 数据库迁移文件
 └── init.ts     # 数据库初始化脚本
-    
+
 ```
+
 ## 数据库结构
 
 系统使用 SQLite 数据库，通过 Drizzle ORM 进行管理，主要包含以下表：
 
 - **conf**: 系统配置表
+
   - `key`: 配置键（主键）
   - `value`: 配置值（JSON 格式）
 
 - **user**: 用户表
+
   - `uid`: 用户 ID（主键）
   - `gid`: 用户组 ID
   - `mail`: 邮箱（唯一）
@@ -58,6 +61,7 @@ assbbs-web/
   - `time`: 注册时间
 
 - **thread**: 主题表
+
   - `tid`: 主题 ID（主键）
   - `uid`: 发帖用户 ID
   - `subject`: 主题标题
@@ -80,11 +84,13 @@ assbbs-web/
 ## 安全说明
 
 ### 密码处理
+
 - 前端使用 MD5 对密码进行加密后传输
 - 后端存储 MD5(MD5(password)+salt)
 - 登录时比对 hash 值进行验证
 
 ### 配置处理
+
 - 所有配置值统一使用 JSON 格式存储
 - 配置读取时会尝试 JSON.parse
 - 如果解析失败则使用原始值
@@ -93,11 +99,13 @@ assbbs-web/
 ## 开发环境设置
 
 1. 安装依赖:
+
 ```bash
 bun install
 ```
 
 2. 初始化数据库:
+
 ```bash
 # 生成数据库迁移文件
 bun run db:generate
@@ -110,6 +118,7 @@ bun run db:init
 ```
 
 3. 启动开发服务器:
+
 ```bash
 bun run dev
 ```
@@ -121,10 +130,11 @@ bun run dev
 系统初始化后会创建以下账号：
 
 - 管理员账号
+
   - 邮箱：admin@example.com
   - 密码：admin123
   - 权限：管理员组（gid=99）
-  - 2025.03.02 目前管理员组gid还是1 这是沿用xiuno
+  - 2025.03.02 目前管理员组 gid 还是 1 这是沿用 xiuno
 
 - 测试账号
   - 邮箱：test@example.com
@@ -157,8 +167,11 @@ bun install
 # 应用数据库迁移
 bun run db:push
 
+# 数据库初始化
+bun run db:init
+
 # 启动服务器
-bun run start
+bun run dev
 ```
 
 ### 数据库备份

@@ -102,7 +102,7 @@ export async function iLogin(a: Context) {
         .where(or(eq(User.mail, acct), eq(User.name, acct)))
     )?.[0];
     if (!user) {
-        return a.text('401', 401);
+        return a.text('no user', 401);
     }
     const inputHash = md5(pass + user.salt);
     const storedHash = user.hash;
