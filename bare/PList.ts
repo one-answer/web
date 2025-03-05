@@ -43,7 +43,7 @@ ${z.data.map(item => html`
 `)}
 </div>
 
-${z.data.length ? html`
+${z.data.length && z.pagination.length > 1 ? html`
 <nav class="flex justify-center -space-x-px mt-6">
     ${z.pagination.map(item => html`
     <a ${item ? html`href="/t/${z.thread.tid}/${item}${URLQuery(z.a)}"` : ''} class="${item == z.page ?
