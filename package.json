@@ -2,14 +2,14 @@
   "name": "a",
   "dependencies": {
     "@libsql/client": "^0.14.0",
-    "@tailwindcss/cli": "^4.0.11",
+    "@tailwindcss/cli": "^4.0.12",
     "@types/bun": "^1.2.4",
     "dompurify": "^3.2.4",
     "drizzle-orm": "^0.40.0",
     "happy-dom": "^16.8.1",
     "hono": "^4.7.4",
     "isomorphic-dompurify": "^2.22.0",
-    "tailwindcss": "^4.0.11",
+    "tailwindcss": "^4.0.12",
     "xregexp": "^5.1.2"
   },
   "scripts": {
