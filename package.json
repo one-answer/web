@@ -2,24 +2,24 @@
   "name": "a",
   "dependencies": {
     "@libsql/client": "^0.14.0",
-    "@tailwindcss/cli": "^4.0.12",
     "@types/bun": "^1.2.4",
     "dompurify": "^3.2.4",
     "drizzle-orm": "^0.40.0",
     "happy-dom": "^16.8.1",
     "hono": "^4.7.4",
     "isomorphic-dompurify": "^2.22.0",
-    "tailwindcss": "^4.0.12",
     "xregexp": "^5.1.2"
   },
   "scripts": {
-    "dev": "concurrently 'bun run --hot app/app.ts' 'bunx @tailwindcss/cli -o ./const/a.css --watch'",
+    "dev": "concurrently 'bun run --hot app/app.ts' 'bunx tailwindcss -i ./const/input.css -o ./const/a.css --watch'",
     "db:generate": "bunx drizzle-kit generate",
     "db:push": "bunx drizzle-kit push",
     "db:init": "bun run init.ts"
   },
   "devDependencies": {
     "concurrently": "^9.1.2",
-    "drizzle-kit": "^0.30.5"
+    "daisyui": "^4.7.2",
+    "drizzle-kit": "^0.30.5",
+    "tailwindcss": "^3.4.1"
   }
 }
