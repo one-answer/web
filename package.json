@@ -2,7 +2,7 @@
   "name": "a",
   "dependencies": {
     "@libsql/client": "^0.14.0",
-    "@types/bun": "^1.2.4",
+    "@types/bun": "^1.2.5",
     "dompurify": "^3.2.4",
     "drizzle-orm": "^0.40.0",
     "happy-dom": "^16.8.1",
@@ -18,8 +18,8 @@
   },
   "devDependencies": {
     "concurrently": "^9.1.2",
-    "daisyui": "^4.7.2",
+    "daisyui": "^4.12.24",
     "drizzle-kit": "^0.30.5",
-    "tailwindcss": "^3.4.1"
+    "tailwindcss": "^3.4.17"
   }
 }
