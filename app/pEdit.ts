@@ -7,7 +7,11 @@ import { PEdit } from "../bare/PEdit";
 
 export interface PEditProps extends Props {
     eid: number,
-    content: string
+    content: string,
+    thread?: {
+        tid: number,
+        subject: string
+    }
 }
 
 export async function pEdit(a: Context) {
@@ -17,6 +21,7 @@ export async function pEdit(a: Context) {
     const eid = parseInt(a.req.param('eid') ?? '0')
     let title = ""
     let content = ''
+    let thread: { tid: number, subject: string } | undefined
     if (eid < 0) {
         title = "编辑"
         const post = (await DB
@@ -31,11 +36,16 @@ export async function pEdit(a: Context) {
         )?.[0]
         if (!post) { return a.text('403', 403) }
         content = raw(post.content) ?? ''
+        if (post.tid) {
+            thread = { tid: post.tid, subject: '' }
+        }
     } else if (eid > 0) {
         title = "回复"
+        thread = { tid: eid, subject: '' }
     } else {
         title = "发表"
+        thread = undefined
     }
     const edit_forbid = true;
-    return a.html(PEdit({ a, i, title, eid, content, edit_forbid }));
+    return a.html(PEdit({ a, i, title, eid, content, edit_forbid, thread }));
 }

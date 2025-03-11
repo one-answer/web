@@ -5,58 +5,111 @@ import { Header, Footer } from "./Common"
 
 export function PList(z: PListProps) {
     z.head_external = raw(`
+        <link href="/quill.snow.css" rel="stylesheet" />
         <style>
             .content a {
                 text-decoration: underline;
+            }
+            .content {
+                overflow-wrap: break-word;
+                word-wrap: break-word;
+                word-break: break-word;
+                hyphens: auto;
             }
         </style>
     `);
     return html`
 ${Header(z)}
 
-<div class="space-y-2">
-${z.data.map(item => html`
-    <div id="p${item.pid}" class="container block w-full mx-auto max-w-4xl px-5 py-3 bg-white shadow-md rounded-lg">
-        ${item.quote_name ? html`
-        <blockquote class="bg-gray-50 px-4 py-2 mb-2 text-gray-700 rounded-lg shadow-inner">
-            ${raw(item.quote_name)}: ${raw(HTMLText(item.quote_content, 140))}
-        </blockquote>
-        ` : ''}
-        <div class="text-base font-normal content">
-            ${raw(item.content)}
-        </div>
-        <div class="text-xs text-gray-400 mt-1">
-            <a href="/?uid=${item.uid}" target="_blank" class="author">${item.name}</a>
-            <span class="date" time_stamp="${item.time}"></span>
-            ${(z.i) ? html`
-            ${(z.i.gid == 1 && !item.tid) ? html`
-            <a class="sticky ${z.thread.is_top ? 'font-bold' : ''}" href="javascript:peak(${item.pid});">置顶</a>
-            `: ''}
-            ${(z.i.gid == 1 || z.i.uid == item.uid) ? html`
-            <a class="edit" href="/e/-${item.pid}">编辑</a>
-            <a class="delete" href="javascript:omit(-${item.pid});">删除</a>
-            `: ''}
-            <a class="reply" href="/e/${item.pid}">回复</a>
-            `: ''}
+<div class="container mx-auto max-w-4xl px-4">
+    <div class="space-y-4">
+        ${z.data.map(item => html`
+            <div id="p${item.pid}" class="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300">
+                <div class="card-body">
+                    ${item.quote_name ? html`
+                    <blockquote class="bg-base-200 px-4 py-3 rounded-lg mb-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="badge badge-neutral">${raw(item.quote_name)}</div>
+                            <div class="text-sm opacity-70">引用</div>
+                        </div>
+                        <div class="text-sm opacity-80 break-all">
+                            ${raw(HTMLText(item.quote_content, 140))}
+                        </div>
+                    </blockquote>
+                    ` : ''}
+                    <div class="prose max-w-none content break-all">
+                        ${raw(item.content)}
+                    </div>
+                    <div class="flex flex-wrap items-center gap-x-4 gap-y-2 mt-4 text-sm">
+                        <a href="/?uid=${item.uid}" target="_blank" class="link link-hover flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            ${item.name}
+                        </a>
+                        <span class="flex items-center gap-2 opacity-70">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span class="date whitespace-nowrap" time_stamp="${item.time}"></span>
+                        </span>
+                        ${(z.i) ? html`
+                            <div class="flex-1"></div>
+                            <div class="join flex flex-wrap gap-1">
+                                ${(z.i.gid == 1 && !item.tid) ? html`
+                                    <button class="btn btn-sm join-item btn-ghost ${z.thread.is_top ? 'btn-active' : ''}" onclick="peak(${item.pid});">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                                        </svg>
+                                        置顶
+                                    </button>
+                                `: ''}
+                                ${(z.i.gid == 1 || z.i.uid == item.uid) ? html`
+                                    <a href="/e/-${item.pid}" class="btn btn-sm join-item btn-ghost">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                        编辑
+                                    </a>
+                                    <button class="btn btn-sm join-item btn-ghost btn-error" onclick="omit(-${item.pid});">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                        删除
+                                    </button>
+                                `: ''}
+                                <a href="/e/${item.pid}" class="btn btn-sm join-item btn-ghost">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                                    </svg>
+                                    回复
+                                </a>
+                            </div>
+                        `: ''}
+                    </div>
+                </div>
+            </div>
+        `)}
+    </div>
+
+    ${z.data.length && z.pagination.length > 1 ? html`
+    <div class="flex justify-center mt-8">
+        <div class="join">
+            ${z.pagination.map(item => html`
+                ${item ? html`
+                    <a href="/t/${z.thread.tid}/${item}${URLQuery(z.a)}" 
+                       class="join-item btn btn-sm ${item == z.page ? 'btn-primary' : 'btn-ghost'}">${item ? item : '...'}</a>
+                ` : html`
+                    <span class="join-item btn btn-sm btn-disabled">...</span>
+                `}
+            `)}
         </div>
     </div>
-`)}
+    `: ''}
 </div>
 
-${z.data.length && z.pagination.length > 1 ? html`
-<nav class="flex justify-center -space-x-px mt-6">
-    ${z.pagination.map(item => html`
-    <a ${item ? html`href="/t/${z.thread.tid}/${item}${URLQuery(z.a)}"` : ''} class="${item == z.page ?
-            'relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
-            :
-            'relative inline-flex items-center bg-white px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus:z-20 focus:outline-offset-0'
-        }">${item ? item : '...'}</a>
-    `)}
-</nav>
-`: ''}
-
 <script>
-async function peak(tid){
+    async function peak(tid){
         if(!confirm('置顶/取消置顶?')){return;}
         const result = await fetch(new Request('/t/'+tid, {method: 'PUT'}))
         if (result.ok) {
