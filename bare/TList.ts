@@ -35,8 +35,9 @@ ${Header(z)}
                                     <div class="badge badge-primary badge-sm lg:badge-md flex-shrink-0">置顶</div>
                                 ` : ''}
                                 <div class="min-w-0 flex-1">
-                                    <h2 class="card-title text-base lg:text-lg hover:text-primary truncate block">
-                                        ${raw(item.subject)}
+                                    <h2 class="card-title text-base lg:text-lg hover:text-primary block">
+                                        <span class="lg:hidden line-clamp-3 break-words">${raw(item.subject)}</span>
+                                        <span class="hidden lg:block truncate">${raw(item.subject)}</span>
                                     </h2>
                                 </div>
                             </div>
