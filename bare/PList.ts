@@ -21,26 +21,27 @@ export function PList(z: PListProps) {
     return html`
 ${Header(z)}
 
-<div class="container mx-auto max-w-4xl px-4">
-    <div class="space-y-4">
+<div class="container mx-auto max-w-4xl px-4 py-6">
+    <div class="flex flex-col gap-8">
         ${z.data.map(item => html`
-            <div id="p${item.pid}" class="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300">
-                <div class="card-body">
+            <div id="p${item.pid}" class="card bg-base-100 shadow-lg">
+                <div class="card-body p-4">
                     ${item.quote_name ? html`
-                    <blockquote class="bg-base-200 px-4 py-3 rounded-lg mb-4">
+                    <blockquote class="bg-base-200 px-4 py-3 rounded-lg mb-6">
                         <div class="flex items-center gap-2 mb-2">
                             <div class="badge badge-neutral">${raw(item.quote_name)}</div>
                             <div class="text-sm opacity-70">引用</div>
                         </div>
                         <div class="text-sm opacity-80 break-all">
-                            ${raw(HTMLText(item.quote_content, 140))}
+                            ${raw(HTMLText(item.quote_content, 100))}
                         </div>
                     </blockquote>
                     ` : ''}
-                    <div class="prose max-w-none content break-all">
+                    <div class="prose max-w-none content break-all mb-6">
                         ${raw(item.content)}
                     </div>
-                    <div class="flex flex-wrap items-center gap-x-4 gap-y-2 mt-4 text-sm">
+                    <div class="divider my-2"></div>
+                    <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm pt-2">
                         <a href="/?uid=${item.uid}" target="_blank" class="link link-hover flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -55,7 +56,7 @@ ${Header(z)}
                         </span>
                         ${(z.i) ? html`
                             <div class="flex-1"></div>
-                            <div class="join flex flex-wrap gap-1">
+                            <div class="join">
                                 ${(z.i.gid == 1 && !item.tid) ? html`
                                     <button class="btn btn-sm join-item btn-ghost ${z.thread.is_top ? 'btn-active' : ''}" onclick="peak(${item.pid});">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -85,46 +86,28 @@ ${Header(z)}
                                     回复
                                 </a>
                             </div>
-                        `: ''}
+                        ` : ''}
                     </div>
                 </div>
             </div>
         `)}
     </div>
 
-    ${z.data.length && z.pagination.length > 1 ? html`
-    <div class="flex justify-center mt-8">
-        <div class="join">
-            ${z.pagination.map(item => html`
-                ${item ? html`
-                    <a href="/t/${z.thread.tid}/${item}${URLQuery(z.a)}" 
-                       class="join-item btn btn-sm ${item == z.page ? 'btn-primary' : 'btn-ghost'}">${item ? item : '...'}</a>
-                ` : html`
-                    <span class="join-item btn btn-sm btn-disabled">...</span>
-                `}
-            `)}
+    ${z.data.length ? html`
+        <div class="flex justify-center mt-8">
+            <div class="join">
+                ${z.pagination.map(item => html`
+                    ${item ? html`
+                        <a href="/t/${z.thread.tid}/${item}${URLQuery(z.a)}" class="join-item btn btn-sm ${item == z.page ? 'btn-active' : 'btn-ghost'}">${item}</a>
+                    ` : html`
+                        <span class="join-item btn btn-sm btn-disabled">...</span>
+                    `}
+                `)}
+            </div>
         </div>
-    </div>
     `: ''}
 </div>
 
-<script>
-    async function peak(tid){
-        if(!confirm('置顶/取消置顶?')){return;}
-        const result = await fetch(new Request('/t/'+tid, {method: 'PUT'}))
-        if (result.ok) {
-            location.reload();
-        } else { alert('置顶失败：'+ await result.text()); }
-    }
-    async function omit(eid){
-        if(!confirm('真的要删除吗?')){return;}
-        const result = await fetch(new Request('/e/'+eid, {method: 'DELETE'}))
-        if (result.ok) {
-            location.reload();
-        } else { alert('删除失败：'+ await result.text()); }
-    }
-</script>
-
 ${Footer(z)}
-`;
+    `;
 }
