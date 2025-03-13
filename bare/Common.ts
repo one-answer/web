@@ -5,8 +5,8 @@ import { unreadReply } from "../app/uCore";
 
 export async function Header(z: Props) {
     const siteName = await Config.get<string>('site_name');
-    const siteDesc = await Config.get<string>('site_description') || '社区讨论平台';
-    const pageTitle = z.title ? `${z.title} - ${siteName}` : siteName;
+    const siteDesc = await Config.get<string>('site_description') || '屌丝论坛是一个交流IT与开发经验的平台，欢迎分享与讨论技术、资源及生活琐事。加入我们，畅所欲言！';
+    const pageTitle = z.title && z.title !== siteName ? `${z.title} - ${siteName}` : siteName;
     const pageDesc = z.description || siteDesc;
     const currentUrl = z.a.req.url;
     
@@ -21,6 +21,7 @@ export async function Header(z: Props) {
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="${currentUrl}" />
   <meta property="og:title" content="${pageTitle}" />
+  <meta name="keywords" content="屌丝论坛, 工程师交流, IT行业经验, 网络资源分享, 开源软件, 论坛讨论, UI设计, VPS服务">
   <meta property="og:description" content="${pageDesc}" />
   <meta property="og:url" content="${currentUrl}" />
   <meta property="og:type" content="website" />

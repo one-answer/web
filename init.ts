@@ -101,7 +101,7 @@ async function main() {
         console.log('正在初始化系统配置...');
         const configs = [
             { key: 'site_name', value: JSON.stringify('ASSBBS') },
-            { key: 'site_description', value: JSON.stringify('A Simple and Sweet BBS') },
+            { key: 'site_description', value: JSON.stringify('屌丝论坛是一个交流IT与开发经验的平台，欢迎分享与讨论技术、资源及生活琐事。加入我们，畅所欲言！') },
             { key: 'register_enable', value: JSON.stringify(true) },
             { key: 'post_interval', value: JSON.stringify(60) }, // 发帖间隔（秒）
             { key: 'credits_initial', value: JSON.stringify(100) }, // 新用户初始积分
