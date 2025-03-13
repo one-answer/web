@@ -46,3 +46,23 @@ async function omit(eid) {
         setTimeout(() => toast.remove(), 3000);
     }
 };
+
+// 置顶帖子
+async function pin(tid) {
+    try {
+        const response = await fetch('/t/' + tid, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (response.ok) {
+            window.location.reload();
+        } else {
+            alert('置顶操作失败');
+        }
+    } catch (error) {
+        console.error('置顶请求出错:', error);
+        alert('置顶操作失败');
+    }
+}
