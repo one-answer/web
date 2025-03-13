@@ -6,6 +6,26 @@ import { Header, Footer } from "./Common"
 export function PList(z: PListProps) {
     z.head_external = raw(`
         <link href="/quill.snow.css" rel="stylesheet" />
+        <script>
+            async function pin(pid) {
+                try {
+                    const response = await fetch('/t/' + pid, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        alert('置顶操作失败');
+                    }
+                } catch (error) {
+                    console.error('置顶请求出错:', error);
+                    alert('置顶操作失败');
+                }
+            }
+        </script>
         <style>
             .content a {
                 text-decoration: underline;
@@ -37,10 +57,10 @@ ${Header(z)}
                         </div>
                     </blockquote>
                     ` : ''}
-                    <div class="prose max-w-none content break-all mb-6">
+                    <div class="prose max-w-none content break-all mb-1">
                         ${raw(item.content)}
                     </div>
-                    <div class="divider my-2"></div>
+                    <div class="divider my-0"></div>
                     <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm pt-2">
                         <a href="/?uid=${item.uid}" target="_blank" class="link link-hover flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -58,7 +78,7 @@ ${Header(z)}
                             <div class="flex-1"></div>
                             <div class="join">
                                 ${(z.i.gid == 1 && !item.tid) ? html`
-                                    <button class="btn btn-sm join-item btn-ghost ${z.thread.is_top ? 'btn-active' : ''}" onclick="peak(${item.pid});">
+                                    <button class="btn btn-sm join-item btn-ghost ${z.thread.is_top ? 'btn-active' : ''}" onclick="pin(${item.pid});">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
                                         </svg>
