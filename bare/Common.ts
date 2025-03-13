@@ -4,28 +4,29 @@ import { Config } from "../app/core";
 import { unreadReply } from "../app/uCore";
 
 export async function Header(z: Props) {
-    const siteName = await Config.get<string>('site_name');
-    const siteDesc = await Config.get<string>('site_description') || '屌丝论坛是一个交流IT与开发经验的平台，欢迎分享与讨论技术、资源及生活琐事。加入我们，畅所欲言！';
-    const pageTitle = z.title && z.title !== siteName ? `${z.title} - ${siteName}` : siteName;
-    const pageDesc = z.description || siteDesc;
-    const currentUrl = z.a.req.url;
-    
-    return html`
+  const siteName = await Config.get<string>('site_name');
+  const siteDesc = await Config.get<string>('site_description');
+  const keywords = await Config.get<string>('site_keywords');
+  const pageTitle = z.title && z.title !== siteName ? `${z.title} - ${siteName}` : siteName;
+  const pageDesc = z.description || siteDesc;
+  const currentUrl = z.a.req.url;
+
+  return html`
 <!DOCTYPE HTML>
 <html data-theme="light" lang="zh-CN">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${pageTitle}</title>
   <meta name="description" content="${pageDesc}">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="keywords" content="${keywords}">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="${currentUrl}" />
-  <meta property="og:title" content="${pageTitle}" />
-  <meta name="keywords" content="屌丝论坛, 工程师交流, IT行业经验, 网络资源分享, 开源软件, 论坛讨论, UI设计, VPS服务">
-  <meta property="og:description" content="${pageDesc}" />
-  <meta property="og:url" content="${currentUrl}" />
   <meta property="og:type" content="website" />
+  <meta property="og:url" content="${currentUrl}" />
   <meta property="og:site_name" content="${siteName}" />
+  <meta property="og:title" content="${pageTitle}" />
+  <meta property="og:description" content="${pageDesc}" />
   <script type="text/javascript" src="/a.js"></script>
   <link rel="stylesheet" type="text/css" href="/a.css" />
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
@@ -102,8 +103,8 @@ export async function Header(z: Props) {
 }
 
 export async function Footer(z: Props) {
-    const friendLinks = await Config.get<{ url: string; name: string; }[]>('friend_link') ?? [];
-    return html`
+  const friendLinks = await Config.get<{ url: string; name: string; }[]>('friend_link') ?? [];
+  return html`
     </main>
     <!-- Footer -->
     <footer class="footer footer-center p-4 bg-base-100 text-base-content border-t">
