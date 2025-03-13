@@ -25,6 +25,7 @@ export async function Header(z: Props) {
   <meta property="og:url" content="${currentUrl}" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="${siteName}" />
+  <script type="text/javascript" src="/a.js"></script>
   <link rel="stylesheet" type="text/css" href="/a.css" />
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   ${z.head_external ?? ''}
