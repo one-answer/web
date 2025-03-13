@@ -7,6 +7,28 @@ export function PList(z: PListProps) {
     z.head_external = raw(`
         <link href="/quill.snow.css" rel="stylesheet" />
         <script>
+            async function omit(eid) {
+                if (!confirm('确定要删除这条内容吗？')) {
+                    return;
+                }
+                try {
+                    const response = await fetch('/e/' + eid, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        alert('删除失败');
+                    }
+                } catch (error) {
+                    console.error('删除请求出错:', error);
+                    alert('删除失败');
+                }
+            }
+
             async function pin(pid) {
                 try {
                     const response = await fetch('/t/' + pid, {
