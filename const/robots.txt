@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /i
+Disallow: /e
+Disallow: /login
+Disallow: /logout
+Disallow: /register
+Disallow: /upload/
+
+Sitemap: /sitemap.xml

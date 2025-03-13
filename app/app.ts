@@ -32,6 +32,31 @@ app.post('/register', iRegister);
 // API
 app.get('/_mList', _mList);
 
+// Sitemap
+app.get('/sitemap.xml', async (c) => {
+    const baseUrl = new URL(c.req.url).origin;
+    const staticRoutes = [
+        { url: '/', changefreq: 'daily', priority: 1.0 },
+        { url: '/auth', changefreq: 'monthly', priority: 0.3 },
+        { url: '/i', changefreq: 'monthly', priority: 0.3 }
+    ];
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    ${staticRoutes.map(route => `
+    <url>
+        <loc>${baseUrl}${route.url}</loc>
+        <changefreq>${route.changefreq}</changefreq>
+        <priority>${route.priority}</priority>
+    </url>`).join('')}
+</urlset>`;
+
+    return c.newResponse(xml, 200, {
+        'Content-Type': 'application/xml',
+        'Cache-Control': 'public, max-age=1800'
+    });
+});
+
 // File
 app.use('/upload/*', serveStatic({ root: './' }));
 app.use('/*', serveStatic({ root: './const/' }));

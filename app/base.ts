@@ -88,6 +88,7 @@ export interface Props {
     a: Context
     i: I | undefined
     title: string
+    description?: string;  // 可选的描述属性，用于SEO
     edit_forbid?: boolean
     head_external?: string
 }

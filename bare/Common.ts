@@ -4,14 +4,29 @@ import { Config } from "../app/core";
 import { unreadReply } from "../app/uCore";
 
 export async function Header(z: Props) {
+    const siteName = await Config.get<string>('site_name');
+    const siteDesc = await Config.get<string>('site_description') || '社区讨论平台';
+    const pageTitle = z.title ? `${z.title} - ${siteName}` : siteName;
+    const pageDesc = z.description || siteDesc;
+    const currentUrl = z.a.req.url;
+    
     return html`
 <!DOCTYPE HTML>
-<html data-theme="light">
+<html data-theme="light" lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>${z.title}</title>
-  <link rel="stylesheet" type="text/css" href="/a.css" />
+  <title>${pageTitle}</title>
+  <meta name="description" content="${pageDesc}">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="${currentUrl}" />
+  <meta property="og:title" content="${pageTitle}" />
+  <meta property="og:description" content="${pageDesc}" />
+  <meta property="og:url" content="${currentUrl}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="${siteName}" />
+  <link rel="stylesheet" type="text/css" href="/a.css" />
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   ${z.head_external ?? ''}
 </head>
 <body class="min-h-screen bg-base-200">
