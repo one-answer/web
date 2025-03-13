@@ -21,15 +21,15 @@ export async function Header(z: Props) {
   <meta name="description" content="${pageDesc}">
   <meta name="keywords" content="${keywords}">
   <meta name="robots" content="index, follow">
-  <link rel="canonical" href="${currentUrl}" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="${currentUrl}" />
   <meta property="og:site_name" content="${siteName}" />
   <meta property="og:title" content="${pageTitle}" />
   <meta property="og:description" content="${pageDesc}" />
-  <script type="text/javascript" src="/a.js"></script>
+  <link rel="canonical" href="${currentUrl}" />
   <link rel="stylesheet" type="text/css" href="/a.css" />
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+  <script type="text/javascript" src="/a.js"></script>
   ${z.head_external ?? ''}
 </head>
 <body class="min-h-screen bg-base-200">
