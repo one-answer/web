@@ -16,7 +16,9 @@ export function PEdit(z: PEditProps) {
                 border-bottom-left-radius: 0.5rem;
                 border-bottom-right-radius: 0.5rem;
                 border-color: #e2e8f0;
-                min-height: 200px;
+            }
+            .ql-editor,.ql-container {
+                min-height: 350px;
             }
         </style>
     `)
@@ -32,7 +34,7 @@ ${Header(z)}
                 </svg>
                 ${z.thread ? '回复帖子' : '发表新帖'}
             </h2>
-            <div name="content" class="min-h-[300px]">${z.content}</div>
+            <div name="content">${z.content}</div>
             <div class="card-actions justify-end mt-6">
                 <div class="join">
                     <button class="btn join-item btn-primary" onclick="post(${z.eid})">

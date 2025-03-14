@@ -2567,11 +2567,6 @@ html:has(.drawer-toggle:checked) {
   margin-bottom: 0px;
 }
 
-.my-8 {
-  margin-top: 2rem;
-  margin-bottom: 2rem;
-}
-
 .mb-1 {
   margin-bottom: 0.25rem;
 }
@@ -2765,10 +2760,6 @@ html:has(.drawer-toggle:checked) {
 
 .gap-4 {
   gap: 1rem;
-}
-
-.gap-8 {
-  gap: 2rem;
 }
 
 .gap-x-4 {
