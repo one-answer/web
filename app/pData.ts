@@ -217,22 +217,20 @@ export async function pOmit(a: Context) {
         await Config.set('threads', (await Config.get<number>('threads') || 0) - 1)
         // 回复通知开始
         const QuotePost = alias(Post, 'QuotePost')
-        const QuoteUser = alias(User, 'QuoteUser')
         // 向被引用人发送了回复通知的帖子
         const postArr = await DB
             .select({
                 pid: Post.pid,
                 time: Post.time,
-                quote_uid: QuoteUser.uid,
+                quote_uid: QuotePost.uid,
             })
             .from(Post)
             .where(and(
                 inArray(Post.access, [0, 1, 2, 3]),
                 eq(Post.tid, post.pid),
-                ne(Post.uid, QuoteUser.uid),
+                ne(Post.uid, QuotePost.uid),
             ))
             .leftJoin(QuotePost, eq(QuotePost.pid, Post.quote_pid))
-            .leftJoin(QuoteUser, eq(QuoteUser.uid, QuotePost.uid))
         postArr.forEach(async function (post) {
             if (post.quote_uid) {
                 // 未读 已读 消息都删

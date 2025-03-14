@@ -1,9 +1,9 @@
 import { Context } from "hono";
 import { DB, Message, Post, User, Thread } from "./base";
-import { Auth } from "./core";
-import { and, asc, eq, gt, inArray } from 'drizzle-orm';
+import { Auth, HTMLText } from "./core";
+import { and, desc, eq, inArray, lt } from 'drizzle-orm';
 import { alias } from "drizzle-orm/sqlite-core";
-import { mRead } from "./mCore";
+import { MList } from "../bare/MList";
 
 export async function _mList(a: Context) {
     const i = await Auth(a)
@@ -13,34 +13,33 @@ export async function _mList(a: Context) {
     const QuotePost = alias(Post, 'QuotePost')
     const data = await DB
         .select({
-            type: Message.type,
-            time: Message.time,
-            pid: Message.pid,
-            content: Post.content,
-            uid: Post.uid,
-            name: User.name,
-            tid: Post.tid,
-            subject: Thread.subject,
             quote_pid: QuotePost.pid,
             quote_content: QuotePost.content,
+            post_uid: User.uid,
+            post_name: User.name,
+            post_pid: Post.pid,
+            post_content: Post.content,
         })
         .from(Message)
         .where(and(
             eq(Message.uid, i.uid),
             inArray(Message.type, type),
-            time ? gt(Message.time, time) : undefined,
+            time ? lt(Message.time, time) : undefined,
         ))
         .leftJoin(Post, eq(Post.pid, Message.pid))
-        .leftJoin(QuotePost, eq(QuotePost.pid, Post.quote_pid))
         .leftJoin(User, eq(User.uid, Post.uid))
-        .leftJoin(Thread, eq(Thread.tid, Post.tid))
-        .orderBy(asc(Message.time))
+        .leftJoin(QuotePost, eq(QuotePost.pid, Post.quote_pid))
+        .orderBy(desc(Message.time))
         .limit(10)
-    // 将已加载消息标记为已读
     data.forEach(function (row) {
-        if (row.type > 0) {
-            mRead(i.uid, row.type, row.time, row.pid)
-        }
+        row.quote_content = HTMLText(row.quote_content, 100);
+        row.post_content = HTMLText(row.post_content, 200);
     })
     return a.json(data)
+}
+
+export async function mList(a: Context) {
+    const i = await Auth(a)
+    const title = '消息'
+    return a.html(MList({ a, i, title }));
 }

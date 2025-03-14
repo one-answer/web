@@ -161,7 +161,9 @@ export function HTMLText(html: string | null, len = 0) {
     if (!html) {
         return '...'
     }
-    let text = DOMPurify.sanitize(html, { ALLOWED_TAGS: ['#text'] })
+    const document = new Window().document
+    document.body.innerHTML = html
+    let text = document.body.innerText
     if (len > 0) {
         const lenOld = text.length
         if (lenOld > len) {

@@ -16,6 +16,9 @@ export function PList(z: PListProps) {
                 word-break: break-word;
                 hyphens: auto;
             }
+            pre {
+                white-space: pre-wrap;
+            }
         </style>
     `);
     return html`

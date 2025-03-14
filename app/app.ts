@@ -9,7 +9,7 @@ import { pEdit } from './pEdit'
 import { pList } from './pList'
 import { tList } from './tList'
 import { tPeak } from './tData'
-import { _mList } from './mList'
+import { _mList, mList } from './mList'
 
 const app = new Hono();
 app.use(csrf());
@@ -29,7 +29,7 @@ app.post('/login', iLogin);
 app.post('/logout', iLogout);
 app.post('/register', iRegister);
 
-// API
+app.get('/m', mList);
 app.get('/_mList', _mList);
 
 // Sitemap
