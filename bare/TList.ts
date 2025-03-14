@@ -67,7 +67,7 @@ ${Header(z)}
 
     <!-- 分页 -->
     ${z.data.length ? html`
-        <div class="flex justify-center my-8">
+        <div class="flex justify-center mt-8">
             <div class="join shadow-sm">
                 ${z.pagination.map(item => html`
                     ${item ? html`
@@ -101,4 +101,5 @@ ${Header(z)}
 
 ${Footer(z)}
 `
-;}
+        ;
+}

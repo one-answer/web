@@ -24,10 +24,10 @@ export function PList(z: PListProps) {
     return html`
 ${Header(z)}
 
-<div class="container mx-auto max-w-4xl px-4 py-6">
-    <div class="flex flex-col gap-8">
+<div class="container mx-auto max-w-5xl px-4 lg:px-0">
+    <div class="flex flex-col gap-4">
         ${z.data.map(item => html`
-            <div id="p${item.pid}" class="card bg-base-100 shadow-lg">
+            <div id="p${item.pid}" class="card bg-base-100 shadow-sm">
                 <div class="card-body p-4">
                     ${item.quote_name ? html`
                     <blockquote class="bg-base-200 px-4 py-3 rounded-lg mb-6">
