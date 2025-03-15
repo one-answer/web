@@ -8,15 +8,13 @@ ${Header(z)}
 
 <button onclick="mClear()">【清空消息】</button>
 <div id="list"></div>
-<a href="javascript:;" onclick="mFetch();">【加载更多】</a>
+<a id="load" href="javascript:;" onclick="mFetch(this);">【加载更多】</a>
 
 <script>
 let pid = 0;
 async function mClear() {
     const response = await fetch('/_mClear');
-    if (response.ok) {
-        document.getElementById('list').innerHTML = '';
-    }
+    if (response.ok) { location.reload(); }
 }
 async function mFetch() {
     try {
@@ -26,7 +24,7 @@ async function mFetch() {
             pid = data.at(-1).post_pid;
             console.log(pid)
         } else {
-            alert('没有更多通知了');
+            document.getElementById('load').style.display = 'none';
         }
         data.forEach(function(row){
             document.getElementById('list').innerHTML += '<div class="message" pid="'+row.post_pid+'">';
