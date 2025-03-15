@@ -7,19 +7,58 @@ async function post(eid) {
         window.location = document.referrer
     } else {
         const errorMsg = await result.text();
-        const toast = document.createElement('div');
-        toast.className = 'toast toast-top toast-center';
-        toast.style.marginTop = '4rem'; // 添加上边距，避免被导航栏遮挡
-        toast.innerHTML = `
-            <div class="alert alert-error">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-                <span>提交失败：${errorMsg}</span>
+        
+        // 创建一个简单的错误提示
+        const alert = document.createElement('div');
+        alert.style.position = 'fixed';
+        alert.style.top = '50%';
+        alert.style.left = '50%';
+        alert.style.transform = 'translate(-50%, -50%)';
+        alert.style.backgroundColor = 'white';
+        alert.style.padding = '20px';
+        alert.style.borderRadius = '8px';
+        alert.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+        alert.style.zIndex = '9999';
+        alert.style.maxWidth = '400px';
+        alert.style.width = '90%';
+        alert.style.textAlign = 'center';
+        
+        alert.innerHTML = `
+            <div style="margin-bottom: 15px; color: #e11d48; font-weight: bold; font-size: 18px;">
+                <span>提交失败</span>
             </div>
+            <div style="margin-bottom: 20px;">
+                ${errorMsg === 'too_fast' ? '太快了🥵，请稍后再试' : errorMsg}
+            </div>
+            <button style="background-color: #4f46e5; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+                确定
+            </button>
         `;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 3000);
+        
+        document.body.appendChild(alert);
+        
+        // 添加背景遮罩
+        const overlay = document.createElement('div');
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+        overlay.style.zIndex = '9998';
+        document.body.appendChild(overlay);
+        
+        // 添加关闭事件
+        const closeAlert = () => {
+            alert.remove();
+            overlay.remove();
+        };
+        
+        alert.querySelector('button').addEventListener('click', closeAlert);
+        overlay.addEventListener('click', closeAlert);
+        
+        // 3秒后自动关闭
+        setTimeout(closeAlert, 3000);
     }
 };
 
