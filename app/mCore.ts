@@ -3,14 +3,13 @@ import { DB, Message } from "./base";
 import { unreadMessage } from "./uCore";
 
 // 增加消息
-export async function mAdd(uid: number, type: number, time: number, pid: number) {
+export async function mAdd(uid: number, type: number, pid: number) {
     try {
         const message = (await DB
             .insert(Message)
             .values({
                 uid,
                 type,
-                time,
                 pid,
             })
             .returning({ uid: Message.uid })
@@ -25,14 +24,13 @@ export async function mAdd(uid: number, type: number, time: number, pid: number)
 }
 
 // 删除消息
-export async function mDel(uid: number, type: number[], time: number, pid: number) {
+export async function mDel(uid: number, type: number[], pid: number) {
     try {
         const message = (await DB
             .delete(Message)
             .where(and(
                 eq(Message.uid, uid),
                 inArray(Message.type, type),
-                eq(Message.time, time),
                 eq(Message.pid, pid),
             ))
             .returning({ uid: Message.uid, type: Message.type })
@@ -47,7 +45,7 @@ export async function mDel(uid: number, type: number[], time: number, pid: numbe
 }
 
 // 已读消息 type也可输入负数 从已读切换到未读
-export async function mRead(uid: number, type: number, time: number, pid: number) {
+export async function mRead(uid: number, type: number, pid: number) {
     try {
         const message = (await DB
             .update(Message)
@@ -57,7 +55,6 @@ export async function mRead(uid: number, type: number, time: number, pid: number
             .where(and(
                 eq(Message.uid, uid),
                 eq(Message.type, type),
-                eq(Message.time, time),
                 eq(Message.pid, pid),
             ))
             .returning({ uid: Message.uid })

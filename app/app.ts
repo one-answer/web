@@ -5,11 +5,12 @@ import { pOmit, pSave } from './pData'
 import { iLogin, iLogout, iRegister, iSave } from './iData'
 import { iAuth } from './iAuth'
 import { iConf } from './iConf'
+import { mList } from './mList'
+import { _mClear, _mList } from './mData'
 import { pEdit } from './pEdit'
 import { pList } from './pList'
 import { tList } from './tList'
 import { tPeak } from './tData'
-import { _mList, mList } from './mList'
 
 const app = new Hono();
 app.use(csrf());
@@ -31,6 +32,7 @@ app.post('/register', iRegister);
 
 app.get('/m', mList);
 app.get('/_mList', _mList);
+app.get('/_mClear', _mClear);
 
 // Sitemap
 app.get('/sitemap.xml', async (c) => {

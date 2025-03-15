@@ -27,7 +27,6 @@ export const Conf = sqliteTable("conf", {
 export const Message = sqliteTable("message", {
     uid: integer().notNull().default(0), // 向哪个用户发送的消息
     type: integer().notNull().default(0), // 消息类别 1:回复提醒 -1:已读回复提醒
-    time: integer().notNull().default(0), // 消息时间 要和帖子一致
     pid: integer().notNull().default(0), // 关联帖子
     /*
     pid 足够了，数据列越少越好。
@@ -38,7 +37,7 @@ export const Message = sqliteTable("message", {
     通过 uid_type_time_pid 才可以找到相应的消息，用主键无法定位。
     */
 }, (table) => [
-    index("message:uid,type,time,pid").on(table.uid, table.type, table.time, table.pid),
+    index("message:uid,type,pid").on(table.uid, table.type, table.pid),
 ]);
 
 export const Post = sqliteTable("post", {
