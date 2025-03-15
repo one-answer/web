@@ -10,12 +10,6 @@ export function PList(z: PListProps) {
             .content a {
                 text-decoration: underline;
             }
-            .content {
-                overflow-wrap: break-word;
-                word-wrap: break-word;
-                word-break: break-word;
-                hyphens: auto;
-            }
             pre {
                 white-space: pre-wrap;
             }
@@ -35,12 +29,12 @@ ${Header(z)}
                             <div class="badge badge-neutral">${raw(item.quote_name)}</div>
                             <div class="text-sm opacity-70">引用</div>
                         </div>
-                        <div class="text-sm opacity-80 break-all">
+                        <div class="text-sm opacity-80 break-all break-words hyphens-auto">
                             ${raw(HTMLText(item.quote_content, 100))}
                         </div>
                     </blockquote>
                     ` : ''}
-                    <div class="prose max-w-none content break-all mb-1">
+                    <div class="content prose max-w-none mb-1 break-all break-words hyphens-auto">
                         ${raw(item.content)}
                     </div>
                     <div class="divider my-0"></div>

@@ -2823,6 +2823,11 @@ html:has(.drawer-toggle:checked) {
   white-space: nowrap;
 }
 
+.hyphens-auto {
+  -webkit-hyphens: auto;
+          hyphens: auto;
+}
+
 .whitespace-nowrap {
   white-space: nowrap;
 }
