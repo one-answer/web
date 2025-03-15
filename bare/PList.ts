@@ -18,7 +18,7 @@ export function PList(z: PListProps) {
     return html`
 ${Header(z)}
 
-<div class="container mx-auto max-w-5xl px-4 lg:px-0">
+<div class="container mx-auto max-w-5xl lg:px-0">
     <div class="flex flex-col gap-4">
         ${z.data.map(item => html`
             <div id="p${item.pid}" class="card bg-base-100 shadow-sm">
