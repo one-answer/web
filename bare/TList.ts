@@ -10,7 +10,7 @@ ${Header(z)}
 <div class="max-w-5xl mx-auto">
 
     <!-- 帖子列表 -->
-    <div class="px-4 lg:px-0">
+    <div class="lg:px-0">
         ${z.data.map(item => html`
             <a href="/t/${item.tid}" class="block card bg-base-100 shadow-sm hover:shadow-md transition-all duration-200 mb-4">
                 <div class="card-body p-4">

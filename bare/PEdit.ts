@@ -25,7 +25,7 @@ export function PEdit(z: PEditProps) {
     return html`
 ${Header(z)}
 
-<div class="container mx-auto max-w-5xl px-4 py-6">
+<div class="container mx-auto max-w-5xl py-6">
     <div class="card bg-base-100 shadow-lg">
         <div class="card-body p-6">
             <h2 class="card-title mb-4">
