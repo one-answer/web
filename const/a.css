@@ -3004,6 +3004,10 @@ html:has(.drawer-toggle:checked) {
   text-transform: none;
 }
 
+.italic {
+  font-style: italic;
+}
+
 .tracking-tight {
   letter-spacing: -0.025em;
 }

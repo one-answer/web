@@ -97,7 +97,7 @@ ${Header(z)}
                     ${item ? html`
                         <a href="/t/${z.thread.tid}/${item}${URLQuery(z.a)}" class="btn btn-sm ${item == z.page ? 'btn-active' : 'btn-ghost'}">${item}</a>
                     ` : html`
-                        <span class="btn btn-sm btn-disabled">...</span>
+                        <span class="btn btn-sm btn-ghost">...</span>
                     `}
                 `)}
             </div>

@@ -51,7 +51,15 @@ ${Header(z)}
 
 <script src="/quill.js"></script>
 <script>
-    const quill = new Quill('[name="content"]', { 
+    const quill = new Quill('[name="content"]', {
+        modules: {
+            toolbar: [
+                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                ['bold', 'italic', 'underline', 'code-block'],
+                ['link'], // ['link', 'image']
+                ['clean']
+            ]
+        },
         theme: 'snow',
         placeholder: '请输入内容...'
     });

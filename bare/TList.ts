@@ -74,7 +74,7 @@ ${Header(z)}
                         <a href="/${item}${URLQuery(z.a)}" 
                            class="join-item btn btn-sm ${item == z.page ? 'btn-primary' : 'btn-ghost'}">${item ? item : '...'}</a>
                     ` : html`
-                        <span class="join-item btn btn-sm btn-disabled">...</span>
+                        <span class="join-item btn btn-sm btn-ghost">...</span>
                     `}
                 `)}
             </div>
