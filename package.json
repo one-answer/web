@@ -8,10 +8,11 @@
     "happy-dom": "^16.8.1",
     "hono": "^4.7.4",
     "isomorphic-dompurify": "^2.22.0",
+    "tailwindcss": "^3.4.17",
     "xregexp": "^5.1.2"
   },
   "scripts": {
-    "dev": "concurrently 'bun run --hot app/app.ts' 'bunx @tailwindcss/cli -o ./const/a.css --watch'",
+    "dev": "concurrently 'bun run --hot app/app.ts' 'bunx tailwindcss -o ./const/a.css --watch'",
     "db:generate": "bunx drizzle-kit generate",
     "db:push": "bunx drizzle-kit push",
     "db:init": "bun run init.ts"
@@ -19,7 +20,6 @@
   "devDependencies": {
     "concurrently": "^9.1.2",
     "daisyui": "^4.12.24",
-    "drizzle-kit": "^0.30.5",
-    "tailwindcss": "^3.4.17"
+    "drizzle-kit": "^0.30.5"
   }
 }
