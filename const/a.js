@@ -7,7 +7,7 @@ async function post(eid) {
         window.location = document.referrer
     } else {
         const errorMsg = await result.text();
-        
+
         // 创建一个简单的错误提示
         const alert = document.createElement('div');
         alert.style.position = 'fixed';
@@ -22,7 +22,7 @@ async function post(eid) {
         alert.style.maxWidth = '400px';
         alert.style.width = '90%';
         alert.style.textAlign = 'center';
-        
+
         alert.innerHTML = `
             <div style="margin-bottom: 15px; color: #e11d48; font-weight: bold; font-size: 18px;">
                 <span>提交失败</span>
@@ -34,9 +34,9 @@ async function post(eid) {
                 确定
             </button>
         `;
-        
+
         document.body.appendChild(alert);
-        
+
         // 添加背景遮罩
         const overlay = document.createElement('div');
         overlay.style.position = 'fixed';
@@ -47,16 +47,16 @@ async function post(eid) {
         overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
         overlay.style.zIndex = '9998';
         document.body.appendChild(overlay);
-        
+
         // 添加关闭事件
         const closeAlert = () => {
             alert.remove();
             overlay.remove();
         };
-        
+
         alert.querySelector('button').addEventListener('click', closeAlert);
         overlay.addEventListener('click', closeAlert);
-        
+
         // 3秒后自动关闭
         setTimeout(closeAlert, 3000);
     }
@@ -67,7 +67,7 @@ async function omit(eid) {
     if (!confirm('真的要删除吗?')) { return; }
     const result = await fetch(new Request('/e/' + eid, { method: 'DELETE' }))
     if (result.ok) {
-        window.location = document.referrer
+        location.reload();
     } else {
         const errorMsg = await result.text();
         const toast = document.createElement('div');
