@@ -7,6 +7,11 @@ import { eq } from 'drizzle-orm';
 import { Window } from "happy-dom";
 import * as DOMPurify from 'isomorphic-dompurify';
 
+export class DOM {
+    public static window = new Window();
+    public static document = this.window.document;
+}
+
 export class Maps {
     // 存储 map 的内存容器
     private static maps: Map<string, Map<any, any>> = new Map();
@@ -161,9 +166,8 @@ export function HTMLText(html: string | null, len = 0) {
     if (!html) {
         return '...'
     }
-    const document = new Window().document
-    document.body.innerHTML = html
-    let text = document.body.innerText
+    DOM.document.body.innerHTML = html
+    let text = DOM.document.body.innerText
     if (len > 0) {
         const lenOld = text.length
         if (lenOld > len) {
@@ -177,9 +181,8 @@ export function HTMLSubject(html: string | null, len = 0) {
     if (!html) {
         return '...'
     }
-    const document = new Window().document
-    document.body.innerHTML = html
-    let text = document.body.innerText.split('\n')[0]
+    DOM.document.body.innerHTML = html
+    let text = DOM.document.body.innerText.split('\n')[0]
     if (len > 0) {
         const lenOld = text.length
         if (lenOld > len) {
