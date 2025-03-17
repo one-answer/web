@@ -157,22 +157,22 @@ export function HTMLFilter(html: string) {
 }
 
 export class HTMLText {
-    private static stop: number;
+    private static stop: boolean;
     private static first: boolean;
     private static value: string;
     private static rewriter = new HTMLRewriter().on('*', {
         element: e => {
-            if (this.stop >= 1) { return; }
+            if (this.stop) { return; }
             if (['p', 'br'].includes(e.tagName)) {
                 this.value += ' '
                 // 如果只取首行 且遇到换行符 则标记预备停止
-                if (this.first) {
-                    this.stop = 1;
-                }
+                this.first && e.onEndTag(() => {
+                    this.stop = true;
+                })
             }
         },
         text: t => {
-            if (this.stop >= 2) { return; }
+            if (this.stop) { return; }
             if (t.text) {
                 this.value += t.text
                     .replace(/&amp;/g, "&")
@@ -183,15 +183,11 @@ export class HTMLText {
                     .replace(/&nbsp;/g, " ")
                     .trim()
             }
-            // 如果预备停止 获取内容后 升级正式停止
-            if (this.stop >= 1) {
-                this.stop = 2;
-            }
         }
     });
     public static run(html: BodyInit | null, len: number) {
         if (!html) { return '...' }
-        this.stop = 0;
+        this.stop = false;
         this.value = '';
         this.rewriter.transform(new Response(html)).text();
         let text = this.value.trim();
