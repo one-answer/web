@@ -10,7 +10,6 @@ ASSBBS Web 是一个基于 Bun + Hono 的轻量级论坛系统。
 - **ORM**: Drizzle ORM - 类型安全的 ORM
 - **CSS**: Tailwind CSS - 实用优先的 CSS 框架
 - **其他工具**:
-  - `happy-dom`: 用于服务端 DOM 操作
   - `dompurify`: HTML 内容净化
   - `xregexp`: 增强的正则表达式库
 

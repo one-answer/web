@@ -1,6 +1,6 @@
 import { Context } from "hono";
 import { DB, Post, Thread, User } from "./base";
-import { Auth, Config, HTMLFilter, HTMLSubject, IsAdmin } from "./core";
+import { Auth, Config, HTMLFilter, HTMLText, IsAdmin } from "./core";
 import { mAdd, mDel } from "./mCore";
 import { cookieReset, lastPostTime } from "./uCore";
 import { and, desc, eq, gt, inArray, ne, or, sql } from "drizzle-orm";
@@ -12,9 +12,11 @@ export async function pSave(a: Context) {
     const time = Math.floor(Date.now() / 1000)
     const body = await a.req.formData()
     const eid = parseInt(a.req.param('eid') ?? '0')
+    const raw = body.get('content')?.toString() ?? ''
     if (eid < 0) { // 编辑
-        const content = HTMLFilter(body.get('content')?.toString() ?? '')
+        const content = HTMLFilter(raw)
         if (!content) { return a.text('406', 406) }
+        const subject = HTMLText.one(raw, 140)
         const post = (await DB
             .update(Post)
             .set({
@@ -33,7 +35,7 @@ export async function pSave(a: Context) {
             await DB
                 .update(Thread)
                 .set({
-                    subject: HTMLSubject(content, 140),
+                    subject,
                 })
                 .where(eq(Thread.tid, post.pid))
         }
@@ -49,7 +51,7 @@ export async function pSave(a: Context) {
             ))
         )?.[0]
         if (!quote) { return a.text('403', 403) }
-        const content = HTMLFilter(body.get('content')?.toString() ?? '')
+        const content = HTMLFilter(raw)
         if (!content) { return a.text('406', 406) }
         const thread = (await DB
             .update(Thread)
@@ -73,7 +75,7 @@ export async function pSave(a: Context) {
                 uid: i.uid,
                 time,
                 quote_pid: quote.pid,
-                content: content,
+                content,
             })
             .returning()
         )?.[0]
@@ -95,14 +97,15 @@ export async function pSave(a: Context) {
         return a.text('ok') //! 返回tid/pid和posts数量
     } else { // 发帖
         if (time - lastPostTime(i.uid) < 60) { return a.text('too_fast', 403) } // 防止频繁发帖
-        const content = HTMLFilter(body.get('content')?.toString() ?? '')
+        const content = HTMLFilter(raw)
         if (!content) { return a.text('406', 406) }
+        const subject = HTMLText.one(raw, 140)
         const post = (await DB
             .insert(Post)
             .values({
                 uid: i.uid,
                 time,
-                content: content,
+                content,
             })
             .returning()
         )?.[0]
@@ -111,7 +114,7 @@ export async function pSave(a: Context) {
             .values({
                 tid: post.pid,
                 uid: i.uid,
-                subject: HTMLSubject(content, 140),
+                subject,
                 time,
                 last_time: time,
                 posts: 1,

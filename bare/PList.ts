@@ -30,7 +30,7 @@ ${Header(z)}
                             <div class="text-sm opacity-70">引用</div>
                         </div>
                         <div class="text-sm opacity-80 break-all break-words hyphens-auto">
-                            ${raw(HTMLText(item.quote_content, 100))}
+                            ${raw(HTMLText.all(item.quote_content, 100))}
                         </div>
                     </blockquote>
                     ` : ''}

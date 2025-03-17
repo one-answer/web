@@ -33,8 +33,8 @@ export async function _mList(a: Context) {
         .orderBy(desc(Message.pid))
         .limit(10)
     data.forEach(function (row) {
-        row.quote_content = HTMLText(row.quote_content, 100);
-        row.post_content = HTMLText(row.post_content, 200);
+        row.quote_content = HTMLText.all(row.quote_content, 100);
+        row.post_content = HTMLText.all(row.post_content, 200);
     })
     return a.json(data)
 }

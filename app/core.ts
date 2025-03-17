@@ -4,13 +4,7 @@ import { getCookie, setCookie } from "hono/cookie";
 import { DB, Conf, I, User } from "./base";
 import { cookieReset } from "./uCore";
 import { eq } from 'drizzle-orm';
-import { Window } from "happy-dom";
 import * as DOMPurify from 'isomorphic-dompurify';
-
-export class DOM {
-    public static window = new Window();
-    public static document = this.window.document;
-}
 
 export class Maps {
     // 存储 map 的内存容器
@@ -162,34 +156,63 @@ export function HTMLFilter(html: string) {
     })
 }
 
-export function HTMLText(html: string | null, len = 0) {
-    if (!html) {
-        return '...'
-    }
-    DOM.document.body.innerHTML = html
-    let text = DOM.document.body.innerText
-    if (len > 0) {
-        const lenOld = text.length
-        if (lenOld > len) {
-            text = text.slice(0, len - 3) + '...'
+export class HTMLText {
+    private static stop: number;
+    private static first: boolean;
+    private static value: string;
+    private static rewriter = new HTMLRewriter().on('*', {
+        element: e => {
+            if (this.stop >= 1) { return; }
+            if (['p', 'br'].includes(e.tagName)) {
+                this.value += ' '
+                // 如果只取首行 且遇到换行符 则标记预备停止
+                if (this.first) {
+                    this.stop = 1;
+                }
+            }
+        },
+        text: t => {
+            if (this.stop >= 2) { return; }
+            if (t.text) {
+                this.value += t.text
+                    .replace(/&amp;/g, "&")
+                    .replace(/&lt;/g, "<")
+                    .replace(/&gt;/g, ">")
+                    .replace(/&quot;/g, '"')
+                    .replace(/&#39;/g, "'")
+                    .replace(/&nbsp;/g, " ")
+                    .trim()
+            }
+            // 如果预备停止 获取内容后 升级正式停止
+            if (this.stop >= 1) {
+                this.stop = 2;
+            }
         }
-    }
-    return text
-}
-
-export function HTMLSubject(html: string | null, len = 0) {
-    if (!html) {
-        return '...'
-    }
-    DOM.document.body.innerHTML = html
-    let text = DOM.document.body.innerText.split('\n')[0]
-    if (len > 0) {
-        const lenOld = text.length
-        if (lenOld > len) {
-            text = text.slice(0, len - 3) + '...'
+    });
+    public static run(html: BodyInit | null, len: number) {
+        if (!html) { return '...' }
+        this.stop = 0;
+        this.value = '';
+        this.rewriter.transform(new Response(html)).text();
+        let text = this.value.trim();
+        if (len > 0) {
+            const lenOld = text.length
+            if (lenOld > len) {
+                text = text.slice(0, len - 3) + '...'
+            }
         }
+        return text
     }
-    return text
+    // 取首行
+    public static one(html: BodyInit | null, len = 0) {
+        this.first = true;
+        return this.run(html, len)
+    }
+    // 取全文
+    public static all(html: BodyInit | null, len = 0) {
+        this.first = false;
+        return this.run(html, len)
+    }
 }
 
 export function URLQuery(a: Context) {
