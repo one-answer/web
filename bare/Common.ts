@@ -114,7 +114,7 @@ export async function Footer(z: Props) {
             <a href="${item.url}" target="_blank" class="link link-hover text-sm text-base-content/70 hover:text-primary">${item.name}</a>
           `)}
         </div>
-        <p class="text-sm opacity-50">Copyright ${new Date().getFullYear()} - All rights reserved</p>
+        <p class="text-sm opacity-50"><a href="https://github.com/assbbs-com/web" target="_blank">Star on GitHub</a></p>
       </div>
     </footer>
     </div>
