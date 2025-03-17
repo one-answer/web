@@ -4,12 +4,12 @@ ASSBBS Web 是一个基于 Bun + Hono 的轻量级论坛系统。
 
 ## 技术栈
 
-- **运行时**: [Bun](https://bun.sh/) - 一个快速的 JavaScript 运行时和工具链
-- **Web 框架**: [Hono](https://hono.dev/) - 轻量级、快速的 Web 框架
-- **数据库**: SQLite (使用 Turso/LibSQL) - 分布式 SQLite 数据库
-- **ORM**: Drizzle ORM - 类型安全的 ORM
-- **CSS**: Tailwind CSS - 实用优先的 CSS 框架
-- **其他工具**:
+- **RT**: [Bun](https://bun.sh/) - 一个快速的 JavaScript 运行时和工具链
+- **JS**: [Hono](https://hono.dev/) - 轻量级、快速的 Web 框架
+- **DB**: [LibSQL](https://turso.tech/libsql) - 分布式 SQLite 数据库
+- **ORM**: [Drizzle ORM](https://orm.drizzle.team/) - 类型安全的 ORM
+- **CSS**: [daisyUI](https://daisyui.com/) - 实用优先的 Tailwind CSS 框架
+- **其它**:
   - `dompurify`: HTML 内容净化
   - `xregexp`: 增强的正则表达式库
 

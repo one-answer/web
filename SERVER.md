@@ -11,4 +11,4 @@ cd /www/assbbs_com && git fetch && git reset --hard && git pull
 cd /www/assbbs_com && chmod 755 *; nohup bun app > app.log 2>&1 &
 
 ### 升级：
-while pgrep -f "bun"; do pkill -f "bun"; done && sleep 1 && cd /www/assbbs_com && git fetch && git reset --hard && git pull && bun upgrade && bun install && cd /www/assbbs_com && chmod 755 *; nohup bun app > app.log 2>&1 &
+while pgrep -f "bun"; do pkill -f "bun"; done && cd /www/assbbs_com && git fetch && git reset --hard && git pull && bun upgrade && bun install && cd /www/assbbs_com && chmod 755 *; nohup bun app > app.log 2>&1 &
