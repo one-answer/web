@@ -1,14 +1,5 @@
 {
   "name": "a",
-  "dependencies": {
-    "@libsql/client": "^0.14.0",
-    "@types/bun": "^1.2.5",
-    "dompurify": "^3.2.4",
-    "drizzle-orm": "^0.40.1",
-    "hono": "^4.7.4",
-    "isomorphic-dompurify": "^2.22.0",
-    "xregexp": "^5.1.2"
-  },
   "scripts": {
     "app": "bunx tailwindcss -o ./const/a.css && bun run --hot app/app.ts",
     "dev": "concurrently 'bunx tailwindcss -o ./const/a.css --watch' 'bun run --hot app/app.ts'",
@@ -16,7 +7,16 @@
     "db:push": "bunx drizzle-kit push",
     "db:init": "bun run init.ts"
   },
+  "dependencies": {
+    "@libsql/client": "^0.14.0",
+    "dompurify": "^3.2.4",
+    "drizzle-orm": "^0.40.1",
+    "hono": "^4.7.4",
+    "isomorphic-dompurify": "^2.22.0",
+    "xregexp": "^5.1.2"
+  },
   "devDependencies": {
+    "@types/bun": "^1.2.5",
     "concurrently": "^9.1.2",
     "daisyui": "^4.12.24",
     "drizzle-kit": "^0.30.5",
