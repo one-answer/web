@@ -163,7 +163,7 @@ export class HTMLText {
     private static rewriter = new HTMLRewriter().on('*', {
         element: e => {
             if (this.stop) { return; }
-            if (['p', 'br'].includes(e.tagName)) {
+            if (['p', 'br', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(e.tagName)) {
                 this.value += ' '
                 // 如果只取首行 且遇到换行符 则标记预备停止
                 this.first && e.onEndTag(() => {
