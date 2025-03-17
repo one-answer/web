@@ -157,22 +157,25 @@ export function HTMLFilter(html: string) {
 }
 
 export class HTMLText {
-    private static stop: boolean;
+    private static stop: number;
     private static first: boolean;
     private static value: string;
     private static rewriter = new HTMLRewriter().on('*', {
         element: e => {
-            if (this.stop) { return; }
+            if (this.stop == 2) { return; }
             if (['p', 'br', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(e.tagName)) {
                 this.value += ' '
                 // 如果只取首行 且遇到换行符 则标记预备停止
-                this.first && e.onEndTag(() => {
-                    this.stop = true;
-                })
+                if (this.first && !this.stop) {
+                    this.stop = 1;
+                    e.onEndTag(() => {
+                        this.stop = 2;
+                    })
+                }
             }
         },
         text: t => {
-            if (this.stop) { return; }
+            if (this.stop == 2) { return; }
             if (t.text) {
                 this.value += t.text
                     .replace(/&amp;/g, "&")
@@ -187,7 +190,7 @@ export class HTMLText {
     });
     public static run(html: BodyInit | null, len: number) {
         if (!html) { return '...' }
-        this.stop = false;
+        this.stop = 0;
         this.value = '';
         this.rewriter.transform(new Response(html)).text();
         let text = this.value.trim();
