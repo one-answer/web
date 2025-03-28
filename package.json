@@ -9,17 +9,15 @@
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",
-    "dompurify": "^3.2.4",
     "drizzle-orm": "^0.40.1",
     "hono": "^4.7.5",
-    "isomorphic-dompurify": "^2.22.0",
     "xregexp": "^5.1.2"
   },
   "devDependencies": {
-    "@types/bun": "^1.2.5",
+    "@types/bun": "^1.2.8",
     "concurrently": "^9.1.2",
     "daisyui": "^4.12.24",
-    "drizzle-kit": "^0.30.5",
+    "drizzle-kit": "^0.30.6",
     "tailwindcss": "^3.4.17"
   }
 }

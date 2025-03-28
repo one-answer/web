@@ -4,7 +4,6 @@ import { getCookie, setCookie } from "hono/cookie";
 import { DB, Conf, I, User } from "./base";
 import { cookieReset } from "./uCore";
 import { eq } from 'drizzle-orm';
-import * as DOMPurify from 'isomorphic-dompurify';
 
 export class Maps {
     // 存储 map 的内存容器
@@ -143,18 +142,25 @@ export function Pagination(perPage: number, sum: number, page: number, near: num
     return navigation
 }
 
-export function HTMLFilter(html: string) {
-    DOMPurify.addHook('afterSanitizeElements', function (node) {
-        if (!node.textContent?.trim() && !node.hasChildNodes() && node.parentNode) {
-            node.parentNode.removeChild(node);
-            return;
-        }
-    });
-    return DOMPurify.sanitize(html, {
-        ALLOWED_TAGS: ['a', 'b', 'i', 'u', 'font', 'strong', 'em', 'strike', 'span', 'table', 'tr', 'td', 'th', 'thead', 'tbody', 'tfoot', 'caption', 'ol', 'ul', 'li', 'dl', 'dt', 'dd', 'menu', 'multicol', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'p', 'div', 'pre', 'br', 'img', 'video', 'audio', 'code', 'blockquote', 'iframe', 'section'],
-        ALLOWED_ATTR: ['target', 'href', 'src', 'alt', 'rel', 'width', 'height', 'size', 'border', 'align', 'colspan', 'rowspan', 'cite'],
-    })
+export function HTMLFilter(html: string | null | undefined) {
+    if (!html) { return ''; }
+    const allowedTags = new Set(['a', 'b', 'i', 'u', 'font', 'strong', 'em', 'strike', 'span', 'table', 'tr', 'td', 'th', 'thead', 'tbody', 'tfoot', 'caption', 'ol', 'ul', 'li', 'dl', 'dt', 'dd', 'menu', 'multicol', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'p', 'div', 'pre', 'br', 'img', 'video', 'audio', 'code', 'blockquote', 'iframe', 'section']);
+    const allowedAttrs = new Set(['target', 'href', 'src', 'alt', 'rel', 'width', 'height', 'size', 'border', 'align', 'colspan', 'rowspan', 'cite']);
+    return new HTMLRewriter().on("*", {
+        element(el) {
+            if (!allowedTags.has(el.tagName)) {
+                el.removeAndKeepContent();
+                return;
+            }
+            for (const [name, value] of el.attributes) {
+                if (!allowedAttrs.has(name)) {
+                    el.removeAttribute(name);
+                }
+            }
+        },
+    }).transform(html);
 }
+
 
 export class HTMLText {
     private static stop: number;
@@ -188,11 +194,11 @@ export class HTMLText {
             }
         }
     });
-    public static run(html: BodyInit | null, len: number) {
+    public static run(html: string | null | undefined, len: number) {
         if (!html) { return '...' }
         this.stop = 0;
         this.value = '';
-        this.rewriter.transform(new Response(html)).text();
+        this.rewriter.transform(html);
         let text = this.value.trim();
         if (len > 0) {
             const lenOld = text.length
@@ -203,12 +209,12 @@ export class HTMLText {
         return text
     }
     // 取首行
-    public static one(html: BodyInit | null, len = 0) {
+    public static one(html: string | null | undefined, len = 0) {
         this.first = true;
         return this.run(html, len)
     }
     // 取全文
-    public static all(html: BodyInit | null, len = 0) {
+    public static all(html: string | null | undefined, len = 0) {
         this.first = false;
         return this.run(html, len)
     }
