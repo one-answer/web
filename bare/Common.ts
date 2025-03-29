@@ -1,4 +1,4 @@
-import { html } from "hono/html";
+import { html, raw } from "hono/html";
 import { Props } from "../app/base";
 import { Config } from "../app/core";
 import { unreadMessage } from "../app/uCore";
@@ -17,15 +17,15 @@ export async function Header(z: Props) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>${pageTitle}</title>
-  <meta name="description" content="${pageDesc}">
+  <title>${raw(pageTitle)}</title>
+  <meta name="description" content="${raw(pageDesc)}">
   <meta name="keywords" content="${keywords}">
   <meta name="robots" content="index, follow">
   <meta property="og:type" content="website" />
   <meta property="og:url" content="${currentUrl}" />
   <meta property="og:site_name" content="${siteName}" />
-  <meta property="og:title" content="${pageTitle}" />
-  <meta property="og:description" content="${pageDesc}" />
+  <meta property="og:title" content="${raw(pageTitle)}" />
+  <meta property="og:description" content="${raw(pageDesc)}" />
   <link rel="canonical" href="${currentUrl}" />
   <link rel="stylesheet" type="text/css" href="/a.css" />
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
@@ -51,7 +51,7 @@ export async function Header(z: Props) {
           <ul class="menu menu-horizontal gap-2 items-center">
             <!-- 导航菜单 -->
             ${z.i ? html`
-              ${z.edit_forbid ? '' : (Object.hasOwn(z.a.req.param(), 'tid') ? html`
+              ${z.edit_forbid ? '' : (Object.prototype.hasOwnProperty.call(z.a.req.param(), 'tid') ? html`
                 <li><a href="/e/${z.a.req.param('tid')}" class="btn btn-sm btn-ghost gap-2">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
@@ -127,7 +127,7 @@ export async function Footer(z: Props) {
         <!-- 抽屉菜单项 -->
         <ul class="menu menu-lg gap-2">
           ${z.i ? html`
-            ${z.edit_forbid ? '' : (Object.hasOwn(z.a.req.param(), 'tid') ? html`
+            ${z.edit_forbid ? '' : (Object.prototype.hasOwnProperty.call(z.a.req.param(), 'tid') ? html`
               <li>
                 <a href="/e/${z.a.req.param('tid')}" class="gap-4">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

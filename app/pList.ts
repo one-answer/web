@@ -61,7 +61,7 @@ export async function pList(a: Context) {
         .offset((page - 1) * page_size_p)
         .limit(page_size_p)
     const pagination = Pagination(page_size_p, thread.posts, page, 2)
-    const title = raw(thread.subject)
+    const title = thread.subject
     const edit_forbid = (thread.last_time + 604800) < Math.floor(Date.now() / 1000)
-    return a.html(PList({ a, i, thread, page, pagination, data, title, edit_forbid }));
+    return a.html(PList({ a, i, thread, page, pagination, data, title, edit_forbid }))
 }

@@ -22,7 +22,6 @@ async function mFetch() {
         const data = await response.json();
         if (data.length) {
             pid = data.at(-1).post_pid;
-            console.log(pid)
         } else {
             document.getElementById('load').style.display = 'none';
         }

@@ -147,20 +147,19 @@ export function HTMLFilter(html: string | null | undefined) {
     const allowedTags = new Set(['a', 'b', 'i', 'u', 'font', 'strong', 'em', 'strike', 'span', 'table', 'tr', 'td', 'th', 'thead', 'tbody', 'tfoot', 'caption', 'ol', 'ul', 'li', 'dl', 'dt', 'dd', 'menu', 'multicol', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'p', 'div', 'pre', 'br', 'img', 'video', 'audio', 'code', 'blockquote', 'iframe', 'section']);
     const allowedAttrs = new Set(['target', 'href', 'src', 'alt', 'rel', 'width', 'height', 'size', 'border', 'align', 'colspan', 'rowspan', 'cite']);
     return new HTMLRewriter().on("*", {
-        element(el) {
-            if (!allowedTags.has(el.tagName)) {
-                el.removeAndKeepContent();
+        element: e => {
+            if (!allowedTags.has(e.tagName)) {
+                e.removeAndKeepContent();
                 return;
             }
-            for (const [name, value] of el.attributes) {
+            for (const [name, value] of e.attributes) {
                 if (!allowedAttrs.has(name)) {
-                    el.removeAttribute(name);
+                    e.removeAttribute(name);
                 }
             }
-        },
+        }
     }).transform(html);
 }
-
 
 export class HTMLText {
     private static stop: number;
@@ -175,7 +174,7 @@ export class HTMLText {
                 if (this.first && !this.stop) {
                     this.stop = 1;
                     e.onEndTag(() => {
-                        this.stop = 2;
+                        this.stop = this.value.trim() ? 2 : 0;
                     })
                 }
             }
@@ -207,6 +206,12 @@ export class HTMLText {
             }
         }
         return text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, "&#39;")
+            .trim()
     }
     // 取首行
     public static one(html: string | null | undefined, len = 0) {
