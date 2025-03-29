@@ -153,7 +153,7 @@ export function HTMLFilter(html: string | null | undefined) {
                 return;
             }
             for (const [name, value] of e.attributes) {
-                if (!allowedAttrs.has(name)) {
+                if (!allowedAttrs.has(name) || value.length > 8000) {
                     e.removeAttribute(name);
                 }
             }
