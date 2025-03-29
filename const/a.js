@@ -124,14 +124,19 @@ function upload() {
                 method: 'POST',
                 body: file
             })
-                .then(response => response.text())
+                .then(async response => {
+                    if (!response.ok) {
+                        throw new Error('[' + response.status + '] ' + await response.text());
+                    }
+                    return await response.text();
+                })
                 .then(url => {
                     const range = quill.getSelection();
                     quill.insertEmbed(range.index, 'image', url);
                     quill.setSelection(range.index + 1);
                 })
                 .catch(error => {
-                    alert('上传失败:' + error);
+                    alert('上传失败: ' + error);
                 });
         }
     };

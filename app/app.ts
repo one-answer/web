@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import { csrf } from 'hono/csrf'
 import { serveStatic } from 'hono/bun'
+import { bodyLimit } from 'hono/body-limit'
 import { pOmit, pSave } from './pData'
 import { iLogin, iLogout, iRegister, iSave } from './iData'
 import { iAuth } from './iAuth'
@@ -35,11 +36,14 @@ app.get('/m', mList);
 app.get('/_mList', _mList);
 app.get('/_mClear', _mClear);
 
-app.post('/f', fUpload);
+app.post('/f', bodyLimit({
+    maxSize: 10 * 1024 * 1024, // MB
+    onError: (a) => a.text('Payload Too Large', 413),
+}), fUpload);
 
 // Sitemap
-app.get('/sitemap.xml', async (c) => {
-    const baseUrl = new URL(c.req.url).origin;
+app.get('/sitemap.xml', async (a) => {
+    const baseUrl = new URL(a.req.url).origin;
     const staticRoutes = [
         { url: '/', changefreq: 'daily', priority: 1.0 },
         { url: '/auth', changefreq: 'monthly', priority: 0.3 },
@@ -56,7 +60,7 @@ app.get('/sitemap.xml', async (c) => {
     </url>`).join('')}
 </urlset>`;
 
-    return c.newResponse(xml, 200, {
+    return a.newResponse(xml, 200, {
         'Content-Type': 'application/xml',
         'Cache-Control': 'public, max-age=1800'
     });
