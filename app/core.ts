@@ -211,7 +211,7 @@ export class HTMLText {
             .replace(/>/g, "&gt;")
             .replace(/"/g, '&quot;')
             .replace(/'/g, "&#39;")
-            .trim()
+            .trim() || '...'
     }
     // 取首行
     public static one(html: string | null | undefined, len = 0) {
