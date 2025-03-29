@@ -11,6 +11,7 @@ import { pEdit } from './pEdit'
 import { pList } from './pList'
 import { tList } from './tList'
 import { tPeak } from './tData'
+import { fUpload } from './fUpload'
 
 const app = new Hono();
 app.use(csrf());
@@ -33,6 +34,8 @@ app.post('/register', iRegister);
 app.get('/m', mList);
 app.get('/_mList', _mList);
 app.get('/_mClear', _mClear);
+
+app.post('/f', fUpload);
 
 // Sitemap
 app.get('/sitemap.xml', async (c) => {

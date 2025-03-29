@@ -56,13 +56,15 @@ ${Header(z)}
             toolbar: [
                 [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
                 ['bold', 'italic', 'underline', 'code-block', 'link'],
-                // ['image'],
+                ['image'],
                 ['clean']
             ]
         },
         theme: 'snow',
         placeholder: '请输入内容...'
     });
+    const toolbar = quill.getModule('toolbar');
+    toolbar.addHandler('image', upload);
 </script>
 
 ${Footer(z)}

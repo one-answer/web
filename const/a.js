@@ -105,3 +105,34 @@ async function pin(tid) {
         alert('置顶操作失败');
     }
 }
+
+// 上传文件
+function upload() {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+    input.onchange = function (e) {
+        var file = e.target.files[0];
+        if (file) {
+            var formData = new FormData();
+            formData.append('fileToUpload', file);
+            formData.append('reqtype', 'fileupload');
+            formData.append('userhash', '');
+            // 上传 CatBox
+            fetch('/f', {
+                method: 'POST',
+                body: file
+            })
+                .then(response => response.text())
+                .then(url => {
+                    const range = quill.getSelection();
+                    quill.insertEmbed(range.index, 'image', url);
+                    quill.setSelection(range.index + 1);
+                })
+                .catch(error => {
+                    alert('上传失败:' + error);
+                });
+        }
+    };
+}
