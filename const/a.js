@@ -130,9 +130,10 @@ function upload() {
                     }
                     return await response.text();
                 })
-                .then(url => {
+                .then(fid => {
+                    if (!fid) { return false; }
                     const range = quill.getSelection();
-                    quill.insertEmbed(range.index, 'image', url);
+                    quill.insertEmbed(range.index, 'image', '/f/catbox-image/' + fid);
                     quill.setSelection(range.index + 1);
                 })
                 .catch(error => {

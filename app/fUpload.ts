@@ -12,7 +12,7 @@ export async function fUpload(a: Context) {
     form.append('fileToUpload', file, time + '');
     const response = await fetch('https://catbox.moe/user/api.php', { method: 'POST', body: form });
     if (response.ok) {
-        return a.text(await response.text())
+        return a.text((await response.text()).split('/').at(-1) ?? '')
     } else {
         return a.text(await response.text(), 500)
     }
