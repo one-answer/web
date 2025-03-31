@@ -20,6 +20,9 @@ export function PEdit(z: PEditProps) {
             .ql-editor,.ql-container {
                 min-height: 350px;
             }
+            .ql-editor img {
+                padding: 4px 0;
+            }
         </style>
     `)
     return html`

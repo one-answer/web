@@ -13,6 +13,9 @@ export function PList(z: PListProps) {
             pre {
                 white-space: pre-wrap;
             }
+            .content img {
+                padding: 4px 0;
+            }
         </style>
     `);
     return html`
